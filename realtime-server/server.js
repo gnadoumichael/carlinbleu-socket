@@ -36,7 +36,7 @@ app.post("/emit/client_updated", (req, res) => {
 
     io.emit("client_updated", req.body);
 
-    res.json({ status: "ok" });
+    res.json({ status: "okK" });
 });
 
 const PORT = process.env.PORT || 3000;
