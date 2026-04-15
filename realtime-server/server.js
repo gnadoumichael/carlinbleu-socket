@@ -31,7 +31,11 @@ io.on("connection", (socket) => {
 
 // endpoint Symfony
 app.post("/emit/client_updated", (req, res) => {
+    console.log("🔥 HTTP REÇU:", req.body);
+    console.log("👥 clients connectés:", io.engine.clientsCount);
+
     io.emit("client_updated", req.body);
+
     res.json({ status: "ok" });
 });
 
