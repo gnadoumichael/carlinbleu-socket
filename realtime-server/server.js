@@ -15,6 +15,11 @@ const io = new Server(server, {
     }
 });
 
+// ✅ Route de test (IMPORTANT pour Render)
+app.get("/", (req, res) => {
+    res.send("🚀 Socket.IO server is running");
+});
+
 // connexion socket
 io.on("connection", (socket) => {
     console.log("Client connecté:", socket.id);
@@ -24,17 +29,13 @@ io.on("connection", (socket) => {
     });
 });
 
-app.get("/", (req, res) => {
-    res.send("🚀 Socket.IO server is running");
-});
-
-// endpoint test Symfony
+// endpoint Symfony
 app.post("/emit/client_updated", (req, res) => {
     io.emit("client_updated", req.body);
     res.json({ status: "ok" });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
     console.log("Socket.IO server running on port", PORT);
