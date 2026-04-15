@@ -1,0 +1,564 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+    <section class="content" style="margin-top: 70px !important;">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                    <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                        <div class="row clearfix m-t-40">
+                            <div class="col-sm-12">
+                                <h2 class="col-blue-grey font-bold">Corbeille</h2><br>
+                            </div>
+                        </div>
+                        {# CLIENT #}
+                        <div class="panel panel-pri shadow">
+                            <div class="panel-heading" role="tab" id="headingOne_CLI">
+                                <h5 class="panel-title">
+                                    <a class="collapsed fontes text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_0" href="#collapseOne_CLI" aria-expanded="false"
+                                       aria-controls="collapseOne_CLI" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Clients
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne_CLI" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingOne_CLI">
+                                <div class="panel-body">
+                                    <div class="table-responsive shadow" style="padding: 20px">
+                                        <table class="table-bordered  display nowrape" style="width: 100%"
+                                               id="dataLISTEDELCLIENTS">
+                                            <thead>
+                                            <tr class="font-weight-normal">
+                                                <th class="text-center" style="width: 10px !important;"></th>
+                                                <th class="text-center">CLIENTS</th>
+                                                <th class="text-center">N° DE CLIENT</th>
+                                                <th class="text-center">ADRESSE</th>
+                                                <th class="text-center">CONTACTS</th>
+                                                <th class="text-center">COMPTE C.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% set tpc = 0 %}
+                                            {% set tpa = 0 %}
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is not null and client.corbeille.etat != 'ultra' %}
+                                                    {% set pc = 0 %}
+                                                    {% set pa = 0 %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% if chantier.corbeille is null %}
+                                                            {% if chantier.archiver != 'oui' %}
+                                                                {% set pc = pc + 1 %}
+                                                            {% else %}
+                                                                {% set pa = pa + 1 %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" data-toggle="toggle"
+                                                                   class="CLYEDEL"
+                                                                   value="{{ client.id }}"></td>
+                                                        <td>
+                                                            <a href="{{ path('client', {'id': client.id}) }}"
+                                                               class="text-pri font-bold"
+                                                               title="{{ client.nomclient|upper }}">{{ client.nomclient|upper }}</a>
+                                                        </td>
+                                                        <td class="text-center">{{ client.code }}</td>
+                                                        <td class="text-center">{{ client.adresse }}</td>
+                                                        <td class="text-center">{{ client.contact }}</td>
+                                                        <td class="text-center">{{ client.contribuable }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# CHANTIER #}
+                        <div class="panel panel-pri shadow">
+                            <div class="panel-heading" role="tab" id="headingOne_PS">
+                                <h5 class="panel-title">
+                                    <a class="collapsed fontes text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_PS" href="#collapseOne_PS" aria-expanded="false"
+                                       aria-controls="collapseOne_PS" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Chantiers
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne_PS" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingOne_PS">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 20px">
+                                        <table class="table-bordered shadow display nowrape" id="dataCHANTIERSUP" style="width: 100%">
+                                            {% set cout = 0 %}
+                                            {% set check = 0 %}
+                                            {% set ccheck = 0 %}
+                                            {% set reglement = 0 %}
+                                            {% set depense = 0 %}
+                                            {% set tcout = 0 %}
+                                            {% set treglement = 0 %}
+                                            {% set tdepense = 0 %}
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is null %}
+                                                    {% set vp = 0 %}
+                                                    {% set vr = 0 %}
+                                                    {% set dp = 0 %}
+
+                                                    {% for chantier in client.chantiers %}
+
+                                                            {% if chantier.corbeille is not null and chantier.corbeille.etat != 'ultra' %}
+                                                                {% if chantier.archiver != 'oui' %}
+                                                                    {% set vp = chantier.cout + vp %}
+                                                                    {% set vr = chantier.reglement + vr %}
+                                                                    {% set dp = chantier.depense + dp %}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                    {% endfor %}
+
+                                                    {% set tcout = vp + tcout %}
+                                                    {% set treglement = vr + treglement %}
+                                                    {% set tdepense = dp + tdepense %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <thead>
+                                            <tr class="font-weight-normal">
+                                                <th style="width: 10px !important;"></th>
+                                                <th class="col-blue-grey">CLIENT / CHANTIER</th>
+                                                <th class="text-center col-blue-grey">COÛT</th>
+                                                <th class="text-center col-blue-grey">CLIENT</th>
+                                                <th class="text-center col-blue-grey">RÈGLEMENT</th>
+                                                <th class="text-center col-blue-grey">SOLDE</th>
+                                                <th class="text-center col-blue-grey">DÉPENSES</th>
+                                                <th class="text-center col-blue-grey">MARGES EST.</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is null %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% if chantier.corbeille is not null and chantier.corbeille.etat != 'ultra' %}
+                                                            {% if chantier.archiver != 'oui' %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox"
+                                                                               data-toggle="toggle"
+                                                                               class="PROJSUP"
+                                                                               value="{{ chantier.id }}"></td>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.nomchantier }}">{% if chantier.sous is not null %}
+                                                                                <span class="badge bg-orange">SP</span>{% endif %} {{ chantier.nomchantier|upper }}
+                                                                        </a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td>
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.nomclient }}"
+                                                                           class="text-white">
+                                                                            {{ client.nomclient|upper }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr class="font-weight-normal">
+                                                <th style="width: 10px !important;"></th>
+                                                <th class="col-blue-grey"></th>
+                                                <th class="text-center bg-blue text-white">{{ tcout|number_format(2,',',' ') }}</th>
+                                                <th class="text-center col-blue"></th>
+                                                <th class="text-center bg-blue text-white">{{ treglement|number_format(2,',',' ') }}</th>
+                                                <th class="text-center bg-blue text-white">{{ (tcout|number_format(2,'.','') -  treglement|number_format(2,'.',''))|number_format(2,',',' ') }}</th>
+                                                <th class="text-center bg-blue text-white">{{ tdepense|number_format(2,',',' ') }}</th>
+                                                <th class="text-center bg-blue text-white">{{ (tcout|number_format(2,'.','') -  tdepense|number_format(2,'.',''))|number_format(2,',',' ') }}</th>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# DEVIS #}
+                        <div class="panel panel-pri shadow">
+                            <div class="panel-heading bg-pri" role="tab" id="headingSdev">
+                                <h5 class="panel-title">
+                                    <a class="collapsed fontes text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_1" href="#collapseSdev" aria-expanded="false"
+                                       aria-controls="collapseSdev" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                        Devis supprimés
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseSdev" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingSdev">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 10px">
+                                        <table class="table-bordered display nowrape" style="width: 100%"
+                                               id="dataCORDEVIS">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th class="mw30"></th>
+                                                <th class="mw30"></th>
+                                                <th>DATE</th>
+                                                <th>N° DEVIS</th>
+                                                <th>TOTAL HT</th>
+                                                <th>TOTAL TTC</th>
+                                                <th>ETAT</th>
+                                                <th>SUPPRIMÉ PAR</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is null %}
+                                                    {% for devis in client.devis %}
+                                                        {% if devis.chantier.corbeille is null %}
+                                                            {% if devis.corbeille is not null and devis.corbeille.etat != 'ultra' %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle" class="CORBDEV"
+                                                                               value="{{ devis.id }}"></td>
+                                                                    <td class="text-center">
+                                                                        <a href="#" onclick="shasha({{ devis.id }},'imprimdevis');"><i
+                                                                                    class="fa fa-eye col-green"
+                                                                                    aria-hidden="true"></i></a>
+                                                                    </td>
+                                                                    <td>{{ devis.date|date('Y/m/d H:m') }}</td>
+                                                                    <td>
+                                                                        <a href="{{ path('editdevis', {'id': devis.id, 'idchantier': devis.chantier.id}) }}"
+                                                                           style="color:dodgerblue"
+                                                                           title="{{ devis.devreference|striptags|raw }}">
+                                                                            {% if devis.etat == "valide" %}
+                                                                                <span class="badge badge-pill badge-primary"
+                                                                                      title="Validé par {% if devis.vabyuser is not null %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ devis.vabyuser.prenoms|upper }}{% endif %}">V</span>
+                                                                            {% else %}
+                                                                                <span class="badge badge-pill text-white"
+                                                                                      title="Dévalidé par {% if devis.vabyuser is not null %}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ devis.vabyuser.prenoms|upper }}{% endif %}">V</span>
+                                                                            {% endif %}
+                                                                            DEVIS
+                                                                            N°
+                                                                            {{ devis.iddevis }}
+                                                                        </a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ devis.totalht|number_format(2,',',' ') }}</td>
+                                                                    <td class="text-right">{{ devis.totalttc|number_format(2,',',' ') }}</td>
+
+                                                                    <td title="{{ devis.devreference|striptags|raw }}"><a
+                                                                                href="{{ path('chantier',{'id':devis.chantier.id}) }}">{{ devis.client.nomclient }}
+                                                                            |
+                                                                            {{ devis.chantier.nomchantier }}</a></td>
+
+                                                                    <td class="text-left col-blue">
+                                                                        <i class="fa fa-user col-blue"></i>{{ devis.corbeille.delby.nom }} {{ devis.corbeille.delby.prenoms }}</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# COMMANDE #}
+                        <div class="panel panel-pri">
+                            <div class="panel-heading bg-pri" role="tab" id="headingCor">
+                                <h5 class="panel-title">
+                                    <a class="collapsed fontes text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_1" href="#collapseCor" aria-expanded="false"
+                                       aria-controls="collapseCor" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                        Bons de commande supprimés
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseCor" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingCor">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 10px">
+                                        <table class="table-bordered display nowrape" style="width: 100%"
+                                               id="dataCORBBON">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px !important;"></th>
+                                                <th style="width: 80px">SUPPRIMÉ LE</th>
+                                                <th>N° DE BON</th>
+                                                <th>CLIENTS/PROJETS</th>
+                                                <th class="text-center">TOTAL HT</th>
+                                                <th class="text-center">TOTAL TTC</th>
+                                                <th>SUPPRIMÉ PAR</th>
+                                                <th style="background-color: #E8E8E8 !important;">TYPE</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is null %}
+                                                    {% for bon in client.bons %}
+                                                        {% if bon.chantier.corbeille is null %}
+                                                            {% if bon.corbeille is not null and bon.corbeille.etat != 'ultra' %}
+                                                                <tr>
+                                                                    <td class="text-center"><input type="checkbox"
+                                                                                                   data-toggle="toggle"
+                                                                                                   class="CORBBON"
+                                                                                                   value="{{ bon.id }}">
+                                                                    </td>
+                                                                    <td class="text-center"
+                                                                        style="width: 140px !important;">{{ bon.corbeille.date|date('Y.m.d H.i.s') }}</td>
+                                                                    <td>
+                                                                        <a href="{{ path('editbon', {'id': bon.id, 'idchantier': bon.chantier.id}) }}">BON
+                                                                            N° {{ bon.numbon }}</a></td>
+                                                                    <td title="{{ bon.client.nomclient }} | {{ bon.chantier.nomchantier }}">{{ bon.client.nomclient }}
+                                                                        | {{ bon.chantier.nomchantier }}</td>
+                                                                    <td class="text-right">{{ bon.totalht|number_format(2,',',' ') }}</td>
+                                                                    <td class="text-right">{{ bon.totalttc|number_format(2,',',' ') }}</td>
+                                                                    <td>{{ bon.corbeille.delby.nom }} {{ bon.corbeille.delby.prenoms }}</td>
+                                                                    <td>BONS SUPPRIMÉS</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# CAISSE #}
+                        <div class="panel panel-pri">
+                            <div class="panel-heading bg-pri" role="tab" id="headingCass">
+                                <h5 class="panel-title">
+                                    <a class="collapsed fontes text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_1" href="#collapseCass" aria-expanded="false"
+                                       aria-controls="collapseCass" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                        Bons de caisse supprimés
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseCass" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingCass">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 10px">
+                                        <table class="table-bordered display nowrape" style="width: 100%"
+                                               id="dataCORBCAISSE">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px !important;"></th>
+                                                <th style="width: 80px">SUPPRIMÉ LE</th>
+                                                <th>N° DE BON</th>
+                                                <th>CLIENTS/PROJETS</th>
+                                                <th class="text-center">FACTURÉ À</th>
+                                                <th class="text-center">MONTANT</th>
+                                                <th>SUPPRIMÉ PAR</th>
+                                                <th style="background-color: #E8E8E8 !important;">TYPE</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in master.clients %}
+                                                {% if client.corbeille is null %}
+                                                    {% for caiss in client.caisses %}
+                                                        {% if caiss.chantier.corbeille is null %}
+                                                            {% if caiss.corbeille is not null and caiss.corbeille.etat != 'ultra' %}
+                                                                <tr>
+                                                                    <td class="text-center"><input type="checkbox"
+                                                                                                   data-toggle="toggle"
+                                                                                                   class="CORBCAISSE"
+                                                                                                   value="{{ caiss.id }}">
+                                                                    </td>
+                                                                    <td class="text-center"
+                                                                        style="width: 140px !important;">{{ caiss.corbeille.date|date('Y.m.d H.i.s') }}</td>
+                                                                    <td>
+                                                                        <a href="{{ path('editcaisse', {'idcaisse': caiss.id, 'idchantier': caiss.chantier.id}) }}">BON
+                                                                            DE CAISSE
+                                                                            N° {{ caiss.numcaisse }}</a></td>
+                                                                    <td title="{{ caiss.client.nomclient }} | {{ caiss.chantier.nomchantier }}">{{ caiss.client.nomclient }}
+                                                                        | {{ caiss.chantier.nomchantier }}</td>
+
+                                                                    <td class="text-right">{% if caiss.intervenant %}{{ caiss.intervenant.nom }}{% endif %}</td>
+                                                                    <td class="text-right">{{ caiss.montant|number_format(2,',',' ') }}</td>
+                                                                    <td>
+                                                                {% if caiss.corbeille.delby %}
+                                                                        {{ caiss.corbeille.delby.nom }} {{ caiss.corbeille.delby.prenoms }}
+                                                                    {% endif %}
+                                                                    </td>
+                                                                    <td>BON DE CAISSE SUPPRIMÉS</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# INTERVENANT #}
+                        <div class="panel panel-pri">
+                            <div class="panel-heading bg-pri" role="tab" id="headingTroi">
+                                <h5 class="panel-title ">
+                                    <a class="collapsed text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_1"
+                                       href="#collapseTroi" aria-expanded="false"
+                                       aria-controls="collapseTroi" style="font-size: 16px!important">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                        Intervenants
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTroi" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingTroi">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 10px">
+                                        <table class="table-striped table-bordered display nowrape"
+                                               style="width: 100%" id="dataCORBINTERVE">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px !important;"></th>
+                                                <th>INTERVENANT</th>
+                                                <th>ETAT</th>
+                                                <th>PROFESSION</th>
+                                                <th>MONTANT FACTURÉ</th>
+                                                <th>MONTANT REÇU</th>
+                                                <th>RESTE À PAYER</th>
+                                                <th>CREÉ PAR
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in master.clients %}
+                                                {% for inter in client.intervenants %}
+                                                    {% if inter.corbeille is not null and inter.corbeille.etat != 'ultra' %}
+                                                        {% if inter.payer !=  inter.recu %}
+                                                            <tr>
+                                                                <td class="text-center">
+                                                                    <input type="checkbox" data-toggle="toggle"
+                                                                           class="CORBINTERVE"
+                                                                           value="{{ inter.id }}"></td>
+                                                                <td class="text-pri text-left">{{ inter.nom|upper }}</td>
+                                                                <td class="text-right">INTERVENANTS NON SOLDÉS</td>
+                                                                <td class="text-left">{{ inter.profession|upper }}</td>
+                                                                <td class="text-right">{{ inter.payer|number_format(2,',',' ') }}</td>
+                                                                <td class="text-right">{{ inter.recu|number_format(2,',',' ') }}</td>
+                                                                <td class="text-right">{{ inter.reste|number_format(2,',',' ') }}</td>
+                                                                <td class="text-left col-blue"><i
+                                                                            class="fa fa-user col-blue"></i>&nbsp;
+                                                                    {% if inter.dobyuser is not null %}
+                                                                        {{ inter.dobyuser.nom|upper }}
+                                                                        &nbsp;{{ inter.dobyuser.prenoms|upper }}{% endif %}
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN #}
+
+                        {# CONTACTS #}
+                        <div class="panel panel-pri">
+                            <div class="panel-heading bg-pri" role="tab" id="headingDeu">
+                                <h5 class="panel-title ">
+                                    <a class="collapsed text-white" role="button" data-toggle="collapse"
+                                       data-parent="#accordion_1"
+                                       href="#collapseDeu" aria-expanded="false"
+                                       aria-controls="collapseDeu"
+                                       style="font-size: 14px!important; font-weight: 500">
+                                        <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                        CARNET D'ADRESSE
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseDeu" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingDeu">
+                                <div class="panel-body" style="overflow: scroll">
+                                    <div class="table-responsive shadow" style="padding: 10px">
+                                        <table class="table-striped table-bordered display nowrape"  style="width: 100%" id="dataCORBCONTACT">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px !important;"></th>
+                                                <th>CONTACT</th>
+                                                <th>FONCTION</th>
+                                                <th>EMAIL</th>
+                                                <th>TÉLÉPHONE</th>
+                                                <th>BUREAU</th>
+                                                <th>CREÉ PAR
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for client in app.user.clients %}
+                                                {% for contact in client.contacts %}
+                                                    {% if contact.corbeille is not null and contact.corbeille.etat != 'ultra' %}
+                                                        <tr class="text-center">
+                                                            <td class="text-center">
+                                                                <input type="checkbox" data-toggle="toggle"
+                                                                       class="CORBCONTACT"
+                                                                       value="{{ contact.id }}"></td>
+                                                            <td class="text-pri text-left">{{ contact.contact|upper }}</td>
+                                                            <td class="text-left">{{ contact.fonction }}</td>
+                                                            <td class="text-left">{{ contact.mail|capitalize }}</td>
+                                                            <td>{{ contact.phone|capitalize }}</td>
+                                                            <td>{{ contact.bureau|capitalize }}</td>
+                                                            <td class="text-left col-blue"><i
+                                                                        class="fa fa-user col-blue"></i>&nbsp;
+                                                                {% if contact.dobyuser is not null %}
+                                                                    {{ contact.dobyuser.nom|upper }}
+                                                                    &nbsp;{{ contact.dobyuser.prenoms|upper }}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# FIN CONTACT #}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

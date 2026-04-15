@@ -1,0 +1,495 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+
+    <div class="modal fade right" id="mdModalDocument" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">LIER DES FICHIERS À UN CHANTIERS</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUpload, {'enctype':'multipart/form-data','attr': {'id': 'addFileForm'}}) }}
+                        {{ form_row(formUpload._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileChantier') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICHIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUpload.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CHANTIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUpload.chantier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileChantier" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileChantier"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileChantier">
+                        </div>
+                        {{ form_end(formUpload) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalFiche" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">AJOUTER DES FICHIERS TECHNIQUES</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUploada, {'enctype':'multipart/form-data','attr': {'id': 'addFileTechniqueForm'}}) }}
+                        {{ form_row(formUploada._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileTech') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICHIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploada.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CATÉGORIES</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploada.categorie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileTechnique" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileTechnique"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileTechnique">
+                        </div>
+                        {{ form_end(formUploada) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalFicheDesc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">AJOUTER DES DESCRIPTIFS TECHNIQUES</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUploado, {'enctype':'multipart/form-data','attr': {'id': 'addFileDescForm'}}) }}
+                        {{ form_row(formUploado._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileDesc') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploado.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CATÉGORIES</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploado.categorie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileDesc" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileDesc"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileDesc">
+                        </div>
+                        {{ form_end(formUploada) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content" style="margin-top: 30px">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+
+                    <div class="row clearfix m-t-40">
+                        <div class="col-sm-12 col-md-12">
+                            <h4 class="col-pink fontez"><u>GESTION DES FICHIERS</u></h4><br>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#mdModalDocument">
+                                LIER DES FICHIERS À UN CHANTIER
+                            </button>
+
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#mdModalFiche">
+                                AJOUTER DES FICHES TECHNIQUES
+                            </button>
+
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#mdModalFicheDesc">
+                                AJOUTER DES DESCRIPTIFS TECHNIQUES
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    {# FICHIER #}
+                    <div class="panel panel-pri" style="margin-top:10px">
+                        <div class="panel-heading bg-pri" role="tab" id="headingFich">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseFich" aria-expanded="false"
+                                   aria-controls="collapseFich">
+                                    <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                    Fichiers des différents chantiers
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseFich" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingFich">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrap" id="dataFichies"
+                                           style="width: 100%">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th style="width: 10px !important;"></th>
+                                            <th class="mw100">DATE D'AJOUT</th>
+                                            <th>DOCUMENTS</th>
+                                            <th>CHANTIER</th>
+                                            <th class="text-center">TAILLE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for client in clients %}
+                                            {% if client.corbeille is null %}
+                                                {% for chantier in client.chantiers %}
+                                                    {% if chantier.corbeille is null %}
+                                                        {% for fichier in chantier.fichiers %}
+                                                            <tr>
+                                                                <td class="text-center">
+                                                                    <input type="checkbox" data-toggle="toggle"
+                                                                           class="FICHIES"
+                                                                           value="{{ fichier.id }}"></td>
+                                                                <td>{{ fichier.date|date('Y.m.d H.i.s') }}</td>
+                                                                <td style="padding: 2px !important;">
+                                                                    <a href="/{{ fichier.folde }}/{{ fichier.nomfichier }}"
+                                                                       class="col-blue" style="font-weight: 600"
+                                                                       target="_blank">{{ fichier.nomfichier }}</a>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.nomchantier }}"
+                                                                       class="col-blue">{{ chantier.client.nomclient|upper }}
+                                                                        | {{ chantier.nomchantier|upper }}</a>
+                                                                </td>
+                                                                <td class="text-center"
+                                                                    style="padding: 2px !important">{{ (fichier.taille/1000000)|number_format(2, ',', ' ') }}
+                                                                    Mo
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN FICHER #}
+
+                    {# FICHES TECHNIQUES #}
+                    <div class="panel panel-pri">
+                        <div class="panel-heading bg-pri" role="tab" id="headingFichi">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseFichi" aria-expanded="false"
+                                   aria-controls="collapseFichi">
+                                    <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                    Fiches techniques
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseFichi" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingFichi">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrap"
+                                           id="dataFichiesTech" style="width: 100%">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th style="width: 10px !important;"></th>
+                                            <th class="mw100">DATE D'AJOUT</th>
+                                            <th>DOCUMENTS</th>
+                                            <th>CATÉGORIE</th>
+                                            <th class="text-center">TAILLE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fichier in fichies %}
+                                            {% if fichier.type == "technique" %}
+                                            <tr>
+                                                <td class="text-center">
+                                                    <input type="checkbox" data-toggle="toggle"
+                                                           class="FICHIESTECH"
+                                                           value="{{ fichier.id }}"></td>
+                                                <td>{{ fichier.date|date('Y.m.d H.i.s') }}</td>
+                                                <td style="padding: 2px !important;">
+                                                    <a href="/{{ fichier.folde }}/{{ fichier.nomfichier }}"
+                                                       class="col-blue" style="font-weight: 600"
+                                                       target="_blank">{{ fichier.nomfichier }}</a>
+                                                </td>
+                                                <td>{{ fichier.categorie|capitalize }}
+                                                </td>
+                                                <td class="text-center"
+                                                    style="padding: 2px !important">{{ (fichier.taille/1000000)|number_format(2, ',', ' ') }}
+                                                    Mo
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN FICHES #}
+
+                    {# DESCRIPTIFS TECHNIQUES #}
+                    <div class="panel panel-pri">
+                        <div class="panel-heading bg-pri" role="tab" id="headingFichidesc">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseFichidesc" aria-expanded="false"
+                                   aria-controls="collapseFichi">
+                                    <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                    Descriptifs techniques
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseFichidesc" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingFichidesc">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrap" style="width: 100%"
+                                           id="dataFichiesDesc">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th style="width: 10px !important;"></th>
+                                            <th>DATE D'AJOUT</th>
+                                            <th>DOCUMENTS</th>
+                                            <th>CATÉGORIE</th>
+                                            <th class="text-center">TAILLE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fichier in fichidesc %}
+                                            <tr>
+                                                <td class="text-center">
+                                                    <input type="checkbox" data-toggle="toggle"
+                                                           class="FICHIESDESC"
+                                                           value="{{ fichier.id }}"></td>
+                                                <td>{{ fichier.date|date('Y.m.d H.i.s') }}</td>
+                                                <td style="padding: 2px !important;">
+                                                    <a href="/{{ fichier.folde }}/{{ fichier.nomfichier }}"
+                                                       class="col-blue" style="font-weight: 600"
+                                                       target="_blank">{{ fichier.nomfichier }}</a>
+                                                </td>
+                                                <td>{{ fichier.categorie|capitalize }}</td>
+                                                <td class="text-center"
+                                                    style="padding: 2px !important">{{ (fichier.taille/1000000)|number_format(2, ',', ' ') }}
+                                                    Mo
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN FICHES #}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade right" id="modalFicheLoading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">ENREGISTREMENT UN FICHIER</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formSave, {'enctype':'multipart/form-data','attr': {'id': 'addFileLoadingForm'}}) }}
+                        {{ form_row(formSave._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileLoad') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER UN FICHIER</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formSave.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CATÉGORIES</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formSave.categorie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileLoading" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileLoading"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileLoading">
+                        </div>
+                        {{ form_end(formSave) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="content" style="margin-top: 30px">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                    <div class="row clearfix m-t-40">
+                        <div class="col-sm-12 col-md-12">
+                            <h4 class="col-black fontez"><u>ENREGISTREMENT DES DONNÉES DANS LA BASE DE DONNÉES</u></h4>
+                            <br>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modalFicheLoading">
+                                IMPORTER UN FICHIER
+                            </button>
+                        </div>
+                    </div>
+
+                    {# FICHES TECHNIQUES #}
+                    <div class="panel panel-pri">
+                        <div class="panel-heading bg-pri" role="tab" id="headingFichiLoad">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseFichiLoad" aria-expanded="false"
+                                   aria-controls="collapseFichiLoad">
+                                    <i class="material-icons text-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                    Fichiers de données enregistrés
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseFichiLoad" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingFichiLoad">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrap"
+                                           id="dataFichesLoading" style="width: 100%">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th style="width: 10px !important;"></th>
+                                            <th class="mw100">DATE D'AJOUT</th>
+                                            <th>DOCUMENTS</th>
+                                            <th>CATÉGORIE</th>
+                                            <th class="text-center">TAILLE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fichier in fichos %}
+                                            {% if fichier.type == "save" %}
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <input type="checkbox" data-toggle="toggle"
+                                                               class="FILOAD"
+                                                               value="{{ fichier.id }}"></td>
+                                                    <td>{{ fichier.date|date('Y.m.d H.i.s') }}</td>
+                                                    <td style="padding: 2px !important;">
+                                                        <a href="/{{ fichier.folde }}/{{ fichier.nomfichier }}"
+                                                           class="col-blue" style="font-weight: 600"
+                                                           target="_blank">{{ fichier.nomfichier }}</a>
+                                                    </td>
+                                                    <td>{{ fichier.categorie|capitalize }}
+                                                    </td>
+                                                    <td class="text-center"
+                                                        style="padding: 2px !important">{{ (fichier.taille/1000000)|number_format(2, ',', ' ') }}
+                                                        Mo
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN FICHES #}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

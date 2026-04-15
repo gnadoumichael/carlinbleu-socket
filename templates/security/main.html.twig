@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html ; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Carlinbleu | Gestionnaire de Chantiers</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description" content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,
+         Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles, matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+
+    <link href="{{ asset('css/mdb.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/waves.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/animate.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/bootstrap-material-datetimepicker.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/bootstrap-datepicker.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/all-themes.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet"/>
+    <style>
+        h6 {
+            font-size: 13px !important;
+        }
+
+        a {
+            color: #3d67d0;
+            font-weight: bold
+        }
+
+        @media (min-width: 992px) {
+            .modal-lg, .modal-xl {
+                max-width: 1100px !important;
+            }
+        }
+    </style>
+
+</head>
+<body style="background-color:#4e73df">
+
+<div class="container">
+    <div class="row justify-content-center" style="margin-top:60px">
+        <div class="col-xl-6 col-lg-6 col-md-6">
+            <h3 class="tet text-white text-center font-weight-bold">CARLINBLEU - GESTIONNAIRE DE CHANTIERS</h3>
+            <h5 class="text-center" style="color:#efd807; ">
+                BIENVENUE {{ app.user.nom|upper }} {{ app.user.prenoms|upper }} </h5>
+            <div class="row" style="margin-top:50px">
+                <div class="col-md-6 text-center" style="padding:5px; font-size: 16px; font-weight: bold; color:#88ccbc">- OPTION COMPTABILITÉ - <a href="{{ path('welcome') }}"><img src="{{ asset('img/compta.jpg') }}" style="width: 100%"/></a></div>
+                <div class="col-md-6 text-center" style="padding:5px; font-size: 16px; font-weight: bold; color:#88ccbc">- GESTION TECHNIQUE -  <a href="{{ path('welcomes') }}"> <img src="{{ asset('img/techni.jpg') }}" style="width: 100%"/></a></div>
+                <div class="col-md-6 text-center" style="padding:40px 5px;  font-size: 16px; font-weight: bold; color:#88ccbc">- GESTION COMMERCIALE - <a href="#"><img src="{{ asset('img/commer.png') }}" style="width: 100%"/></a></div>
+                <div class="col-md-6 text-center" style="padding:40px 5px; font-size: 16px; font-weight: bold; color:#88ccbc">- SHOWROOM | VENTE  - <a href="{{ path('content') }}"><img src="{{ asset('img/showe.jpg') }}" style="width: 100%"/></a></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+</html>

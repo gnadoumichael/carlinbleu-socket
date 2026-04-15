@@ -1,0 +1,30 @@
+twig:
+  form_themes:
+    - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+
+fos_ck_editor:
+  base_path: "/bundles/fosckeditor/"
+  js_path: "/bundles/fosckeditor/ckeditor.js"
+
+  configs:
+    my_config_1:
+      toolbar: "my_toolbar_1"
+      uiColor: "#F5F5F5"
+      removePlugins: 'exportpdf'
+
+    my_config_2:
+      toolbar: "my_toolbar_2"
+      uiColor: "#F5F5F5"
+      removePlugins: 'exportpdf'
+
+  toolbars:
+    configs:
+      my_toolbar_1:
+        - [ "Bold", "-", "Italic", "-", "Underline", "-", "Strike",
+            "-", "Subscript", "-", "Superscript", "-", "Font",
+            "-", "FontSize", "-", "TextColor", "/", "BGColor" ]
+
+      my_toolbar_2:
+        - [ "Bold", "-", "Italic", "-", "Underline", "-", "Strike",
+            "-", "Subscript", "-", "Superscript", "-", "Font",
+            "-", "FontSize", "-", "TextColor", "/", "BGColor" ]

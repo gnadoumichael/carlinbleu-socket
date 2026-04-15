@@ -1,0 +1,197 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-lg-3">
+                <div id="accordion">
+                    {# CRÉER  OU MODIFIER UN CLIENT #}
+                    <div class="card shadow mb-4" id="client">
+                        <div id="headingDe">
+                            <h5 class="mb-0">
+                                <a class="btn text-left text-white bg-pri bolderrer" data-toggle="collapse"
+                                   data-target="#collapseDe"
+                                   aria-expanded="false" aria-controls="collapseDe"
+                                   style="width: 100%; font-size: 14px">
+                                    1- CHOISIR UN PROJET
+                                </a>
+                            </h5>
+
+                        </div>
+                        <div id="collapseDe" class="collapse show bg-light"
+                             aria-labelledby="headingDe"
+                             data-parent="#accordion">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <select class="form-control" id="targetcaisse">
+                                        <option>CHOISIR UN PROJET</option>
+                                        {% for client in clients %}
+                                            {% for chantier in chantiers %}
+                                                {% if client == chantier.client %}
+                                                    <option value="{{ chantier.id }}">{{ client.client }} || {{ chantier.chantier }}</option>
+                                                {% endif %}
+                                            {%  endfor %}
+                                        {%  endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN #}
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-9">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive" style="overflow-x: scroll">
+                            <table class="table-bordered display nowrap" style="width: 100%"
+                                   id="dataCAISSE">
+                                <thead>
+                                <tr class="text-center bg-light">
+                                    <th style="width: 10px !important;"></th>
+                                    <th style="width: 80px">DATE</th>
+                                    <th>N° BON</th>
+                                    <th>FACTURÉ À</th>
+                                    <th>RÉFÉRENCE</th>
+                                    <th>MONTANT</th>
+                                    <th style="background-color: #E8E8E8 !important;" >CREÉ PAR</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for caisse in chantier.caisses %}
+                                    {% if caisse.etat == 'valide' %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <input type="checkbox" data-toggle="toggle"
+                                                       class="CAYSS"
+                                                       value="{{ caisse.id }}"></td>
+
+                                            <td>{{ caisse.date|date('Y.m.d H.i.s') }}</td>
+                                            <td><a
+                                                        href="{{ path('editcaisse',{'idcaisse':caisse.id,'idchantier':chantier.id}) }}"><span
+                                                            class="badge badge-pill badge-primary">V</span> Caisse N° {{ caisse.numcaisse }}
+                                                </a>
+                                            </td>
+                                            <td title="{{ caisse.intervenant.nom|upper }}">
+                                                {% if caisse.intervenant.reste <= 0 %}
+                                                    <span class="text-dangerr">SOLDÉ</span> | {{ caisse.intervenant.nom|upper }}
+                                                    <br>
+                                                {% else %}
+                                                    <span class="text-success">NON SOLDÉ</span> | {{ caisse.intervenant.nom|upper }}
+                                                    <br>
+                                                {% endif %}
+
+                                                {% if caisse.intervenant.reste <= 0 %}
+                                                    <span class="text-black-50">
+                                                                MONTANT À RECEVOIR : {{ caisse.intervenant.payer|number_format(2,',',' ') }}<br>
+                                                                MONTANT RECU : {{ caisse.intervenant.recu|number_format(2,',',' ') }}<br>
+                                                                <u class="text-success">RESTE À PAYER : {{ caisse.intervenant.reste|number_format(2,',',' ') }}</u><br>
+                                                            </span>
+                                                {% else %}
+                                                    <span class="text-black-50">
+                                                                MONTANT À RECEVOIR : {{ caisse.intervenant.payer|number_format(2,',',' ') }}<br>
+                                                                MONTANT RECU : {{ caisse.intervenant.recu|number_format(2,',',' ') }}<br>
+                                                                <u class="text-danger">RESTE À PAYER : {{ caisse.intervenant.reste|number_format(2,',',' ') }}</u><br>
+                                                            </span>
+                                                {% endif %}
+                                            </td>
+                                            <td title="{{ caisse.reference|striptags|raw }}">{{ caisse.reference|striptags }}</td>
+                                            <td class="text-right">{{ caisse.montant|number_format(2,',',' ') }}</td>
+                                            <td class="text-left text-pri bolderrer" style="background-color: #E8E8E8 !important;"><i class="fa fa-user text-pri"></i>&nbsp;{{ caisse.dobyuser.nom|upper }}&nbsp;{{ caisse.dobyuser.prenoms|upper }}</td>
+
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+                            <hr style="width: 100%; height: 2px; background-color: darkgrey">
+                            <br>
+                            <table class="table-bordered display nowrap" style="width: 100%"
+                                   id="dataCAISSE2">
+                                <thead>
+                                <tr class="text-center bg-light">
+                                    <th style="width: 10px !important;"></th>
+                                    <th style="width: 80px">DATE</th>
+                                    <th>N° BON</th>
+                                    <th>ETAT</th>
+                                    <th>FACTURÉ À</th>
+                                    <th>RÉFÉRENCE</th>
+                                    <th>MONTANT</th>
+                                    <th style="background-color: #E8E8E8 !important;" >CREÉ PAR</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for caisse in chantier.caisses %}
+                                    {% if caisse.etat == 'save' %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <input type="checkbox" data-toggle="toggle"
+                                                       class="CAYSS2"
+                                                       value="{{ caisse.id }}"></td>
+
+                                            <td>{{ caisse.date|date('Y.m.d H.i.s') }}</td>
+                                            <td><a
+                                                        href="{{ path('editcaisse',{'idcaisse':caisse.id,'idchantier':chantier.id}) }}"><span
+                                                            class="badge badge-pill badge-secondary">V</span> Caisse N° {{ caisse.numcaisse }}
+                                                </a>
+                                            </td>
+                                            <td>BONS DE CAISSE NON VALIDÉS</td>
+                                            <td title="{{ caisse.intervenant.nom|upper }}">{{ caisse.intervenant.nom|upper }}
+                                            </td>
+                                            <td title="{{ caisse.reference|striptags|raw }}">{{ caisse.reference|striptags }}</td>
+                                            <td class="text-right">{{ caisse.montant|number_format(2,',',' ') }}</td>
+                                            <td class="text-left text-pri bolderrer" style="background-color: #E8E8E8 !important;"><i class="fa fa-user text-pri"></i>&nbsp;{{ caisse.dobyuser.nom|upper }}&nbsp;{{ caisse.dobyuser.prenoms|upper }}</td>
+
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+
+                            {% set vcth = 0 %}
+                            {% set ncth = 0 %}
+
+                            {% for caisse in chantier.caisses %}
+                                {% if caisse.etat == 'valide' %}
+                                    {% set vcth = caisse.montant + vcth %}
+                                {% endif %}
+                                {% if caisse.etat == 'save' %}
+                                    {% set ncth = caisse.montant + ncth %}
+                                {% endif %}
+                            {% endfor %}
+                            <table class="table-bordered d reduire" style="float: right">
+                                <tr style="background-color: slategrey; color: white;">
+                                    <td colspan="2" class="text-right">
+                                        VALIDÉS
+                                    </td>
+                                    <td class="text-right">{{ vcth|number_format(2,',',' ') }}</td>
+                                </tr>
+                                <tr style="background-color: indianred; color: white">
+                                    <td colspan="2" class="text-right">
+                                        NON VALIDÉS
+                                    </td>
+                                    <td class="text-right">{{ ncth|number_format(2,',',' ') }}</td>
+                                </tr>
+                                <tr class="bg-pri text-white">
+                                    <td colspan="2" class="text-right">
+                                        TOTAUX
+                                    </td>
+                                    <td class="text-right">{{ (ncth+vcth)|number_format(2,',',' ') }}</td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

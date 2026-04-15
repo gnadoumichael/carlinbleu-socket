@@ -1,0 +1,8 @@
+[26-Jul-2024 00:02:21 America/Boise] PHP Fatal error:  Uncaught Error: Class "Doctrine\Migrations\AbstractMigration" not found in /home1/eitechkc/public_html/eagles/migrations/ddd/Version20240608105121.php:13
+Stack trace:
+#0 {main}
+  thrown in /home1/eitechkc/public_html/eagles/migrations/ddd/Version20240608105121.php on line 13
+[26-Jul-2024 00:02:24 America/Boise] PHP Fatal error:  Uncaught Error: Class "Doctrine\Migrations\AbstractMigration" not found in /home1/eitechkc/public_html/eagles/migrations/ddd/Version20240610214434.php:13
+Stack trace:
+#0 {main}
+  thrown in /home1/eitechkc/public_html/eagles/migrations/ddd/Version20240610214434.php on line 13

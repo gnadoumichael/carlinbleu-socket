@@ -1,0 +1,16 @@
+{% use '@CraueTwigExtensions/ChangeLanguage/changeLanguage_blocks.html.twig' %}
+
+<ul>
+	{% for locale in craue_availableLocales() %}
+		<li>
+			{%- set craue_language_iscurrent = locale == app.request.locale -%}
+			{%- if craue_language_iscurrent -%}
+				{{- block('craue_language_link_text') -}}
+			{%- else -%}
+				<a href="{{ block('craue_language_link_target') }}">
+					{{- block('craue_language_link_text') -}}
+				</a>
+			{%- endif -%}
+		</li>
+	{% endfor %}
+</ul>

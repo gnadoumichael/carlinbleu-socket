@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html ; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Carlinbleu | Gestion et Suivi de Chantier</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description" content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,
+         Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+<body>
+<style>
+    body {
+        font-size: 12px !important;
+        background-color: #FFF;
+    }
+
+    td, th {
+        padding: 5px !important;
+    }
+
+</style>
+
+
+{% if type == 'clients' %}
+    <p style="font-size: 16px; font-weight: bold; color: #4e73df">CLIENTS</p>
+    <table class="table-bordered display nowrape" style="width: 100%;">
+        <thead>
+        <tr style="background-color: #cfe2f3">
+            <th>CLIENTS</th>
+            <th>EMAIL</th>
+            <th>ADRESSE</th>
+            <th>CONTACTS</th>
+            <th>COMPTE&nbsp;CONTRIBUABLE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    <tr>
+                        <td>{{ client.nomclient|upper }}</td>
+                        <td style="max-width:200px; white-space: nowrap">{{ client.mail }}</td>
+                        <td style="max-width:150px">{{ client.adresse }}</td>
+                        <td style="max-width:150px;">{{ client.contact }}</td>
+                        <td style="max-width:150px; white-space: nowrap">{{ client.contribuable }}</td>
+                    </tr>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% if type == 'contacts' %}
+    <p style="font-size: 16px; font-weight: bold; color: #4e73df">CONTACTS</p>
+    <table class="table-bordered display nowrape" style="width: 100%;">
+        <thead>
+        <tr style="background-color: #cfe2f3">
+            <th>CLIENTS</th>
+            <th>CONTACTS</th>
+            <th>FONCTION</th>
+            <th>EMAIL</th>
+            <th>TÉLÉPHONE MOBILE</th>
+            <th>TÉLÉPHONE BUREAU</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for contact in contacts %}
+            <tr>
+                <td class="bolo700 col-blue">{{ contact.client.nomClient|upper }}</td>
+                <td>{{ contact.contact }}</td>
+                <td>{{ contact.fonction }}</td>
+                <td>{{ contact.mail }}</td>
+                <td>{{ contact.phone }}</td>
+                <td>{{ contact.bureau }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% if type == 'encours' %}
+    <table class="table-striped table-bordered display nowrape"
+           style="width:100%">
+
+
+        {% set solde = 0 %}
+        {% set tocout = 0 %}
+        {% set toregle = 0 %}
+        {% set tosolde = 0 %}
+        {% set todepense = 0 %}
+        {% set tobalance = 0 %}
+        <thead>
+        <tr class="font-weight-normal">
+            <th style="min-width: 30px !important;"></th>
+            <th class="col-blue-grey">CHANTIERS EN COURS</th>
+            <th class="text-center col-blue-grey">CLIENT</th>
+            <th class="text-center col-blue-grey">COÛT</th>
+            <th class="text-center col-blue-grey">RÈGLEMENT</th>
+            <th class="text-center col-blue-grey">SOLDE</th>
+            <th class="text-center col-blue-grey">COMMANDES</th>
+            <th class="text-center col-blue-grey">BALANCE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    {% for chantier in client.chantiers %}
+                        {% if chantier.corbeille is null  and chantier.etat == "encours" %}
+                            <tr>
+                                <td style="text-align: center; white-space: nowrap">{{ chantier.progression|number_format(2,',',' ') }}%</td>
+                                <td style="max-width: 200px; font-weight: bold">{{ client.nomclient|upper }}</td>
+                                <td style="max-width: 200px; font-weight: bold">
+                                    {% if chantier.sous is not null %}
+                                        <span class="badge bg-orange">SC</span>
+                                    {% endif %}
+                                    {{ chantier.nomchantier }}
+                                </td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ solde|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                {% set balance = chantier.reglement|number_format(2,'.','') -  chantier.depense|number_format(2,'.','') %}
+                                <td style="text-align: right; white-space: nowrap">{{ balance|number_format(2,',',' ') }}</td>
+
+                                {% set solde  = chantier.cout - chantier.reglement %}
+                                {% set tocout  = chantier.cout + tocout %}
+                                {% set toregle  = chantier.reglement + toregle %}
+                                {% set tosolde  = solde + tosolde %}
+                                {% set todepense  = chantier.depense + todepense %}
+                                {% set tobalance  = balance + tobalance %}
+
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="font-weight-normal">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ tocout|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ toregle|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tosolde|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ todepense|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tobalance|number_format(2,',',' ') }}</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if type == 'etude' %}
+    <table class="table-striped table-bordered display nowrape"
+           style="width:100%">
+
+
+        {% set solde = 0 %}
+        {% set tocout = 0 %}
+        {% set toregle = 0 %}
+        {% set tosolde = 0 %}
+        {% set todepense = 0 %}
+        {% set tobalance = 0 %}
+        <thead>
+        <tr class="font-weight-normal">
+            <th style="min-width: 30px !important;"></th>
+            <th class="col-blue-grey">CHANTIERS EN ÉTUDE</th>
+            <th class="text-center col-blue-grey">CLIENT</th>
+            <th class="text-center col-blue-grey">COÛT</th>
+            <th class="text-center col-blue-grey">RÈGLEMENT</th>
+            <th class="text-center col-blue-grey">SOLDE</th>
+            <th class="text-center col-blue-grey">COMMANDES</th>
+            <th class="text-center col-blue-grey">BALANCE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    {% for chantier in client.chantiers %}
+                        {% if chantier.corbeille is null  and chantier.etat == "etude" %}
+                            <tr>
+                                <td style="text-align: center; white-space: nowrap">{{ chantier.progression|number_format(2,',',' ') }}%</td>
+                                <td style="max-width: 200px; font-weight: bold">{{ client.nomclient|upper }}</td>
+                                <td style="max-width: 200px; font-weight: bold">
+                                    {% if chantier.sous is not null %}
+                                        <span class="badge bg-orange">SC</span>
+                                    {% endif %}
+                                    {{ chantier.nomchantier }}
+                                </td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ solde|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                {% set balance = chantier.reglement|number_format(2,'.','') -  chantier.depense|number_format(2,'.','') %}
+                                <td style="text-align: right; white-space: nowrap">{{ balance|number_format(2,',',' ') }}</td>
+
+                                {% set solde  = chantier.cout - chantier.reglement %}
+                                {% set tocout  = chantier.cout + tocout %}
+                                {% set toregle  = chantier.reglement + toregle %}
+                                {% set tosolde  = solde + tosolde %}
+                                {% set todepense  = chantier.depense + todepense %}
+                                {% set tobalance  = balance + tobalance %}
+
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="font-weight-normal">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ tocout|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ toregle|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tosolde|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ todepense|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tobalance|number_format(2,',',' ') }}</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if type == 'echouer' %}
+    <table class="table-striped table-bordered display nowrape"
+           style="width:100%">
+
+
+        {% set solde = 0 %}
+        {% set tocout = 0 %}
+        {% set toregle = 0 %}
+        {% set tosolde = 0 %}
+        {% set todepense = 0 %}
+        {% set tobalance = 0 %}
+
+
+        <thead>
+        <tr class="font-weight-normal">
+            <th style="min-width: 30px !important;"></th>
+            <th class="col-blue-grey">CHANTIERS ÉCHOUÉS</th>
+            <th class="text-center col-blue-grey">CLIENT</th>
+            <th class="text-center col-blue-grey">COÛT</th>
+            <th class="text-center col-blue-grey">RÈGLEMENT</th>
+            <th class="text-center col-blue-grey">SOLDE</th>
+            <th class="text-center col-blue-grey">COMMANDES</th>
+            <th class="text-center col-blue-grey">BALANCE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    {% for chantier in client.chantiers %}
+                        {% if chantier.corbeille is null  and chantier.etat == "echouer" %}
+                            <tr>
+                                <td style="text-align: center; white-space: nowrap">{{ chantier.progression|number_format(2,',',' ') }}%</td>
+                                <td style="max-width: 200px; font-weight: bold">{{ client.nomclient|upper }}</td>
+                                <td style="max-width: 200px; font-weight: bold">
+                                    {% if chantier.sous is not null %}
+                                        <span class="badge bg-orange">SC</span>
+                                    {% endif %}
+                                    {{ chantier.nomchantier }}
+                                </td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ solde|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                {% set balance = chantier.reglement|number_format(2,'.','') -  chantier.depense|number_format(2,'.','') %}
+                                <td style="text-align: right; white-space: nowrap">{{ balance|number_format(2,',',' ') }}</td>
+
+                                {% set solde  = chantier.cout - chantier.reglement %}
+                                {% set tocout  = chantier.cout + tocout %}
+                                {% set toregle  = chantier.reglement + toregle %}
+                                {% set tosolde  = solde + tosolde %}
+                                {% set todepense  = chantier.depense + todepense %}
+                                {% set tobalance  = balance + tobalance %}
+
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="font-weight-normal">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ tocout|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ toregle|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tosolde|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ todepense|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tobalance|number_format(2,',',' ') }}</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if type == 'terminer' %}
+    <table class="table-striped table-bordered display nowrape"
+           style="width:100%">
+
+
+        {% set solde = 0 %}
+        {% set tocout = 0 %}
+        {% set toregle = 0 %}
+        {% set tosolde = 0 %}
+        {% set todepense = 0 %}
+        {% set tobalance = 0 %}
+
+
+        <thead>
+        <tr class="font-weight-normal">
+            <th style="min-width: 30px !important;"></th>
+            <th class="col-blue-grey">CHANTIERS TERMINÉS</th>
+            <th class="text-center col-blue-grey">CLIENT</th>
+            <th class="text-center col-blue-grey">COÛT</th>
+            <th class="text-center col-blue-grey">RÈGLEMENT</th>
+            <th class="text-center col-blue-grey">SOLDE</th>
+            <th class="text-center col-blue-grey">COMMANDES</th>
+            <th class="text-center col-blue-grey">BALANCE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    {% for chantier in client.chantiers %}
+                        {% if chantier.corbeille is null  and chantier.etat == "archiver" %}
+                            <tr>
+                                <td style="text-align: center; white-space: nowrap">{{ chantier.progression|number_format(2,',',' ') }}%</td>
+                                <td style="max-width: 200px; font-weight: bold">{{ client.nomclient|upper }}</td>
+                                <td style="max-width: 200px; font-weight: bold">
+                                    {% if chantier.sous is not null %}
+                                        <span class="badge bg-orange">SC</span>
+                                    {% endif %}
+                                    {{ chantier.nomchantier }}
+                                </td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ solde|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                {% set balance = chantier.reglement|number_format(2,'.','') -  chantier.depense|number_format(2,'.','') %}
+                                <td style="text-align: right; white-space: nowrap">{{ balance|number_format(2,',',' ') }}</td>
+
+                                {% set solde  = chantier.cout - chantier.reglement %}
+                                {% set tocout  = chantier.cout + tocout %}
+                                {% set toregle  = chantier.reglement + toregle %}
+                                {% set tosolde  = solde + tosolde %}
+                                {% set todepense  = chantier.depense + todepense %}
+                                {% set tobalance  = balance + tobalance %}
+
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="font-weight-normal">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ tocout|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ toregle|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tosolde|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ todepense|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tobalance|number_format(2,',',' ') }}</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if type == 'clotures' %}
+    <table class="table-striped table-bordered display nowrape"
+           style="width:100%">
+
+
+        {% set solde = 0 %}
+        {% set tocout = 0 %}
+        {% set toregle = 0 %}
+        {% set tosolde = 0 %}
+        {% set todepense = 0 %}
+        {% set tobalance = 0 %}
+
+
+        <thead>
+        <tr class="font-weight-normal">
+            <th style="min-width: 30px !important;"></th>
+            <th class="col-blue-grey">CHANTIERS CLÔTURÉS</th>
+            <th class="text-center col-blue-grey">CLIENT</th>
+            <th class="text-center col-blue-grey">COÛT</th>
+            <th class="text-center col-blue-grey">RÈGLEMENT</th>
+            <th class="text-center col-blue-grey">SOLDE</th>
+            <th class="text-center col-blue-grey">COMMANDES</th>
+            <th class="text-center col-blue-grey">BALANCE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            {% if client.type is null %}
+                {% if client.corbeille is null %}
+                    {% for chantier in client.chantiers %}
+                        {% if chantier.corbeille is null  and chantier.etat == "cloturer" %}
+                            <tr>
+                                <td style="text-align: center; white-space: nowrap">{{ chantier.progression|number_format(2,',',' ') }}%</td>
+                                <td style="max-width: 200px; font-weight: bold">{{ client.nomclient|upper }}</td>
+                                <td style="max-width: 200px; font-weight: bold">
+                                    {% if chantier.sous is not null %}
+                                        <span class="badge bg-orange">SC</span>
+                                    {% endif %}
+                                    {{ chantier.nomchantier }}
+                                </td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ solde|number_format(2,',',' ') }}</td>
+                                <td style="text-align: right; white-space: nowrap">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                {% set balance = chantier.reglement|number_format(2,'.','') -  chantier.depense|number_format(2,'.','') %}
+                                <td style="text-align: right; white-space: nowrap">{{ balance|number_format(2,',',' ') }}</td>
+
+                                {% set solde  = chantier.cout - chantier.reglement %}
+                                {% set tocout  = chantier.cout + tocout %}
+                                {% set toregle  = chantier.reglement + toregle %}
+                                {% set tosolde  = solde + tosolde %}
+                                {% set todepense  = chantier.depense + todepense %}
+                                {% set tobalance  = balance + tobalance %}
+
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr class="font-weight-normal">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ tocout|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ toregle|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tosolde|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ todepense|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ tobalance|number_format(2,',',' ') }}</th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+{% if type == 'presta' %}
+    {% set sottc = 0 %}
+    {% set sopercu = 0 %}
+    {% set soreste = 0 %}
+
+    <table class="table-bordered display nowrape" style="width: 100%;">
+        <thead>
+        <tr style="background-color:#4e73df; color:#FFF">
+            <th>PRESTATAIRES</th>
+            <th>TOTAL TTC</th>
+            <th>PERÇUE</th>
+            <th>SOLDE TTC</th>
+            <th>FONCTION</th>
+            <th>CONTACTS</th>
+            <th>EMAIL</th>
+            <th>ADRESSE</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for four in prestas %}
+            {% if four.corbeille is null %}
+                {% set ttc = 0 %}
+                {% set percu = 0 %}
+                {% set reste = 0 %}
+                {% for bon in four.bons %}
+                    {% if bon.corbeille is null %}
+                        {% set ttc = bon.totalttc + ttc %}
+                        {% set percu = bon.recu + percu %}
+                        {% set reste = bon.reste + reste %}
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td>{{ four.fournisseur|upper }}</td>
+                    <td style="text-align: right; white-space: nowrap">{{ ttc|number_format(2,',',' ') }}</td>
+                    <td style="text-align: right; white-space: nowrap">{{ percu|number_format(2,',',' ') }}</td>
+                    <td style="text-align: right; white-space: nowrap">{{ reste|number_format(2,',',' ') }}</td>
+                    <td style="max-width:150px">{{ four.fonction }}</td>
+                    <td style="max-width:150px">{{ four.adresse }}</td>
+                    <td style="max-width:150px;">{{ four.mobile }}</td>
+                    <td style="max-width:150px; white-space: nowrap">{{ four.mail }}</td>
+                </tr>
+                {% set sottc = ttc + sottc %}
+                {% set sopercu = percu + sopercu %}
+                {% set soreste = reste + soreste %}
+            {% endif %}
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th></th>
+            <th style="text-align: right; white-space: nowrap">{{ sottc|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ sopercu|number_format(2,',',' ') }}</th>
+            <th style="text-align: right; white-space: nowrap">{{ soreste|number_format(2,',',' ') }}</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </tfoot>
+    </table>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>

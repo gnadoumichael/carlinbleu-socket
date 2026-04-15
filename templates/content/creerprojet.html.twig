@@ -1,0 +1,1300 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+<div class="modal fade" id="ModalClient" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pri">
+                <h5 class="modal-title text-white" id="exampleModalLabel">AJOUTER UN CLIENT</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    {{ form_start(formClient, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(formClient._token) }}
+                    <table style="width: 100%">
+                        <tbody>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Client <span class="text-dangerr">*</span><br>
+                                {% if editClient %}
+                                    {{ form_widget(formClient.client,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formClient.client,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+                                {{ form_errors(formClient.client) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Code client<span class="text-dangerr">*</span><br>
+                                {{ form_widget(formClient.code,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {{ form_errors(formClient.code) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Adresse<br>
+                                {{ form_widget(formClient.adresse,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {{ form_errors(formClient.adresse) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Contact<br>
+                                {{ form_widget(formClient.contact,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {{ form_errors(formClient.contact) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; C. Contribuable<br>
+                                {{ form_widget(formClient.compte,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {{ form_errors(formClient.compte) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;padding-top: 10px">{{ form_widget(formClient.saveclient,{ 'label': 'Enregistrer',  'attr':{'class':'btn btn-primary'} }) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {{ form_end(formClient) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal show" id="ModalChantier" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pri">
+                <h5 class="modal-title text-white" id="exampleModalLabel">AJOUTER UN CLIENT</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    {{ form_start(formChantier, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(formChantier._token) }}
+                    <table style="width: 100%;text-align: left">
+                        <tbody>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Client <span class="text-dangerr">*</span><br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.client,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.client,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChantier.chantier) }}</td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-pri bolderr">
+                                &raquo; Nom du chantier <span class="text-dangerr">*</span><br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.chantier,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.chantier,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChantier.chantier) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Description<br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.description,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.description,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChantier.description) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Phase actuelle<br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.phase,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.phase,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChantier.phase) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Date de début<br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.ddebut,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.ddebut,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChantier.ddebut) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Date de fin<br>
+                                {% if editP %}
+                                    {{ form_widget(formChantier.dfin,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChantier.dfin,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+                                {{ form_errors(formChantier.dfin) }}</td>
+                        </tr>
+                        <tr>
+
+                        </tr>
+                        <td align="left"
+                            style="padding-top: 10px">
+                            {% if editP %}
+                                {{ form_widget(formChantier.savechantier,{
+                                    'label': 'Modifier',
+                                    'attr':{'class':'btn btn-danger'}
+                                }) }}
+                                <a href="{{ path('creerchantier') }}" class="btn btn-success">Annuler</a>
+                            {% else %}
+                                {{ form_widget(formChantier.savechantier,{
+                                    'label': 'Enregistrer',
+                                    'attr':{'class':'btn btn-primary'}
+                                }) }}
+                            {% endif %}
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {{ form_end(formChantier) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal show" id="ModalChef" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">CHEF PROJET</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <h6><u>AJOUTER UN CHEF</u></h6>
+                    {{ form_start(formChef, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(formChef._token) }}
+                    <table style="width: 100%;text-align: left">
+                        <tbody>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Nom & Prénoms <span class="text-dangerr">*</span><br>
+                                {% if editChef %}
+                                    {{ form_widget(formChef.nom,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChef.nom,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChef.nom) }}</td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-pri bolderr">
+                                &raquo; Téléphone <br>
+                                {% if editChef %}
+                                    {{ form_widget(formChef.phone,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChef.phone,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChef.phone) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; E-mail<br>
+                                {% if editChef %}
+                                    {{ form_widget(formChef.email,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formChef.email,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formChef.email) }}</td>
+                        </tr>
+                        <td align="left"
+                            style="padding-top: 10px">
+                            {% if editChef %}
+                                {{ form_widget(formChef.savechef,{
+                                    'label': 'Modifier',
+                                    'attr':{'class':'btn btn-danger'}
+                                }) }}
+                                <a href="{{ path('creerchantier') }}" class="btn btn-success">Annuler</a>
+                            {% else %}
+                                {{ form_widget(formChef.savechef,{
+                                    'label': 'Enregistrer',
+                                    'attr':{'class':'btn btn-info'}
+                                }) }}
+                            {% endif %}
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {{ form_end(formChef) }}<br>
+
+                    <h6><u>LIER UN CHEF À UN PROJET</u></h6><br>
+                    {{ form_start(formLier, {'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(formLier._token) }}
+                    <table style="width: 100%;text-align: left">
+                        <tbody>
+                        <tr>
+                            <td class="text-pri bolderr">
+                                &raquo; Chefs chantier <span class="text-dangerr">*</span><br>
+                                {% if editLier %}
+                                    {{ form_widget(formLier.chef,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formLier.chef,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formLier.chef) }}</td>
+                        </tr>
+                        <tr>
+
+                            <td class="text-pri bolderr">
+                                &raquo; chantiers <br>
+                                {% if editLier %}
+                                    {{ form_widget(formLier.chantier,{'attr':{'class':'form-control form-control-user text-danger'}}) }}
+                                {% else %}
+                                    {{ form_widget(formLier.chantier,{'attr':{'class':'form-control form-control-user'}}) }}
+                                {% endif %}
+
+                                {{ form_errors(formLier.chantier) }}</td>
+                        </tr>
+                        <tr>
+                            <td align="left"
+                                style="padding-top: 10px">
+                                {% if editLier %}
+                                    {{ form_widget(formLier.savelier,{
+                                        'label': 'Modifier',
+                                        'attr':{'class':'btn btn-danger'}
+                                    }) }}
+                                    <a href="{{ path('creerchantier') }}" class="btn btn-success">Annuler</a>
+                                {% else %}
+                                    {{ form_widget(formLier.savelier,{
+                                        'label': 'Enregistrer',
+                                        'attr':{'class':'btn btn-info'}
+                                    }) }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    {{ form_end(formLier) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    table td {
+        max-width: 100px !important;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        overflow: hidden;
+        padding: 2px !important;
+    }
+
+    .modal {
+        -webkit-border-radius: 20px !important;
+        -moz-border-radius: 20px !important;
+        border-radius: 20px !important;
+    }
+
+    .btn-label {
+        position: relative;
+        left: -10px;
+        display: inline-block;
+        padding: 0px 12px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 10px 0 0 10px;
+    }
+
+    .btn-labeled {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .btn {
+        margin-bottom: 10px;
+        border-radius: 10px
+    }
+
+    .div_chart {
+        width: 100% !important;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-body bg-gray-400" style="padding: 5px !important;">
+                    <div style="padding:15px 12px 0 12px">
+                    {% if estadmin %}
+                        <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                data-toggle="modal" data-target="#ModalClient">
+                            <span class="btn-label"><i class="fa fa-plus-circle"></i></span>AJOUTER UN
+                            CLIENT
+                        </button>
+
+                        {% if editP %}
+                            <button type="button" class="btn btn-labeled btn-danger btn-sm"
+                                    data-toggle="modal" data-target="#ModalChantier">
+                                <span class="btn-label"><i class="fa fa-minus-circle"></i></span>MODIFIER
+                                UN PROJET
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-labeled btn-success btn-sm"
+                                    data-toggle="modal" data-target="#ModalChantier">
+                                <span class="btn-label"><i class="fa fa-plus-circle"></i></span>AJOUTER
+                                UN PROJET
+                            </button>
+                        {% endif %}
+                        <button type="button" class="btn btn-labeled btn-danger btn-sm"
+                                data-toggle="modal" data-target="#ModalChef">
+                            <span class="btn-label"><i class="fa fa-plus-circle"></i></span> CHEF PROJET
+                        </button>
+                    {% endif %}
+                </div>
+
+                    <div id="accordion" style="padding:10px 12px 0 12px">
+                        {# PROJETS EN COURS #}
+                        <div style="margin-bottom: 5px">
+                            <div id="headingOne">
+                                <h5 class="mb-0">
+                                    <a class="btn bg-pri text-left text-white" data-toggle="collapse"
+                                       data-target="#collapseOne"
+                                       aria-expanded="true" aria-controls="collapseOne" style="width: 100%;">
+                                        PROJETS EN COURS
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne"
+                                 data-parent="#accordion">
+                                <div class="table-responsive shadow">
+                                    <table class="table-bordered shadow display nowrap pri" id="dataPROJET" style="width: 100%">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th style="width: 10px !important;"></th>
+                                            <th>CLIENT / PROJETS</th>
+                                            <th>COÛT</th>
+                                            <th>CLIENT</th>
+                                            <th>RÈGLEMENT</th>
+                                            <th>SOLDE</th>
+                                            <th>DÉPENSES</th>
+                                            <th>MARGES EST.</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set cout = 0 %}
+                                        {% set check = 0 %}
+                                        {% set ccheck = 0 %}
+                                        {% set reglement = 0 %}
+                                        {% set depense = 0 %}
+                                        {% set tcout = 0 %}
+                                        {% set treglement = 0 %}
+                                        {% set tdepense = 0 %}
+                                        {% for client in clients %}
+                                            {% set vp = 0 %}
+                                            {% set vr = 0 %}
+                                            {% set dp = 0 %}
+
+                                            {% for chantier in client.chantiers %}
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set ccheck = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if ccheck != 1 %}
+                                                            {% if chantier.archiver != 'oui' %}
+                                                                {% set vp = chantier.cout + vp %}
+                                                                {% set vr = chantier.reglement + vr %}
+                                                                {% set dp = chantier.depense + dp %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% set ccheck = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set ccheck = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if ccheck != 1 %}
+                                                        {% if chantier.archiver != 'oui' %}
+                                                            {% set vp = chantier.cout + vp %}
+                                                            {% set vr = chantier.reglement + vr %}
+                                                            {% set dp = chantier.depense + dp %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% set ccheck = 0 %}
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            {% set tcout = vp + tcout %}
+                                            {% set treglement = vr + treglement %}
+                                            {% set tdepense = dp + tdepense %}
+                                            {% for chantier in client.chantiers %}
+
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set check = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if check != 1 %}
+                                                            {% if chantier.archiver != 'oui' %}
+                                                                {% if estadmin %}
+                                                                    <tr>
+                                                                        <td class="text-center">
+                                                                            <input type="checkbox" data-toggle="toggle"
+                                                                                   class="PROJY"
+                                                                                   value="{{ chantier.id }}"></td>
+                                                                        <td>
+                                                                            <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                               title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                        </td>
+                                                                        <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                        <td> +
+                                                                            <a href="{{ path('client',{'id':client.id}) }}"
+                                                                               title="{{ client.client }}"
+                                                                               class="text-white">
+                                                                                {{ client.client|upper }}</a></td>
+                                                                        <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    </tr>
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td class="text-center">
+                                                                            <input type="checkbox" data-toggle="toggle"
+                                                                                   class="PROJY"
+                                                                                   value="{{ chantier.id }}"></td>
+                                                                        <td>
+                                                                            <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                               title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                        </td>
+                                                                        <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                        <td> +
+                                                                            <a href="{{ path('client',{'id':client.id}) }}"
+                                                                               title="{{ client.client }}"
+                                                                               class="text-white">
+                                                                                {{ client.client|upper }}</a></td>
+                                                                        <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% set check = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set check = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if check != 1 %}
+                                                        {% if chantier.archiver != 'oui' %}
+                                                            {% if estadmin %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle"
+                                                                               class="PROJY"
+                                                                               value="{{ chantier.id }}"></td>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client|upper }}</a></td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                </tr>
+                                                            {% else %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle"
+                                                                               class="PROJY"
+                                                                               value="{{ chantier.id }}"></td>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client|upper }}</a></td>
+                                                                    <
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% set check = 0 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    {% if estadmin %}
+                                        <div class="row p-3">
+                                            <div class="col-sm shadow m-1 p-2 text-center"
+                                                 style="border: 1px solid #4e73df; border-radius: 20px">
+                                                <span class="text-secondary">TOTAL&nbsp;DES&nbsp;COÛTS&nbsp;&nbsp;&nbsp;</span>
+                                                <br><span class="text-pri h6">{{ tcout|number_format(2,',',' ') }}&nbsp;TTC</span>
+                                            </div>
+                                            <div class="col-sm shadow m-1 p-2 text-center"
+                                                 style="border: 1px solid #4e73df; border-radius: 20px">
+                                                <span class="text-secondary">TOTAL&nbsp;DES&nbsp;RÈGLEMENTS</span>
+                                                <br><span class="text-pri h6">{{ treglement|number_format(2,',',' ') }}&nbsp;TTC</span>
+                                            </div>
+                                            <div class="col-sm shadow m-1 p-2 text-center"
+                                                 style="border: 1px solid #4e73df; border-radius: 20px">
+                                                <span class="text-secondary">TOTAL&nbsp;DES&nbsp;SOLDES</span>
+                                                <br><span
+                                                        class="text-pri h6">{{ (tcout|number_format(2,'.','') -  treglement|number_format(2,'.',''))|number_format(2,',',' ') }} TTC</span>
+                                            </div>
+                                            <div class="col-sm shadow m-1 p-2 text-center"
+                                                 style="border: 1px solid #4e73df; border-radius: 20px">
+                                                <span class="text-secondary">TOTAL&nbsp;DES&nbsp;DÉPENSES</span>
+                                                <br><span class="text-pri h6">{{ tdepense|number_format(2,',',' ') }}&nbsp;TTC</span>
+                                            </div>
+                                            <div class="col-sm shadow m-1 p-2 text-center"
+                                                 style="border: 1px solid #4e73df; border-radius: 20px">
+                                                <span class="text-secondary">TOTAL&nbsp;DES&nbsp;MARGES&nbsp;EST.</span>
+                                                <br><span
+                                                        class="text-pri h6">{{ (tcout|number_format(2,'.','') -  tdepense|number_format(2,'.',''))|number_format(2,',',' ') }}&nbsp;TTC</span>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {# PROJETS ARCHIVÉS #}
+                        <div class="b-4" style="margin-bottom: 5px">
+                            <div id="headingDeu">
+                                <h5 class="mb-0">
+                                    <a class="btn bg-pri text-left text-white" data-toggle="collapse"
+                                       data-target="#collapseDeu"
+                                       aria-expanded="true" aria-controls="collapseDeu" style="width: 100%;">
+                                        PROJETS ARCHIVÉS
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseDeu" class="collapse" aria-labelledby="headingDeu"
+                                 data-parent="#accordion">
+                                <div class="table-responsive shadow  bg-white"
+                                     style="margin-bottom: 50px; padding: 20px; margin-top: -20px">
+                                    <br>
+                                    <table class="table-bordered shadow display nowrap" id="dataPROJET2" style="width: 100%">
+                                        <thead>
+                                        <tr class="text-gray-600">
+                                            <th style="width: 10px !important;"></th>
+                                            <th>CLIENT / PROJETS</th>
+                                            <th>VALEUR</th>
+                                            <th>CLIENT</th>
+                                            <th>RÈGLEMENT</th>
+                                            <th>SOLDE</th>
+                                            <th>DÉPENSES</th>
+                                            <th>MARGES EST.</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set cout = 0 %}
+                                        {% set check2 = 0 %}
+                                        {% set ccheck2 = 0 %}
+                                        {% set reglement = 0 %}
+                                        {% set depense = 0 %}
+
+                                        {% set acout = 0 %}
+                                        {% set areglement = 0 %}
+                                        {% set adepense = 0 %}
+
+                                        {% for client in clients %}
+                                            {% set vp = 0 %}
+                                            {% set vr = 0 %}
+                                            {% set dp = 0 %}
+
+                                            {% for chantier in client.chantiers %}
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set ccheck2 = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if ccheck2 != 1 %}
+                                                            {% if chantier.archiver == 'oui' %}
+                                                                {% set vp = chantier.cout + vp %}
+                                                                {% set vr = chantier.reglement + vr %}
+                                                                {% set dp = chantier.depense + dp %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% set ccheck2 = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set ccheck2 = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if ccheck2 != 1 %}
+                                                        {% if chantier.archiver == 'oui' %}
+                                                            {% set vp = chantier.cout + vp %}
+                                                            {% set vr = chantier.reglement + vr %}
+                                                            {% set dp = chantier.depense + dp %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% set ccheck2 = 0 %}
+                                                {% endif %}
+                                            {% endfor %}
+
+
+                                            {% set acout = vp + acout %}
+                                            {% set areglement = vr + areglement %}
+                                            {% set adepense = dp + adepense %}
+
+                                            {% for chantier in client.chantiers %}
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set check2 = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if check2 != 1 %}
+                                                            {% if chantier.archiver == 'oui' %}
+                                                                {% if estadmin %}
+                                                                    <tr>
+                                                                        <td class="text-center">
+                                                                            <input type="checkbox" data-toggle="toggle"
+                                                                                   class="PROJY2"
+                                                                                   value="{{ chantier.id }}"></td>
+                                                                        <td>
+                                                                            <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                               title="{{ chantier.chantier }}">{{ chantier.chantier }}</a>
+                                                                        </td>
+                                                                        <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                        <td> +
+                                                                            <a href="{{ path('client',{'id':client.id}) }}"
+                                                                               title="{{ client.client }}"
+                                                                               class="text-white">
+                                                                                {{ client.client|upper }}</a></td>
+                                                                        <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+
+                                                                    </tr>
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td class="text-center">
+                                                                            <input type="checkbox" data-toggle="toggle"
+                                                                                   class="PROJY2"
+                                                                                   value="{{ chantier.id }}"></td>
+                                                                        <td>
+                                                                            <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                               title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                        </td>
+                                                                        <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                        <td> +
+                                                                            <a href="{{ path('client',{'id':client.id}) }}"
+                                                                               title="{{ client.client }}"
+                                                                               class="text-white">
+                                                                                {{ client.client|upper }}</a></td>
+                                                                        <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                        <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+
+
+                                                                    </tr>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% set check2 = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set check2 = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if check2 != 1 %}
+                                                        {% if chantier.archiver == 'oui' %}
+                                                            {% if estadmin %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle"
+                                                                               class="PROJY2"
+                                                                               value="{{ chantier.id }}"></td>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client|upper }}</a></td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+
+                                                                </tr>
+                                                            {% else %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle"
+                                                                               class="PROJY2"
+                                                                               value="{{ chantier.id }}"></td>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client|upper }}</a></td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+
+
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% set check2 = 0 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    {% if estadmin %}
+                                        <table class="table-bordered d reduire">
+                                            <tr class="bg-pri text-white">
+                                                <td colspan="2" class="text-center">TOTAUX PROJETS ARCHIVÉS</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">VALEUR</td>
+                                                <td class="text-right">{{ acout|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">RÈGLEMENT</td>
+                                                <td class="text-right">{{ areglement|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">SOLDE</td>
+                                                <td class="text-right">{{ (acout|number_format(2,'.','') -  areglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">DÉPENSES</td>
+                                                <td class="text-right">{{ adepense|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">MARGES EST.</td>
+                                                <td class="text-right">{{ (acout|number_format(2,'.','') -  adepense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {# TOUS LES PROJETS #}
+                        <div class="b-4" style="margin-bottom: 5px">
+                            <div id="headingTroi">
+                                <h5 class="mb-0">
+                                    <a class="btn bg-pri text-left text-white" data-toggle="collapse"
+                                       data-target="#collapseTroi"
+                                       aria-expanded="true" aria-controls="collapseTroi" style="width: 100%;">
+                                        PROJETS EN COURS
+                                    </a>
+                                </h5>
+                            </div>
+                            <div id="collapseTroi" class="collapse" aria-labelledby="headingTroi"
+                                 data-parent="#accordion">
+                                <div class="table-responsive shadow bg-white"
+                                     style="margin-bottom: 50px; padding: 20px; margin-top: -20px">
+                                    <br>
+                                    <table class="table-bordered shadow display nowrap" width="100%" id="dataPROJET3">
+                                        <thead>
+                                        <tr class="text-gray-600">
+                                            <th>CLIENT / PROJETS</th>
+                                            <th>VALEUR</th>
+                                            <th>CLIENT</th>
+                                            <th>RÈGLEMENT</th>
+                                            <th>SOLDE</th>
+                                            <th>DÉPENSES</th>
+                                            <th>MARGES EST.</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set cout = 0 %}
+                                        {% set check3 = 0 %}
+                                        {% set ccheck3 = 0 %}
+                                        {% set reglement = 0 %}
+                                        {% set depense = 0 %}
+
+                                        {% set bcout = 0 %}
+                                        {% set breglement = 0 %}
+                                        {% set bdepense = 0 %}
+
+                                        {% for client in clients %}
+                                            {% set vp = 0 %}
+                                            {% set vr = 0 %}
+                                            {% set dp = 0 %}
+                                            {% for chantier in client.chantiers %}
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set ccheck3 = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if ccheck3 != 1 %}
+                                                            {% set vp = chantier.cout + vp %}
+                                                            {% set vr = chantier.reglement + vr %}
+                                                            {% set dp = chantier.depense + dp %}
+                                                        {% endif %}
+                                                        {% set ccheck3 = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set ccheck3 = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if ccheck3 != 1 %}
+                                                        {% set vp = chantier.cout + vp %}
+                                                        {% set vr = chantier.reglement + vr %}
+                                                        {% set dp = chantier.depense + dp %}
+                                                    {% endif %}
+                                                    {% set ccheck3 = 0 %}
+                                                {% endif %}
+                                            {% endfor %}
+
+                                            {% set bcout = vp + bcout %}
+                                            {% set breglement = vr + breglement %}
+                                            {% set bdepense = dp + bdepense %}
+
+                                            {% for chantier in client.chantiers %}
+                                                {% if not estmaster %}
+                                                    {% if chantier.dobyuser == app.user or chantier.dobyuser == master %}
+                                                        {% for corbe in corbeilles %}
+                                                            {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                                {% set check3 = 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if check3 != 1 %}
+                                                            {% if estadmin %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client }}</a></td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                </tr>
+                                                            {% else %}
+                                                                <tr>
+                                                                    <td>
+                                                                        <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                           title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                    </td>
+                                                                    <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                    <td> +
+                                                                        <a href="{{ path('client',{'id':client.id}) }}"
+                                                                           title="{{ client.client }}"
+                                                                           class="text-white">
+                                                                            {{ client.client|upper }}</a></td>
+                                                                    <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                    <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        {% set check3 = 0 %}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% for corbe in corbeilles %}
+                                                        {% if corbe.designation == chantier.idchantier and corbe.type == '1' %}
+                                                            {% set check3 = 1 %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if check3 != 1 %}
+                                                        {% if estadmin %}
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.chantier }}">{{ chantier.chantier }}</a>
+                                                                </td>
+                                                                <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                <td> + <a href="{{ path('client',{'id':client.id}) }}"
+                                                                          title="{{ client.client }}"
+                                                                          class="text-white">
+                                                                        {{ client.client|upper }}</a></td>
+                                                                <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                            </tr>
+                                                        {% else %}
+                                                            <tr>
+                                                                <td>
+                                                                    <a href="{{ path('chantier', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.chantier }}">{{ chantier.chantier|upper }}</a>
+                                                                </td>
+                                                                <td class="text-right">{{ chantier.cout|number_format(2,',',' ') }}</td>
+                                                                <td> + <a href="{{ path('client',{'id':client.id}) }}"
+                                                                          title="{{ client.client }}"
+                                                                          class="text-white">
+                                                                        {{ client.client }}</a></td>
+                                                                <td class="text-right">{{ chantier.reglement|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.reglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ chantier.depense|number_format(2,',',' ') }}</td>
+                                                                <td style="text-align: right">{{ (chantier.cout|number_format(2,'.','') -  chantier.depense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    {% if estadmin %}
+                                        <table class="table-bordered d reduire" style="float: right">
+                                            <tr class="bg-pri text-white">
+                                                <td colspan="2" class="text-center">TOTAUX PROJETS</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">VALEUR</td>
+                                                <td class="text-right">{{ bcout|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">RÈGLEMENT</td>
+                                                <td class="text-right">{{ breglement|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">SOLDE</td>
+                                                <td class="text-right">{{ (bcout|number_format(2,'.','') -  breglement|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">DÉPENSES</td>
+                                                <td class="text-right">{{ bdepense|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="slategrey">MARGES EST.</td>
+                                                <td class="text-right">{{ (bcout|number_format(2,'.','') -  bdepense|number_format(2,'.',''))|number_format(2,',',' ') }}</td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- start of weather widget -->
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h5 class="text-pri">LISTE DES CLIENTS</h5>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="table-responsive ">
+                                <h6>PC: PROJETS EN COURS</h6>
+                                <h6>PA: PROJETS ARCHIVÉS</h6>
+                                <table class="table-bordered  display nowrap" width="100%" id="dataLISTECLIENTS">
+                                    <thead>
+                                    <tr class="text-gray-600 text-center">
+                                        <th style="width: 10px !important;"></th>
+                                        <th>CLIENT</th>
+                                        <th>PC</th>
+                                        <th>PA</th>
+                                        <th>TOTAL</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for client in clients %}
+                                    {% set pc = 0 %}
+                                    {% set pa = 0 %}
+                                    {% for chantier in client.chantiers %}
+                                        {% if chantier.archiver != 'oui' %}
+                                            {% set pc = pc + 1 %}
+                                        {% else %}
+                                            {% set pa = pa + 1  %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" data-toggle="toggle"
+                                                   class="CLYE"
+                                                   value="{{ client.id }}"></td>
+                                        <td>
+                                            <a href="{{ path('client', {'id': client.id}) }}" class="text-pri"
+                                               title="{{ client.client|upper }}">{{ client.client|upper }}</a>
+                                        </td>
+                                        <td class="text-center">{{ pc }}</td>
+                                        <td class="text-center">{{ pa }}</td>
+                                        <td class="text-center text-info bolderrer">{{ pa + pc }}</td>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h4 class="text-pri">Activités récentes</h4>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="dashboard-widget-content">
+
+                                    <ul class="list-unstyled timeline widget">
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="block">
+                                                <div class="block_content">
+                                                    <h2 class="title">
+                                                        <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
+                                                    </h2>
+                                                    <div class="byline">
+                                                        <span>13 hours ago</span> by <a>Jane Smith</a>
+                                                    </div>
+                                                    <p class="excerpt">Film festivals used to be do-or-die moments for
+                                                        movie makers. They were where you met the producers that could
+                                                        fund your project, and if the buyers liked your flick, they’d
+                                                        pay to Fast-forward and… <a>Read&nbsp;More</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start to do list -->
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h4 class="text-pri">Liste des tâches</h4>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+
+                                <div class="">
+                                    <ul class="to_do">
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Schedule meeting with new client
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Create email address for new intern
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Have IT fix the network printer</p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Copy backups to offsite location
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Food truck fixie locavors mcsweeney
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Food truck fixie locavors mcsweeney
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Create email address for new intern
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Have IT fix the network printer</p>
+                                        </li>
+                                        <li>
+                                            <p>
+                                                <input type="checkbox" class="flat"> Copy backups to offsite location
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

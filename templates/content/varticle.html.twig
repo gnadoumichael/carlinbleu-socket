@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello VarticleController!{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-xl-3 col-md-3 col-lg-3">
+            <div class="card shadow mb-4 bg-white"
+                                                     style=" padding:15px">
+                <h5>DESCRIPTION DE L'ARTICLES</h5>
+            </div>
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                <img src="{% if article.info1 == 'oui' %}{{ asset('articles/'~article.link1) }}{% else %}{{ asset('gallery/not.png') }}{% endif %}" align="left"
+                     style="width:100%;border: 1px solid #000">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-7 col-md-7 col-lg-7" >
+            <div class="card shadow mb-4" style="height:auto; padding: 15px">
+                <h3>{{ article.designation }}</h3>
+                <h4 class="text-danger">{{ article.pu }} {{ article.monnaies.code }}</h4>
+                <table class="table-striped border" style="font-size: 1rem">
+                    <tr>
+                        <td>Code Article</td>
+                        <td>{{ article.colisage }}</td>
+                    </tr>
+                    <tr>
+                        <td>Marque</td>
+                        <td>{{ article.marque }}</td>
+                    </tr>
+                    <tr>
+                        <td>Référence</td>
+                        <td>{{ article.reference }}</td>
+                    </tr>
+                    <tr>
+                        <td>Conditionnement de Vente</td>
+                        <td>{{ article.unite }}</td>
+                    </tr>
+                    <tr>
+                        <td>Colisage</td>
+                        <td>{{ article.colisage }}</td>
+                    </tr>
+                    <tr>
+                        <td>Longueur</td>
+                        <td>{{ article.longueur }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Largeur</td>
+                        <td>{{ article.largeur }}</td>
+                    </tr>
+                    <tr>
+                        <td>Poids</td>
+                        <td>{{ article.poids }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Volume</td>
+                        <td>{{ article.volume }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Tension</td>
+                        <td>{{ article.tension}}</td>
+                    </tr>
+                    <tr>
+                        <td>Temperature</td>
+                        <td>{{ article.temperature }}</td>
+                    </tr>
+                    <tr>
+                        <td>Puissance</td>
+                        <td>{{ article.puissance}}</td>
+                    </tr>
+                    <tr>
+                        <td>Mise en oeuvre</td>
+                        <td>{{ article.colisage }}</td>
+                    </tr>
+                    <tr>
+                        <td>Epaisseur</td>
+                        <td>{{ article.epaisseur }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hauteur</td>
+                        <td>{{ article.hauteur }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

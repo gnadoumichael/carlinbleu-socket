@@ -1,0 +1,237 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-3 col-lg-3">
+                <div id="accordion">
+                    {# CRÉER  OU MODIFIER UN CLIENT #}
+                    <div class="card shadow mb-4" id="client">
+                        <div id="headingDe">
+                                <h5 class="mb-0">
+                                    <a class="btn text-left text-white bg-pri bolderrer" data-toggle="collapse"
+                                       data-target="#collapseDe"
+                                       aria-expanded="false" aria-controls="collapseDe"
+                                       style="width: 100%; font-size: 14px">
+                                        1- CHOISIR UN PROJET
+                                    </a>
+                                </h5>
+
+                        </div>
+                        <div id="collapseDe" class="collapse show bg-light"
+                             aria-labelledby="headingDe"
+                             data-parent="#accordion">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <select class="form-control" id="targetbon">
+                                        <option>CHOISIR UN PROJET</option>
+                                        {% for client in clients %}
+                                        {% for chantier in chantiers %}
+                                            {% if client == chantier.client %}
+                                        <option value="{{ chantier.id }}">{{ client.client }} || {{ chantier.chantier }}</option>
+                                            {% endif %}
+                                        {%  endfor %}
+                                        {%  endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# FIN #}
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-9">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            {% for message in app.flashes('errbon') %}
+                                <div class="alert alert-danger">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                            {% for message in app.flashes('subon') %}
+                                <div class="alert alert-success">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                            <table class="table-striped table-bordered display nowrap"
+                                   style="width: 100%" id="dataBON">
+                                <thead>
+                                <tr class="text-center bg-light">
+                                    <th style="width: 10px !important;"></th>
+                                    <th style="width: 80px !important;">DATE</th>
+                                    <th>N° BON</th>
+                                    <th>RÉFÉRENCE</th>
+                                    <th>TOTAL HT</th>
+                                    <th>TOTAL TTC</th>
+                                    <th style="width: 10px !important;">ETAT</th>
+                                    <th style="background-color: #E8E8E8 !important;" >CREÉ PAR</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for bon in chantier.bons %}
+                                    {% if bon.etat == 'valide' %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <input type="checkbox" data-toggle="toggle"
+                                                       class="BONNS"
+                                                       value="{{ bon.id }}"></td>
+                                            <td>{{ bon.date|date('Y.m.d H.i.s') }}</td>
+                                            <td>
+                                                {% if bon.type == "non" %}
+                                                    <a href="{{ path('editbon',{'id':bon.id,'idchantier':chantier.id}) }}">
+                                                        <span class="badge badge-pill badge-primary">V</span>
+                                                        <span class="badge badge-pill badge-danger">BRC</span> Commande N° {{ bon.numbon }}
+                                                    </a>
+                                                {% else %}
+                                                    <span
+                                                            class="badge badge-pill badge-primary">V</span>
+                                                    <a href="{{ path('editbon',{'id':bon.id,'idchantier':chantier.id}) }}"> Commande N° {{ bon.numbon }}</a>
+                                                {% endif %}
+                                            </td>
+                                            <td title="{{ bon.reference|striptags|raw }}">{{ bon.reference|striptags|raw }}</td>
+                                            <td class="text-right">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                                            <td class="text-right">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                                            <td>BONS DE COMMANDE VALIDÉS</td>
+                                            <td class="text-left text-pri bolderrer" style="background-color: #E8E8E8 !important;"><i class="fa fa-user text-pri"></i>&nbsp;{{ bon.dobyuser.nom|upper }}&nbsp;{{ bon.dobyuser.prenoms|upper }}</td>
+
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+                            <hr style="width: 100%; height: 2px; background-color: darkgrey">
+                            <br>
+                            <table class="table-striped table-bordered display nowrap"
+                                   style="width: 100%" id="dataBON2">
+                                <thead>
+                                <tr class="text-center bg-light">
+                                    <th style="width: 10px !important;"></th>
+                                    <th style="width: 80px !important;">DATE</th>
+                                    <th>N° BON</th>
+                                    <th>RÉFÉRENCE</th>
+                                    <th>TOTAL HT</th>
+                                    <th>TOTAL TTC</th>
+                                    <th style="width: 10px !important;">ETAT</th>
+                                    <th style="background-color: #E8E8E8 !important;" >CREÉ PAR</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for bon in chantier.bons %}
+                                    {% if bon.etat == 'save' %}
+                                        <tr>
+                                            <td class="text-center">
+                                                <input type="checkbox" data-toggle="toggle"
+                                                       class="BONNS2"
+                                                       value="{{ bon.id }}"></td>
+                                            <td>{{ bon.date|date('Y.m.d H.i.s') }}</td>
+                                            <td>
+                                                {% if bon.type == "non" %}
+                                                    <a href="{{ path('editbon',{'id':bon.id,'idchantier':chantier.id}) }}"><span
+                                                                class="badge badge-pill badge-secondary">V</span>
+                                                        <span
+                                                                class="badge badge-pill badge-danger">BRC</span> Commande N° {{ bon.numbon }}
+                                                    </a>
+                                                {% else %}
+                                                    <span
+                                                            class="badge badge-pill badge-secondary">V</span>
+                                                    <a href="{{ path('editbon',{'id':bon.id,'idchantier':chantier.id}) }}"> Commande N°{{ bon.numbon }}</a>
+                                                {% endif %}
+                                            </td>
+                                            <td title="{{ bon.reference|striptags|raw }}">{{ bon.reference|striptags|raw }}</td>
+                                            <td class="text-right">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                                            <td class="text-right">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                                            <td>BONS DE COMMANDE NON VALIDÉS</td>
+                                            <td class="text-left text-pri bolderrer" style="background-color: #E8E8E8 !important;"><i class="fa fa-user text-pri"></i>&nbsp;{{ bon.dobyuser.nom|upper }}&nbsp;{{ bon.dobyuser.prenoms|upper }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <br>
+                            {% set vbth = 0 %}
+                            {% set vbttc = 0 %}
+
+                            {% set nbth = 0 %}
+                            {% set nbttc = 0 %}
+
+                            {% set brht = 0 %}
+                            {% set brttc = 0 %}
+
+                            {% set brnht = 0 %}
+                            {% set brnttc = 0 %}
+
+                            {% for bon in chantier.bons %}
+
+                                {% if bon.etat == 'valide' and bon.type != "non" %}
+                                    {% set vbth = bon.totalht + vbth %}
+                                    {% set vbttc = bon.totalttc + vbttc %}
+                                {% endif %}
+
+                                {% if bon.etat == 'save' and bon.type != "non" %}
+                                    {% set nbth = bon.totalht + nbth %}
+                                    {% set nbttc = bon.totalttc + nbttc %}
+                                {% endif %}
+
+                                {% if bon.etat == 'valide' and bon.type == "non" %}
+                                    {% set brht = bon.totalht + brht %}
+                                    {% set brttc = bon.totalttc + brttc %}
+                                {% endif %}
+
+                                {% if bon.etat == 'save' and bon.type == "non" %}
+                                    {% set brnht = bon.totalht + brnht %}
+                                    {% set brnttc = bon.totalttc + brnttc %}
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            <table class="table-bordered d reduire" style="float: right">
+                                <tr style="background-color: slategrey; color: white">
+                                    <th class="text-center"></th>
+                                    <th class="text-center">TOTAL HT</th>
+                                    <th class="text-center">TOTAL TTC</th>
+                                </tr>
+                                <tr style="background-color: slategrey; color: white">
+                                    <td class="text-right">VALIDÉS</td>
+                                    <td class="text-right">{{ vbth|number_format(2,',', ' ') }}</td>
+                                    <td class="text-right">{{ vbttc|number_format(2,',',' ') }}</td>
+                                </tr>
+                                <tr style="background-color: slategrey; color: white">
+                                    <td class="text-right">BONS DE RETOUR VALIDÉS</td>
+                                    <td class="text-right">{{ brht|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ brttc|number_format(2,',',' ') }}</td>
+                                </tr>
+                                <tr style="background-color: indianred; color: white">
+                                    <td class="text-right">NON VALIDÉS</td>
+                                    <td class="text-right">{{ nbth|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ nbttc|number_format(2,',',' ') }}</td>
+                                </tr>
+
+                                <tr style="background-color: indianred; color: white">
+                                    <td class="text-right">BONS DE RETOUR NON VALIDÉS</td>
+                                    <td class="text-right">{{ brnht|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ brnttc|number_format(2,',',' ') }}</td>
+                                </tr>
+                                <tr class="bg-pri text-white">
+                                    <td class="text-right">TOTAUX</td>
+                                    <td class="text-right">{{ ((vbth-brht)+(nbth-brnht))|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ ((vbttc-brttc)+(nbttc-brnttc))|number_format(2,',',' ') }}</td>
+
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

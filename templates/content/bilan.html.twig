@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html ; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Carlinbleu | Gestion et Suivi de Chantier</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description"
+          content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+
+    <link href="{{ asset('css/chat.css') }}" rel="stylesheet"/>
+    {{ encore_entry_link_tags('apbilan') }}
+</head>
+<body class="theme-red" style="background-color: #d1d3e2 !important;" id="bod">
+<nav class="navbar bg-blue">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse"
+               data-target="#navbar-collapse" aria-expanded="false"></a>
+            <a href="javascript:void(0);" class="bars"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-right m-t-5">
+
+                {% set countTodo = 0 %}
+                {% if libre is not defined %}
+                    {% if app.user %}
+                        {% for todo  in app.user.todos %}
+                            {% if todo.status == "lu" %}
+                                {% set countTodo = countTodo + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+
+                {% if libre is not defined %}
+                    {% if app.user %}
+                        <li class="col-yellow h4 bolo600 m-l-20">
+                            {{ app.user.nom|upper }}
+                            {{ app.user.prenoms|upper }}
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% if app.user %}
+                    {% if libre is not defined and app.user %}
+                        <li class="hidere"><a href="javascript:void(0);" data-close="true">
+                    <span class="js-right-sidebars badge bg-purple">
+                      CHANTIERS EN ÉTUDE
+                    </span>
+                            </a>
+                        </li>
+                        <li class="hidere">
+                            <a href="javascript:void(0);" data-close="true">
+                    <span class="js-right-sidebar badge bg-pink">
+                      CHANTIERS EN COURS
+                    </span>
+                            </a>
+                        </li>
+                        <li class="hidere">
+                            <a href="{{ path('page') }}">
+                                <i class="material-icons">calendar_month</i>
+                                {% if countTodo > 0 %}
+                                    <sup><span class="badge badge-danger"
+                                               style="border-radius: 50px; margin: -10px 0 0 -10px">{{ countTodo }}</span></sup>
+                                {% else %}
+                                    <sup><span class="badge badge-success"
+                                               style="border-radius: 50px; margin: -10px 0 0 -10px">{{ countTodo }}</span></sup>
+                                {% endif %}
+                            </a>
+
+                        </li>
+                        <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                            <i class="material-icons">notifications</i>
+                        </a>
+                        <ul class="dropdown-menu bg-light" style="width: 370px !important">
+                            <li class="header col-pink" style="font-size: 16px">ACTIONS</li>
+                            <li class="body">
+                                <ul class="menu" style="width: 340px !important">
+                                    {% for history in history %}
+                                        <li>
+                                            <a href="javascript:void(0);">
+                                                <div class="menu-info">
+                                                    <h5 class="col-indigo font-weight-bold">{{ history.action|striptags|raw }}</h5>
+                                                    <h5 class="col-pink font-weight-bold">
+                                                        Par: {{ history.dobyuser.nom|upper }} {{ history.dobyuser.prenoms|upper }}</h5>
+                                                    <p class="col-black">
+                                                        <i class="material-icons">access_time</i> <span
+                                                                style="font-size: 14px">{{ history.date|date('d.m.Y H.m') }}</span>
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="footer bg-blue col-white">
+                                <a href="{{ path('historique') }}" class="bolo text-white" style="font-size: 16px">
+                                    Voir toutes les actions
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                    <li class="hidere">
+                        <a data-toggle="modal" data-target="#ModalSearch">
+                            <i class="material-icons">search</i>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="#" id="tgol" title="Page d'acceuil">
+                        <i class="material-icons">exit_to_app</i>
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+<section>
+    <aside id="leftsidebar" class="sidebar text-center bg-pri"
+           style="z-index: 1000 !important; margin-top: -70px; width: 240px; height: 100%">
+        <div class="user-info" style="height: 150px !important;">
+            <img src="{{ asset('img/logoy.png') }}" style="float: left; width: 200px !important;margin-top: 10px"/>
+        </div>
+        <div class="menu">
+            <ul class="list">
+                <li class="active">
+                    {% if page is defined and page == 'page' %}
+                        <a href="{{ path('page') }}" class="bolo">
+                            <i class="material-icons col-yellow">home</i>
+                            <span class="col-yellow">ACCUEIL</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('page') }}" class="bolo">
+                            <i class="material-icons text-white">home</i>
+                            <span class="text-white">Accueil</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    <a href="{{ path('content') }}" class="bolo">
+                        <i class="material-icons col-white">add_shopping_cart</i>
+                        <span class="col-white">SHOWROOMS</span>
+                    </a>
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'message' %}
+                        <a href="{{ path('message') }}" class="bolo">
+                            <i class="material-icons col-yellow">email</i>
+                            <span class="col-yellow">MESSAGERIE</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('message') }}" class="bolo">
+                            <i class="material-icons text-white">email</i>
+                            <span class="text-white">Messagerie</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'article' %}
+                        <a href="{{ path('article') }}" class="bolo">
+                            <i class="material-icons col-yellow">content_copy</i>
+                            <span class="col-yellow">GESTION DES ARTICLES</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('article') }}" class="bolo">
+                            <i class="material-icons text-white">content_copy</i>
+                            <span class="text-white">Gestion des articles</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'etat' %}
+                        <a href="{{ path('etat') }}" class="bolo">
+                            <i class="material-icons col-yellow">swap_horiz</i>
+                            <span class="col-yellow">GESTION DES ÉTATS</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('etat') }}" class="bolo">
+                            <i class="material-icons text-white">swap_horiz</i>
+                            <span class="text-white">Gestion des états</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'comptable' %}
+                        <a href="{{ path('chantiers') }}" class="bolo">
+                            <i class="material-icons col-yellow">widgets</i>
+                            <span class="col-yellow">GESTION DES CHANTIERS</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('chantiers') }}">
+                            <i class="material-icons text-white">widgets</i>
+                            <span class="text-white">Gestion des chantiers</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'technique' %}
+                        <a href="{{ path('technique') }}" class="bolo">
+                            <i class="material-icons col-yellow">open_with</i>
+                            <span class="col-yellow">GESTION TECHNIQUE</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('technique') }}" class="bolo">
+                            <i class="material-icons text-white">open_with</i>
+                            <span class="text-white">Gestion technique</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'materiel' %}
+                        <a href="{{ path('materiel') }}" class="bolo">
+                            <i class="material-icons col-yellow">bubble_chart</i>
+                            <span class="col-yellow">GESTION DU MATÉRIEL</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('materiel') }}" class="bolo">
+                            <i class="material-icons text-white">bubble_chart</i>
+                            <span class="text-white">Gestion du matériel</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'personnel' %}
+                        <a href="{{ path('personnel') }}" class="bolo">
+                            <i class="material-icons col-yellow">people_outline</i>
+                            <span class="col-yellow">GESTION DU PERSONNEL</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('personnel') }}" class="bolo">
+                            <i class="material-icons text-white">people_outline</i>
+                            <span class="text-white">Gestion du personnel</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'paie' %}
+                        <a href="{{ path('paie') }}" class="bolo">
+                            <i class="material-icons col-yellow">toll</i>
+                            <span class="col-yellow">POINTS DE PAIE</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('paie') }}">
+                            <i class="material-icons text-white">toll</i>
+                            <span class="text-white">Points de paie</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'parametre' %}
+                        <a href="{{ path('parametre') }}" class="bolo">
+                            <i class="material-icons col-yellow">center_focus_weak</i>
+                            <span class="col-yellow">PARAMÈTRES</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('parametre') }}" class="bolo">
+                            <i class="material-icons text-white">center_focus_weak</i>
+                            <span class="text-white">Paramètres</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'historique' %}
+                        <a href="{{ path('historique') }}" class="bolo">
+                            <i class="material-icons col-yellow">history</i>
+                            <span class="col-yellow">HISTORIQUE</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('historique') }}" class="bolo">
+                            <i class="material-icons text-white">history</i>
+                            <span class="text-white">Historique</span>
+                        </a>
+                    {% endif %}
+                </li>
+                <li class="active">
+                    {% if page is defined and page == 'corbeille' %}
+                        <a href="{{ path('corbeille') }}" class="bolo">
+                            <i class="material-icons col-yellow">delete</i>
+                            <span class="col-yellow">CORBEILLE</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('corbeille') }}" class="bolo">
+                            <i class="material-icons text-white">delete</i>
+                            <span class="text-white">Corbeille</span>
+                        </a>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </div>
+
+
+    </aside>
+    <aside id="rightsidebars" class="right-sidebars m-t--25 p-t-10" style="overflow: scroll">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="chantier">
+                <div class="table-responsive" style="padding: 10px !important;">
+                    {% if libre is not defined %}
+                        {% for client in clients %}
+                            {% set p = 0 %}
+                            {% if client.corbeille is null and client.chantiers.count > 0 %}
+                                {% if client.type is null %}
+                                    <table class="table-bordered shadow" width="100%" style=" overflow: scroll;">
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null
+                                                and chantier.archiver != 'oui' %}
+                                                {% if p == 0 %}
+                                                    <tr>
+                                                        <td colspan="2" class="bg-blue text-white"
+                                                            style="padding-left: 5px;">
+                                                            <a href="{{ path('client',{id: client.id}) }}"
+                                                               class="text-white" title="{{ client.nomclient }}">
+                                                                -
+                                                                {{ client.nomclient }}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr>
+                                                    <td style="padding-left: 5px" colspan="2" class="bg-light">
+                                                        <a href="{{ path(
+                                                            'chantier',
+                                                            {
+                                                                id: chantier.id
+                                                            }
+                                                        ) }}" class="text-pri" title="{{ chantier.nomchantier }}">
+                                                            {{ chantier.nomchantier[0:55]|upper }}
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% set p = p + 1 %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
+<input type="text" class="hide" id="jsonchantiers" value="{{ jsonchantiers }}">
+
+<section class="content" style="margin-top: -20px !important;">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row clearfix m-t-50">
+                <div class="col-sm-12 ">
+                    <h3 class="bolo700">Bonjour {{ app.user.prenoms|capitalize }} !</h3>
+                    <h4 class="bolo700 col-deep-orange">BILAN ANNUEL</h4>
+                </div>
+                <div class="col-md-12" id="setBilan">
+
+                </div>
+            </div>
+            <div class="row" id="setBilan">
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    localStorage.setItem('reloadd', 'bilan');
+</script>
+{{ encore_entry_script_tags('apbilan') }}
+</body>
+<html>
+

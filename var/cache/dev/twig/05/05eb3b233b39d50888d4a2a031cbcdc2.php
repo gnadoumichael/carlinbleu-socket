@@ -1,0 +1,526 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* registration/security/accueil.html.twig */
+class __TwigTemplate_807910a133053e2d77dabaad3e8d7db2 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2 = $this->extensions["Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension"];
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->enter($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "registration/security/accueil.html.twig"));
+
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "registration/security/accueil.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html ; charset=utf-8\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+    <meta http-equiv=\"Expires\" CONTENT=\"Fri, 01 Jan 1990 00:00:00 GMT\">
+    <meta http-equiv=\"Cache-Control\"
+          CONTENT=\"private, no-store, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0\">
+    <meta http-equiv=\"Pragma\" CONTENT=\"no-cache\">
+    <title>Carlinbleu | Gestionnaire de Chantiers</title>
+    <meta content=\"no-cache, no-store, must-revalidate, post-check=0, pre-check=0\"/>
+    <meta name=\"description\" content=\"Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,
+         Gestion des articles, Planning, Gestionnaire de stock, etc.\">
+    <meta name=\"keywords\"
+          content=\"carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , showroom , matériels\">
+    <meta name=\"author\" content=\"carlinGroup\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">
+    <link href=\"https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext\" rel=\"stylesheet\"
+          type=\"text/css\"/>
+    <link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\" type=\"text/css\">
+    <link rel=\"shortcut icon\" type=\"image/png\" href=\"https://www.carlinbleu.com/img/Icon-96.png\">
+    <!-- CSS
+  ================================================== -->
+    <!-- Bootstrap -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/bootstrap/bootstrap.min.css\">
+    <!-- FontAwesome -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/fontawesome/css/all.min.css\">
+    <!-- Animation -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/animate-css/animate.css\">
+    <!-- slick Carousel -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/slick/slick.css\">
+    <link rel=\"stylesheet\" href=\"cover/plugins/slick/slick-theme.css\">
+    <!-- Colorbox -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/colorbox/colorbox.css\">
+    <!-- Template styles-->
+    <link rel=\"stylesheet\" href=\"cover/css/style.css\">
+
+</head>
+<body>
+<div class=\"body-inner\">
+    <div id=\"top-bar\" class=\"top-bar\" style=\"background-color: #4e73df\">
+        <div class=\"container\">
+            <div class=\"row\">
+                <div class=\"col-lg-7 col-md-7\">
+                    <ul class=\"top-info text-center text-md-left\">
+                        <li><h1 class=\"info-text\" style=\"color: #fff\"><img src=\"cover/images/72.png\">Carlinbleu</h1>
+                        </li>
+                    </ul>
+                </div>
+                <div class=\"col-lg-5 col-md-5\" style=\"padding-top: 15px\">
+                    <h5 class=\"text-center\" style=\"color: #fff; font-weight: 500; font-size:16px \">
+                        <a href=\"";
+        // line 52
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("login");
+        yield "\" style=\"color: #fff; font-weight: 500\">Se connecter</a>
+                        | <a href=\"";
+        // line 53
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_register");
+        yield "\" style=\"color: #fff; font-weight: 500\">Créer un compte</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header id=\"header\" class=\"header-one\">
+        <div class=\"site-navigation\">
+            <div class=\"container\">
+
+                <div class=\"nav-search\">
+                    <span id=\"search\"><i class=\"fa fa-search\"></i></span>
+                </div><!-- Search end -->
+
+                <div class=\"search-block\" style=\"display: none;\">
+                    <label for=\"search-field\" class=\"w-100 mb-0\">
+                        <input type=\"text\" class=\"form-control\" id=\"search-field\"
+                               placeholder=\"Type what you want and enter\">
+                    </label>
+                    <span class=\"search-close\">&times;</span>
+                </div><!-- Site search end -->
+            </div>
+            <!--/ Container end -->
+
+        </div>
+        <!--/ Navigation end -->
+    </header>
+    <!--/ Header end -->
+    <div id=\"banner-area\" class=\"banner-area\" style=\"background-image:url(cover/images/banner/banner1.jpg); background-color: #4e73df\">
+        <div class=\"banner-text\">
+            <div class=\"container\">
+                <div class=\"row\">
+                    <div class=\"col-lg-12\">
+                        <div class=\"banner-heading\">
+                            <h4 class=\"banner-title\" style=\"font-size: 40px; line-height: 1\">Gestionnaire de
+                                chantiers</h4>
+                            <h3 style=\"color: yellow\">Tout ce dont vous aurez BESOIN pour<br> la gestion de vos
+                                chantiers !</h3>
+                        </div>
+                    </div><!-- Col end -->
+                </div><!-- Row end -->
+            </div><!-- Container end -->
+        </div><!-- Banner text end -->
+    </div><!-- Banner area end -->
+
+    <section id=\"main-container\" class=\"main-container\">
+        <div class=\"container\">
+            <div class=\"row\">
+                <div class=\"col-lg-9\">
+                    <h3 class=\"text-center p-4\">Une application pour vous aider à mieux structurer la gestion de vos
+                        chantiers</h3>
+                    <div id=\"carouselExampleSlidesOnly\" class=\"carousel slide\" data-ride=\"carousel\">
+                        <div class=\"carousel-inner\">
+                            <div class=\"carousel-item active\">
+                                <img class=\"d-block w-100\" src=\"cover/images/pic.png\" alt=\"First slide\">
+                            </div>
+                            <div class=\"carousel-item\">
+                                <img class=\"d-block\" src=\"cover/images/pic2.png\" alt=\"Second slide\"
+                                     style=\"width: 60%; margin: auto\">
+                            </div>
+                        </div>
+                    </div>
+                    <p style=\"align-content: center\"><img class=\"d-block\" src=\"cover/images/googleplay.png\"
+                                                          alt=\"Second slide\" style=\"width:180px; margin: auto\"></p>
+                </div>
+                <div class=\"col-lg-3\" style=\"padding: 0\">
+                    <div style=\"background-color: #4e73df; margin-top: 20px; padding: 5px\">
+                        <h4 style=\"color:yellow\">- COMPTABILITÉ</h4>
+                        <ul style=\"color: #FFF; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Compte Client</li>
+                            <li>Compte Chantier</li>
+                            <li>Compte Sous Chantier</li>
+                            <li>Devis</li>
+                            <li>Décompte</li>
+                            <li>Facture</li>
+                            <li>Bon de commande</li>
+                            <li>Bon retour de commande</li>
+                            <li>Bon de livraison</li>
+                            <li>Bon de caisse</li>
+                            <li>Dépenses internes</li>
+                            <li>Gestion de la paie</li>
+                        </ul>
+                    </div>
+                    <div style=\"background-color: #4e73df; margin-top: 20px; padding: 5px\">
+                        <h4 style=\"color: yellow\">- GESTION TECHNIQUE</h4>
+                        <ul style=\"color: #FFF; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Planning</li>
+                            <li>Agenda</li>
+                            <li>Chat</li>
+                            <li>Gestion des intervenants</li>
+                            <li>Gestion du personnel</li>
+                            <li>Gestion du matériel</li>
+                            <li>Gestion des fichiers</li>
+                            <li>Gestion des articles</li>
+                            <li>Gestion des stocks</li>
+                            <li>Prévision des articles</li>
+                            <li>Messagerie</li>
+                        </ul>
+                    </div>
+
+                    <div style=\"background-color: #4e73df; margin: 20px 0 20px 0; padding: 5px\">
+                        <h4 style=\"color:yellow\">- EN PLUS</h4>
+                        <ul style=\"color: #fff; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Corbeille</li>
+                            <li>Paramètre</li>
+                            <li>Historique</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div><!-- Content row end -->
+
+        </div><!-- Conatiner end -->
+    </section><!-- Main container end -->
+
+    <footer id=\"footer\" class=\"footer\">
+        <div class=\"copyright\">
+            <div class=\"container\">
+                <div class=\"row align-items-center\">
+                    <div class=\"col-md-6\">
+                        <div class=\"copyright-info\">
+              <span style=\"font-size: 13px; color: #FFF\">Copyright &copy; <script>
+                  document.write(new Date().getFullYear())
+                </script> - Carlingroup</span>
+                        </div>
+                    </div>
+                    <div class=\"col-md-6\">
+                        <p style=\"font-size: 13px; color: #FFF; text-align: right\">Assistance & Contact: contact@carlinbleu.com</p>
+                    </div>
+                </div><!-- Row end -->
+
+                <div id=\"back-to-top\" data-spy=\"affix\" data-offset-top=\"10\" class=\"back-to-top position-fixed\">
+                    <button class=\"btn btn-primary\" title=\"Back to Top\">
+                        <i class=\"fa fa-angle-double-up\"></i>
+                    </button>
+                </div>
+
+            </div><!-- Container end -->
+        </div><!-- Copyright end -->
+    </footer><!-- Footer end -->
+
+
+    <!-- Javascript Files
+    ================================================== -->
+
+    <!-- initialize jQuery Library -->
+    <script src=\"cover/plugins/jQuery/jquery.min.js\"></script>
+    <!-- Bootstrap jQuery -->
+    <script src=\"cover/plugins/bootstrap/bootstrap.min.js\" defer></script>
+    <!-- Slick Carousel -->
+    <script src=\"cover/plugins/slick/slick.min.js\"></script>
+    <script src=\"plugins/slick/slick-animation.min.js\"></script>
+    <!-- Color box -->
+    <script src=\"cover/plugins/colorbox/jquery.colorbox.js\"></script>
+    <!-- shuffle -->
+    <script src=\"cover/plugins/shuffle/shuffle.min.js\" defer></script>
+
+
+    <!-- Google Map API Key-->
+    <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU\" defer></script>
+    <script src=\"cover/js/script.js\"></script>
+
+</div><!-- Body inner end -->
+</body>
+
+</html>
+";
+        
+        $__internal_5a27a8ba21ca79b61932376b2fa922d2->leave($__internal_5a27a8ba21ca79b61932376b2fa922d2_prof);
+
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "registration/security/accueil.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  105 => 53,  101 => 52,  48 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html ; charset=utf-8\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
+    <meta http-equiv=\"Expires\" CONTENT=\"Fri, 01 Jan 1990 00:00:00 GMT\">
+    <meta http-equiv=\"Cache-Control\"
+          CONTENT=\"private, no-store, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0\">
+    <meta http-equiv=\"Pragma\" CONTENT=\"no-cache\">
+    <title>Carlinbleu | Gestionnaire de Chantiers</title>
+    <meta content=\"no-cache, no-store, must-revalidate, post-check=0, pre-check=0\"/>
+    <meta name=\"description\" content=\"Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,
+         Gestion des articles, Planning, Gestionnaire de stock, etc.\">
+    <meta name=\"keywords\"
+          content=\"carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , showroom , matériels\">
+    <meta name=\"author\" content=\"carlinGroup\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">
+    <link href=\"https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext\" rel=\"stylesheet\"
+          type=\"text/css\"/>
+    <link href=\"https://fonts.googleapis.com/icon?family=Material+Icons\" rel=\"stylesheet\" type=\"text/css\">
+    <link rel=\"shortcut icon\" type=\"image/png\" href=\"https://www.carlinbleu.com/img/Icon-96.png\">
+    <!-- CSS
+  ================================================== -->
+    <!-- Bootstrap -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/bootstrap/bootstrap.min.css\">
+    <!-- FontAwesome -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/fontawesome/css/all.min.css\">
+    <!-- Animation -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/animate-css/animate.css\">
+    <!-- slick Carousel -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/slick/slick.css\">
+    <link rel=\"stylesheet\" href=\"cover/plugins/slick/slick-theme.css\">
+    <!-- Colorbox -->
+    <link rel=\"stylesheet\" href=\"cover/plugins/colorbox/colorbox.css\">
+    <!-- Template styles-->
+    <link rel=\"stylesheet\" href=\"cover/css/style.css\">
+
+</head>
+<body>
+<div class=\"body-inner\">
+    <div id=\"top-bar\" class=\"top-bar\" style=\"background-color: #4e73df\">
+        <div class=\"container\">
+            <div class=\"row\">
+                <div class=\"col-lg-7 col-md-7\">
+                    <ul class=\"top-info text-center text-md-left\">
+                        <li><h1 class=\"info-text\" style=\"color: #fff\"><img src=\"cover/images/72.png\">Carlinbleu</h1>
+                        </li>
+                    </ul>
+                </div>
+                <div class=\"col-lg-5 col-md-5\" style=\"padding-top: 15px\">
+                    <h5 class=\"text-center\" style=\"color: #fff; font-weight: 500; font-size:16px \">
+                        <a href=\"{{ path('login') }}\" style=\"color: #fff; font-weight: 500\">Se connecter</a>
+                        | <a href=\"{{ path('app_register') }}\" style=\"color: #fff; font-weight: 500\">Créer un compte</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header id=\"header\" class=\"header-one\">
+        <div class=\"site-navigation\">
+            <div class=\"container\">
+
+                <div class=\"nav-search\">
+                    <span id=\"search\"><i class=\"fa fa-search\"></i></span>
+                </div><!-- Search end -->
+
+                <div class=\"search-block\" style=\"display: none;\">
+                    <label for=\"search-field\" class=\"w-100 mb-0\">
+                        <input type=\"text\" class=\"form-control\" id=\"search-field\"
+                               placeholder=\"Type what you want and enter\">
+                    </label>
+                    <span class=\"search-close\">&times;</span>
+                </div><!-- Site search end -->
+            </div>
+            <!--/ Container end -->
+
+        </div>
+        <!--/ Navigation end -->
+    </header>
+    <!--/ Header end -->
+    <div id=\"banner-area\" class=\"banner-area\" style=\"background-image:url(cover/images/banner/banner1.jpg); background-color: #4e73df\">
+        <div class=\"banner-text\">
+            <div class=\"container\">
+                <div class=\"row\">
+                    <div class=\"col-lg-12\">
+                        <div class=\"banner-heading\">
+                            <h4 class=\"banner-title\" style=\"font-size: 40px; line-height: 1\">Gestionnaire de
+                                chantiers</h4>
+                            <h3 style=\"color: yellow\">Tout ce dont vous aurez BESOIN pour<br> la gestion de vos
+                                chantiers !</h3>
+                        </div>
+                    </div><!-- Col end -->
+                </div><!-- Row end -->
+            </div><!-- Container end -->
+        </div><!-- Banner text end -->
+    </div><!-- Banner area end -->
+
+    <section id=\"main-container\" class=\"main-container\">
+        <div class=\"container\">
+            <div class=\"row\">
+                <div class=\"col-lg-9\">
+                    <h3 class=\"text-center p-4\">Une application pour vous aider à mieux structurer la gestion de vos
+                        chantiers</h3>
+                    <div id=\"carouselExampleSlidesOnly\" class=\"carousel slide\" data-ride=\"carousel\">
+                        <div class=\"carousel-inner\">
+                            <div class=\"carousel-item active\">
+                                <img class=\"d-block w-100\" src=\"cover/images/pic.png\" alt=\"First slide\">
+                            </div>
+                            <div class=\"carousel-item\">
+                                <img class=\"d-block\" src=\"cover/images/pic2.png\" alt=\"Second slide\"
+                                     style=\"width: 60%; margin: auto\">
+                            </div>
+                        </div>
+                    </div>
+                    <p style=\"align-content: center\"><img class=\"d-block\" src=\"cover/images/googleplay.png\"
+                                                          alt=\"Second slide\" style=\"width:180px; margin: auto\"></p>
+                </div>
+                <div class=\"col-lg-3\" style=\"padding: 0\">
+                    <div style=\"background-color: #4e73df; margin-top: 20px; padding: 5px\">
+                        <h4 style=\"color:yellow\">- COMPTABILITÉ</h4>
+                        <ul style=\"color: #FFF; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Compte Client</li>
+                            <li>Compte Chantier</li>
+                            <li>Compte Sous Chantier</li>
+                            <li>Devis</li>
+                            <li>Décompte</li>
+                            <li>Facture</li>
+                            <li>Bon de commande</li>
+                            <li>Bon retour de commande</li>
+                            <li>Bon de livraison</li>
+                            <li>Bon de caisse</li>
+                            <li>Dépenses internes</li>
+                            <li>Gestion de la paie</li>
+                        </ul>
+                    </div>
+                    <div style=\"background-color: #4e73df; margin-top: 20px; padding: 5px\">
+                        <h4 style=\"color: yellow\">- GESTION TECHNIQUE</h4>
+                        <ul style=\"color: #FFF; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Planning</li>
+                            <li>Agenda</li>
+                            <li>Chat</li>
+                            <li>Gestion des intervenants</li>
+                            <li>Gestion du personnel</li>
+                            <li>Gestion du matériel</li>
+                            <li>Gestion des fichiers</li>
+                            <li>Gestion des articles</li>
+                            <li>Gestion des stocks</li>
+                            <li>Prévision des articles</li>
+                            <li>Messagerie</li>
+                        </ul>
+                    </div>
+
+                    <div style=\"background-color: #4e73df; margin: 20px 0 20px 0; padding: 5px\">
+                        <h4 style=\"color:yellow\">- EN PLUS</h4>
+                        <ul style=\"color: #fff; margin-left: 10px;font-size: 16px; font-weight: 600\">
+                            <li>Corbeille</li>
+                            <li>Paramètre</li>
+                            <li>Historique</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div><!-- Content row end -->
+
+        </div><!-- Conatiner end -->
+    </section><!-- Main container end -->
+
+    <footer id=\"footer\" class=\"footer\">
+        <div class=\"copyright\">
+            <div class=\"container\">
+                <div class=\"row align-items-center\">
+                    <div class=\"col-md-6\">
+                        <div class=\"copyright-info\">
+              <span style=\"font-size: 13px; color: #FFF\">Copyright &copy; <script>
+                  document.write(new Date().getFullYear())
+                </script> - Carlingroup</span>
+                        </div>
+                    </div>
+                    <div class=\"col-md-6\">
+                        <p style=\"font-size: 13px; color: #FFF; text-align: right\">Assistance & Contact: contact@carlinbleu.com</p>
+                    </div>
+                </div><!-- Row end -->
+
+                <div id=\"back-to-top\" data-spy=\"affix\" data-offset-top=\"10\" class=\"back-to-top position-fixed\">
+                    <button class=\"btn btn-primary\" title=\"Back to Top\">
+                        <i class=\"fa fa-angle-double-up\"></i>
+                    </button>
+                </div>
+
+            </div><!-- Container end -->
+        </div><!-- Copyright end -->
+    </footer><!-- Footer end -->
+
+
+    <!-- Javascript Files
+    ================================================== -->
+
+    <!-- initialize jQuery Library -->
+    <script src=\"cover/plugins/jQuery/jquery.min.js\"></script>
+    <!-- Bootstrap jQuery -->
+    <script src=\"cover/plugins/bootstrap/bootstrap.min.js\" defer></script>
+    <!-- Slick Carousel -->
+    <script src=\"cover/plugins/slick/slick.min.js\"></script>
+    <script src=\"plugins/slick/slick-animation.min.js\"></script>
+    <!-- Color box -->
+    <script src=\"cover/plugins/colorbox/jquery.colorbox.js\"></script>
+    <!-- shuffle -->
+    <script src=\"cover/plugins/shuffle/shuffle.min.js\" defer></script>
+
+
+    <!-- Google Map API Key-->
+    <script src=\"https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU\" defer></script>
+    <script src=\"cover/js/script.js\"></script>
+
+</div><!-- Body inner end -->
+</body>
+
+</html>
+", "registration/security/accueil.html.twig", "C:\\wamp64\\www\\carlinbleu\\templates\\registration\\security\\accueil.html.twig");
+    }
+}

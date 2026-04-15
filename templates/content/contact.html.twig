@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block body %}
+
+
+    <section class="content" style="margin-top: 50px !important;">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row clearfix m-t-50">
+                    <div class="col-sm-12 ">
+                        <h4 class="bolo700 col-deep-orange">CONTACTS CLIENT</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content" id="setchantier">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                    {% set countContact = 0 %}
+                    {% for client in clients %}
+                        {% for contact in client.contacts %}
+                            {% if contact.corbeille is null and client.corbeille is null %}
+                                {% set countContact = countContact + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    <div class="panel panel-pri shadow" style="margin-top: 20px !important">
+                        <div class="panel-heading bg-pri" role="tab" id="headingDeu">
+                            <h5 class="panel-title ">
+                                <a class="collapsed outai col-white" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseDeu" aria-expanded="false"
+                                   aria-controls="collapseDeu">
+                                    <i class="material-icons col-white" style="font-size:18px;float: left">keyboard_arrow_down</i>Contacts<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countContact }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseDeu" class="panel-collapse " role="tabpanel"
+                             aria-labelledby="headingDeu">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrape" style="width: 100%"
+                                           id="dataContacts">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th style="min-width: 30px !important;"></th>
+                                            <th>CONTACT</th>
+                                            <th>FONCTION</th>
+                                            <th>EMAIL</th>
+                                            <th>TÉLÉPHONE</th>
+                                            <th>BUREAU</th>
+                                            <th>CREÉ PAR</th>
+                                            <th>CLIENT</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for client in clients %}
+                                            {% for contact in client.contacts %}
+                                                {% if contact.corbeille is null and client.corbeille is null %}
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="checkbox" data-toggle="toggle" class="CONTAK"
+                                                                   value="{{ contact.id }}"></td>
+                                                        <td class="bolo600">{{ contact.contact|upper }}</td>
+                                                        <td>{{ contact.fonction|capitalize }}</td>
+                                                        <td>{{ contact.mail }}</td>
+                                                        <td>{{ contact.phone }}</td>
+                                                        <td>{{ contact.bureau }}</td>
+                                                        <td class="text-left col-blue bolo600">
+                                                            <i class="fa fa-user col-blue bolo600"></i>&nbsp;
+                                                            {% if contact.dobyuser is not null %}
+                                                                {{ contact.dobyuser.nom|upper }}
+                                                                &nbsp;{{ contact.dobyuser.prenoms|upper }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td><b>{{ client.nomclient }}</b></td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

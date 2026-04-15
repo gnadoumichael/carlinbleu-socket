@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block body %}
+
+    <input type="text" class="hide" id="idchan" value="{{ chantier.id }}"/>
+    <input type="text" class="hide" id="page" value="dndecomptes"/>
+
+    <section class="content" style="margin-top: 50px !important;">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row clearfix m-t-50">
+                    <div class="col-sm-12 ">
+                        <h4 class="bolo700 col-deep-orange">DÉCOMPTES NON VALIDÉS</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content" id="setchantier">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+
+
+                    {% set decnv = 0 %}
+                    {% for client in clients %}
+                        {% if client.type is null and  client.corbeille is null %}
+                            {% for chantier in client.chantiers %}
+                                {% if (chantier.corbeille is null) %}
+                                    {% if (chantier.etat == "encours" or chantier.etat == "etude" ) %}
+                                        {% for decompte in chantier.decomptes %}
+                                            {% if decompte.etat == 'save' %}
+                                                {% if decompte.corbeille is null %}
+                                                    {% set  decnv = decnv + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="panel panel-pri">
+                        <div class="panel-heading bg-pri" role="tab" id="headingDeco">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseDeco" aria-expanded="false"
+                                   aria-controls="collapseDeco" style="font-size: 16px!important">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>
+                                    Décomptes non validés<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ decnv }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseDeco" class="panel-collapse" role="tabpanel"
+                             aria-labelledby="headingDeco">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive">
+                                    <table class="table-striped table-bordered display nowrap" style="width: 100%"
+                                           id="dataDECOMPTE4">
+                                        <thead>
+                                        <tr class="text-center bolderr">
+                                            <th class="mw30"></th>
+                                            <th class="mw30"></th>
+                                            <th>DATE</th>
+                                            <th>N° DÉCOMPTE</th>
+                                            <th>N° DEVIS</th>
+                                            <th>N° FACTURE</th>
+                                            <th>MONTANT TTC</th>
+                                            <th>AVANCEMENT</th>
+                                            <th>VALEUR TTC</th>
+                                            <th>ETAT</th>
+                                            <th>CREÉ PAR</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for client in clients %}
+                                            {% if client.type is null and  client.corbeille is null %}
+                                                {% for chantier in client.chantiers %}
+                                                    {% if (chantier.corbeille is null) %}
+                                                        {% if (chantier.etat == "encours" or chantier.etat == "etude" ) %}
+                                                            {% for decompte in chantier.decomptes %}
+                                                                {% if decompte.etat == 'save' %}
+                                                                    {% if decompte.corbeille is null %}
+                                                                        <tr>
+                                                                            <td class="text-center">
+                                                                                <input type="checkbox"
+                                                                                       data-toggle="toggle"
+                                                                                       class="DECO4"
+                                                                                       value="{{ decompte.id }}"></td>
+                                                                            <td class="text-center">
+                                                                                <a href="#"
+                                                                                   onclick="shasha({{ decompte.id }},'imprimdecompte');">
+                                                                                    <i class="fa fa-eye col-green"
+                                                                                       aria-hidden="true"></i>
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{ decompte.date|date('y.m.d H:m') }}</td>
+                                                                            <td>
+                                                                                <a href="{{ path('editdecompte',{'id':decompte.id, 'idchantier':decompte.chantier.id}) }}"
+                                                                                   class="bolo600"
+                                                                                   style="color:dodgerblue"><span
+                                                                                            class="badge badge-pill badge-blue-grey">V</span>&nbsp;DÉCOMPTE&nbsp;N°{{ decompte.numdecompte }}
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>
+                                                                                <a href="{{ path('editdevis',{'id':decompte.devis.id, 'idchantier':decompte.chantier.id}) }}"
+                                                                                   class="bolo600"
+                                                                                   style="color:dodgerblue">
+                                                                                    {% if decompte.devis.etat == 'valide' %}
+                                                                                        <span class="badge badge-pill badge-primary">V</span>
+                                                                                    {% else %}
+                                                                                        <span class="badge badge-pill badge-blue-grey">V</span>
+                                                                                    {% endif %}
+                                                                                    DEVIS&nbsp;N°&nbsp;{{ decompte.devis.iddevis }}
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>
+                                                                                {% if decompte.facture %}
+                                                                                    <a href="{{ path('editfacture', {'id': decompte.facture.id , 'idchantier':decompte.chantier.id}) }}"
+                                                                                       class="bolo600"
+                                                                                       class="col-pink">
+                                                                                        {% if decompte.facture.etat == 'valide' %}
+                                                                                            <span class="badge badge-pill badge-primary">V</span>
+                                                                                        {% else %}
+                                                                                            <span class="badge badge-pill badge-blue-grey">V</span>
+                                                                                        {% endif %}
+                                                                                        FACTURE&nbsp;N°&nbsp;{{ decompte.facture.numfacture }}
+                                                                                    </a>
+                                                                                {% endif %}
+                                                                            </td>
+                                                                            {% if decompte.devis.ptva == 'non' %}
+                                                                                <td class="text-right bolo600">{{ decompte.totalht|number_format(2,',',' ') }}</td>
+                                                                            {% else %}
+                                                                                <td class="text-right bolo600">{{ (decompte.totalht + ((decompte.totalht * decompte.devis.tva)/100) )|number_format(2,',',' ') }}</td>
+                                                                            {% endif %}
+
+                                                                            <td class="text-center col-pink bolo600">{{ decompte.avancement|number_format(2,',',' ') }}
+                                                                                %
+                                                                            </td>
+
+                                                                            {% if decompte.devis.ptva == 'non' %}
+                                                                                <td class="text-right bolo600">{{ decompte.apayer|number_format(2,',',' ') }}</td>
+                                                                            {% else %}
+                                                                                <td class="text-right bolo600">{{ (decompte.apayer + ((decompte.apayer * decompte.devis.tva)/100) )|number_format(2,',',' ') }}</td>
+                                                                            {% endif %}
+
+                                                                            <td>
+                                                                                <a href="{{ path('chantier',{'id':decompte.chantier.id}) }}">{{ chantier.client.nomclient }}
+                                                                                    |
+                                                                                    {{ chantier.nomchantier }}</a></td>
+                                                                            <td class="text-left col-blue bolo600">
+                                                                                <i class="fa fa-user col-blue bolo600"></i>&nbsp;
+                                                                                {% if decompte.dobyuser is not null %}
+                                                                                    {{ decompte.dobyuser.nom|upper }}&nbsp;{{ decompte.dobyuser.prenoms|upper }}
+                                                                                {% endif %}
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {# DECOMPTE #}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

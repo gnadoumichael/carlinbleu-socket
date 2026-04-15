@@ -1,0 +1,331 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block body %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <table class="table-bordered" style="width: 100%" id="dataPARTAGE3">
+                        <thead>
+                        <tr style="color: dimgray !important;">
+                            <th>SHOWROOMS</th>
+                            <th>LETTRE</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td class="text-pri">
+                                    {% for gale in user.galeries %}
+                                        {% if gale.position == 0 and gale.info == 'oui' %}
+                                            <a href="{{ path('provider', {'iduser': user.id}) }}"><img
+                                                        src="{{ asset('gallery/') }}{{ gale.link }}"
+                                                        style="float: left; margin-right: 5px; width: 80px; height: 80px"
+                                                        class="shadow"></a>
+                                        {% endif %}
+                                        {% if gale.position == 0 and gale.info == 'non' %}
+                                            <img src="{{ asset('gallery/not.png') }}"
+                                                 style="float: left; margin-right: 5px; width: 80px; height: 80px"
+                                                 class="shadow">
+                                        {% endif %}
+                                    {% endfor %}
+                                    <a href="{{ path('provider', {'iduser': user.id}) }}"><b class="text-pri"
+                                                                                             style="font-size: large">{{ user.societe|upper }}</b></a><br>
+                                    <b class="text-danger" style="font-size: small">{{ user.contact }}</b><br>
+                                    {{ user.adresse }}</p>
+                                </td>
+
+                                <td>{{ user.societe|first|upper }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if editmode %}
+                    {% for article in articles %}
+                        {% if article.vente == 'oui' %}
+                            <!-- Modal -->
+                            <div class="modal fade" id="article{{ article.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Description de
+                                                l'article</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <img src="{% if article.info1 == 'oui' %}{{ asset('articles/') }}{{ article.link1 }}{% endif %}"
+                                                 style="width:100%;border: 1px solid #000">
+                                            <div class="card shadow mb-4" style="height:auto; padding: 15px">
+                                                <h5>{{ article.designation }}</h5>
+                                                <h4 class="text-danger">{{ article.pu|number_format(2, ',', ' ') }}
+                                                    {{ article.monnaies.code }}</h4>
+                                                <table class="table-striped border" style="font-size: 1rem">
+                                                    {% if article.code != null %}
+                                                        <tr>
+                                                            <td>Code Article</td>
+                                                            <td class="text-pri">{{ article.code }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if article.marque != null %}
+                                                        <tr>
+                                                            <td>Marque</td>
+                                                            <td class="text-pri">{{ article.marque }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if article.reference != null %}
+                                                        <tr>
+                                                            <td>Référence</td>
+                                                            <td class="text-pri">{{ article.reference }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if article.unite != null %}
+                                                        <tr>
+                                                            <td>Vendu en</td>
+                                                            <td class="text-pri">{{ article.unite }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    {% if article.description != null %}
+                                                        <tr>
+                                                            <td>Description</td>
+                                                            <td class="text-pri">{{ article.description }}</td>
+                                                        </tr>
+                                                    {% endif %}
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-sm-8">
+                {% if editmode %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card shadow mb-4 bg-white" style=" padding:15px">
+                                <div class="card-body">
+                                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="float: left; width: 40%">
+                                        <ol class="carousel-indicators">
+                                            <li class="active" data-slide-to="0"
+                                                data-target="#carouselExampleIndicators"></li>
+                                            <li data-slide-to="1" data-target="#carouselExampleIndicators"></li>
+                                            <li data-slide-to="2" data-target="#carouselExampleIndicators"></li>
+                                            <li data-slide-to="3" data-target="#carouselExampleIndicators"></li>
+                                            <li data-slide-to="4" data-target="#carouselExampleIndicators"></li>
+                                        </ol>
+                                        <div class="carousel-inner">
+                                            {% for gale in user.galeries %}
+                                                {% if gale.info == 'oui' and gale.position != 0 %}
+                                                    <div class="carousel-item {% if gale.position == 1 %}active{% endif %} ">
+                                                        <img class="d-block w-100"
+                                                             src="{{ asset('gallery/') }}{{ gale.link }}"
+                                                             style="width: 450px; height: 450px">
+                                                    </div>
+                                                {% else %}
+                                                    <div class="carousel-item {% if gale.position == 1 %}active{% endif %}">
+                                                        <img class="d-block w-100" src="{{ asset('gallery/not.png') }}"
+                                                             style="width: 450px; height: 450px">
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                                           data-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                                           data-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </div>
+                                    <br><br>
+                                            <table class="table-bordered" id="dataPARTAGE">
+                                        <thead>
+                                        <tr style="color: dimgray !important;">
+                                            <th style="width: 10px !important;"></th>
+                                            <th>ARTICLE</th>
+                                            <th>FAMILLE</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for article in articles %}
+                                            {% if article.vente == 'oui' %}
+                                                <tr>
+                                                    <td class="text-center"><input type="checkbox" data-toggle="toggle"
+                                                                                   class="PARTAR"
+                                                                                   value="{{ article.id }}"></td>
+                                                    <td class="text-pri">
+                                                        <a href="#" data-toggle="modal"
+                                                           data-target="#article{{ article.id }}"
+                                                           title="{{ article.designation|upper }}"
+                                                           class="font-weight-bold">
+                                                            {{ article.designation|upper }}</a>
+                                                        <br>
+                                                        <span class="text-dangerr">
+													{{ article.pu|number_format(2, ',', ' ') }}
+                                                            {{ article.monnaies.code }}/{{ article.unite }}
+												</span><br>
+                                                        Réf:
+                                                        {{ article.reference }}
+                                                    </td>
+                                                    <td>{{ article.typeArticle.type|upper }}
+                                                        |
+                                                        {{ article.biblio.section|upper }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="accordion">
+                        {% set p = 0 %}
+                        {#  CATEGORIES D'ARTICLES #}
+                        {% for typ in user.getTypearticle %}
+                            <div class="card shadow mb-4 bg-light " style="margin-bottom: 20px; padding: 10px">
+                                <div id="heading{{ p }}">
+                                    <h5 class="mb-0">
+                                        <a class="btn bg-pri text-left text-white pan" data-toggle="collapse"
+                                           data-target="#collapse{{ p }}" aria-expanded="true"
+                                           aria-controls="collapse{{ p }}" style="width: 100%;">
+                                            {{ typ.type|upper }}
+                                            {% set q = 0 %}
+                                            {% for article in articles %}
+                                                {% if article.vente == 'oui' and article.typeArticle == typ %}
+                                                    {% set q = q + 1 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span class="badge badge-light float-right"
+                                                  style="margin-top: 6px">{{ q }}</span>
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div id="collapse{{ p }}"
+                                     class="{% if p == 0 %}collapse show{% else %}collapse{% endif %}"
+                                     aria-labelledby="heading{{ p }}" data-parent="#accordion">
+                                    <div class="card-body">
+
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <div id="carouselExample" class="carousel slide" data-ride="carousel">
+                                                    <div class="button-placement" style="margin-bottom: 5px">
+                                                        <a class="btn btn-sm btn-primary" href="#carouselExample"
+                                                           role="button" data-slide="prev">
+                                                            <i class="fas fa-chevron-circle-left"></i>
+                                                        </a>
+                                                        <a class="btn btn-sm btn-primary" href="#carouselExample"
+                                                           role="button" data-slide="next">
+                                                            <i class="fas fa-chevron-circle-right"></i>
+                                                        </a>
+                                                    </div>
+
+                                                    <div id="carouselExample" class="carousel slide"
+                                                         data-ride="carousel">
+                                                        <div class="carousel-inner">
+                                                            <div class="carousel-item active">
+                                                                <div class="row">
+                                                                    {% set i = 1 %}
+                                                                    {% for article in articles %}
+                                                                    {% if article.vente == 'oui' and article.typeArticle == typ %}
+                                                                    <div class="col-md-4 col-sm-12" style=" padding: 15px">
+                                                                        <div class="shadow"
+                                                                             style="border: 1px solid gainsboro; padding: 5px"
+                                                                             alt="Product">
+                                                                            <a href="#" data-toggle="modal"
+                                                                               data-target="#article{{ article.id }}"
+                                                                               title="{{ article.designation|upper }}">
+                                                                                <img src="{% if article.info1 == 'oui' %}{{ asset('articles/'~article.link1) }}{% else %}{{ asset('gallery/not.png') }}{% endif %}"
+                                                                                     width="100%"></a>
+
+                                                                            <h6>{{ article.designation[0:35]|capitalize }}</h6>
+                                                                            <medium>Réf:
+                                                                                {{ article.reference }}</medium>
+                                                                            <h6 class="text-dangerr"
+                                                                                style="font-size: 14px">Prix:
+                                                                                {{ article.pu|number_format(2, '.', ' ') }}
+                                                                                {{ article.monnaies.code }}
+                                                                                /{{ article.unite }}</h6>
+
+                                                                            {% if(app.user) %}
+                                                                                {% set k = 0 %}
+                                                                                {% for arti in artik %}
+                                                                                    {% if(app.user != user) %}
+                                                                                        {% if article.id == arti.article.id and k == 0 %}
+                                                                                            <button class="btn btn-sm btn-danger"
+                                                                                                    id="{{ article.getId() }}"
+                                                                                                    style="width: 100%"
+                                                                                                    onclick="aamigrate({{ article.getId() }})">
+                                                                                                Article déjà ajouté
+                                                                                            </button>
+                                                                                            {% set k = k + 1 %}
+                                                                                        {% endif %}
+                                                                                    {% endif %}
+                                                                                {% endfor %}
+                                                                                {% if(app.user != user) %}
+                                                                                    {% if k == 0 %}
+                                                                                        <button class="btn btn-sm btn-primary"
+                                                                                                id="{{ article.getId() }}"
+                                                                                                style="width: 100%"
+                                                                                                onclick="aamigrate({{ article.getId() }})">
+                                                                                            Ajouter à mes articles
+                                                                                        </button>
+                                                                                    {% endif %}
+                                                                                    <button class="btn btn-sm btn-warning"
+                                                                                            style="width: 100%">
+                                                                                        Commander
+                                                                                    </button>
+                                                                                {% endif %}
+                                                                            {% endif %}
+
+                                                                        </div>
+                                                                    </div>
+                                                                    {% set m = i%3 %}
+                                                                    {% if m == 0 and articles|length > 3 %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="carousel-item">
+                                                                <div class="row">
+                                                                    {% endif %}
+                                                                    {% set i = i + 1 %}
+                                                                    {% endif %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% set p = p + 1 %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

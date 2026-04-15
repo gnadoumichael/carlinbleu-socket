@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block body %}
+
+    <input type="text" class="hide" id="idchan" value="{{ chantier.id }}"/>
+    <input type="text" class="hide" id="page" value="dndevis"/>
+
+    <section class="content" style="margin-top: 50px !important;">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row clearfix m-t-50">
+                    <div class="col-sm-12 ">
+                        <h4 class="bolo700 col-deep-orange">DEVIS NON VALIDÉS</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content" id="setchantier">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-pri shadow"
+                         style="border-left: 2px solid #E91E63;">
+                        <div class="panel-heading" role="tab" id="headingOne_1">
+                            <h5 class="panel-title">
+                                <a class="collapsed outai col-white" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseOne_1p" aria-expanded="false"
+                                   aria-controls="collapseOne_1">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Devis non validés
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseOne_1p" class="panel-collapse" role="tabpanel"
+                             aria-labelledby="headingOne_1">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrap" style="width: 100%"
+                                           id="dataDEVIS4">
+                                        <thead>
+                                        <tr class="text-center bolderr"
+                                            style="background-color: #f9f9f9 !important;">
+                                            <th class="mw30"></th>
+                                            <th class="mw30"></th>
+                                            <th>DATE</th>
+                                            <th>N° DEVIS</th>
+                                            <th>TOTAL HT</th>
+                                            <th>TOTAL TTC</th>
+                                            <th>RÉFÉRENCE</th>
+                                            <th>ETAT</th>
+                                            <th>CREÉ PAR</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set dtth = 0 %}
+                                        {% set dttc = 0 %}
+                                        {% for client in clients %}
+                                            {% if client.corbeille is null and client.type is null %}
+                                                {% for devis in client.devis %}
+                                                    {% if devis.chantier.corbeille  is null %}
+                                                    {% if devis.chantier.etat == 'encours' or devis.chantier.etat == 'etude' %}
+                                                        {% if devis.etat == 'save' and devis.type != "esti" %}
+                                                            {% if devis.corbeille is null %}
+                                                                <tr>
+                                                                    <td class="text-center">
+                                                                        <input type="checkbox" data-toggle="toggle"
+                                                                               class="DEVYS4"
+                                                                               value="{{ devis.id }}"></td>
+                                                                    <td class="text-center">
+                                                                        <a href="#"
+                                                                           onclick="shasha({{ devis.id }},'imprimdevis');">
+                                                                            <i class="fa fa-eye col-green"
+                                                                               aria-hidden="true"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>{{ devis.date|date('y.m.d H:m') }}</td>
+                                                                    <td>
+                                                                        <a href="{{ path('editdevis',{'id':devis.id, 'idchantier':devis.chantier.id}) }}"
+                                                                           class="bolo600"
+                                                                           style="color:dodgerblue">
+                                                                            {% if devis.etat == "valide" %}
+                                                                            <span class="badge badge-pill badge-primary"
+                                                                                  title="Validé par {% if devis.vabyuser is not null %}
+                                                                                  {{ devis.vabyuser.prenoms|upper }}{% endif %}">V</span>
+                                                                        {% else %}
+                                                                            <span class="badge badge-pill col-white"
+                                                                                  title="Dévalidé par {% if devis.vabyuser is not null %}
+                                                                                   {{ devis.vabyuser.prenoms|upper }}{% endif %}">V</span>
+                                                                            {% endif %}&nbsp;DEVIS
+                                                                            N°{{ devis.iddevis }}
+                                                                        </a>
+                                                                    </td>
+
+                                                                    <td class="text-right bolo600">{{ devis.totalht|number_format(2,',',' ') }}</td>
+                                                                    <td class="text-right bolo600">{{ devis.totalttc|number_format(2,',',' ') }}</td>
+                                                                    <td class="col-deep-orange"
+                                                                        title="{{ devis.devreference|striptags|raw }}">
+                                                                        {{ devis.devreference|striptags|length > 30 ? devis.devreference|striptags|slice(0, 30)|capitalize ~ '…' :
+                                                                        devis.devreference|striptags|capitalize }}</td>
+                                                                    <td title="{{ devis.devreference|striptags|raw }}">
+                                                                        <a href="{{ path('chantier',{'id':devis.chantier.id}) }}">{{ devis.client.nomclient|upper }}
+                                                                            | {{ devis.chantier.nomchantier|upper }}</a>
+                                                                    </td>
+
+                                                                    <td class="text-left col-blue bolo600">
+                                                                        <i class="fa fa-user col-blue bolo600"></i>&nbsp;{{ devis.dobyuser.nom|upper }}
+                                                                        &nbsp;{{ devis.dobyuser.prenoms|upper }}
+                                                                    </td>
+                                                                </tr>
+                                                                {% set dtth = devis.totalht + dtth %}
+                                                                {% set dttc = devis.totalttc + dttc %}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                        <tfoot>
+                                        <tr class="text-center bolderr">
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th class="text-center bg-blue col-white">{{ dtth|number_format(2,',',' ') }}</th>
+                                            <th class="text-center bg-blue col-white">{{ dttc|number_format(2,',',' ') }}</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

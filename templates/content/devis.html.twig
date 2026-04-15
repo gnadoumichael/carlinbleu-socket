@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html ; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Carlinbleu | Gestion et Suivi de Chantier</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description"
+          content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , showroom , matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+
+    {{ encore_entry_link_tags('apdevis') }}
+
+</head>
+<body class="theme-red" style="background-color: #d1d3e2 !important;" id="bod">
+<style>
+    .bood {
+        position: relative;
+        width: 100%;
+        height: {{ 30 - forte.headerHeight - forte.footerHeight }}cm;
+        padding-left: 1cm;
+        padding-right: 1cm;
+        overflow-y: scroll;
+    }
+
+    .footer {
+        height: {{forte.footerHeight}}cm;
+        bottom: 0;
+    }
+
+    .header {
+        height: {{ forte.headerHeight }}cm;
+        -webkit-print-color-adjust: exact;
+        top: 0;
+    }
+
+    @media print {
+        .footer-space {
+            height: {{forte.footerHeight}}cm;
+        }
+
+        .header-space {
+            height: {{ forte.headerHeight }}cm;
+            margin-top: {{ forte.teteDH }}cm;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+        }
+
+        th {
+            background-color: {{ forte.decolor }} !important;
+            color: {{ forte.decolortex }} !important;
+        }
+
+        table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            font-size: {{forte.dsize}}px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+
+    }
+</style>
+<style>
+    .kop {
+        font-weight: 700
+    }
+
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+        font-size: {{forte.dsize}}px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    .togo {
+        background-color: #EAEDED !important;
+        font-size: {{forte.dsize}}px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    td.borde {
+        border-spacing: 0;
+        border-collapse: collapse;
+        border: solid #D3D3D3;
+        border-width: 1px 1px 1px 1px !important;
+        padding: 4px !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    td.barder {
+        border-spacing: 0;
+        border-collapse: collapse;
+        border: solid #D3D3D3;
+        border-width: 0 1px 1px 0 !important;
+        padding: 4px !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+
+    tr.printer {
+        background-color: {{ forte.decolor }} !important;
+        color: {{ forte.decolortex }} !important;
+        text-align: center;
+    }
+
+    tr.printa {
+        background-color: {{forte.decolor}} !important;
+        color: {{ forte.decolortex }} !important;
+        text-align: center;
+    }
+
+    th.borde {
+        border: solid #D3D3D3;
+        border-width: 1px 1px 1px 1px;
+        padding: 5px 15px 5px 15px;
+    }
+
+    th.barde {
+        border: solid #D3D3D3;
+        border-width: 0 1px 0 0;
+        padding: 5px;
+    }
+
+    th.bor {
+        border: solid #D3D3D3;
+        border-width: 1px 1px 1px 1px;
+        padding: 5px;
+    }
+
+    td.bordz {
+        border: 0 solid #FFFFFF !important;
+        padding: 0 0 0 5px !important;
+    }
+
+    #modif td {
+        border: none !important;
+    }
+
+    .pp100 {
+        padding: 10px !important;
+    }
+
+</style>
+
+<div class="modal fade" id="ModalSearch" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center" id="defaultModalLabel">RECHERCHER<br>
+                    <span class="col-pink" style="font-size: 14px; ">Chantier- Devis - Bon de commande - Bon de livraison - Facture - Bon de caisse</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Rechercher..." id="richi"
+                           style="border: 2px solid dodgerblue; padding: 10px"/>
+                </div>
+                <div id="ressult" style="width: 100%; align-content: start" class="text-left"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">FERMER</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErreur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body" style="height: 120px !important;">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    IMPOSSIBLE DE TRAITER VOTRE REQUÊTE
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErrCai" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    VEUILLEZ SVP SUPPRIMER LES BONS DE CAISSE CRÉES
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErrInterve" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    MONTANT À PAYER INFÉRIEUR AU MONTANT DÉJÀ RECU.
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErreurDEVIS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fa fa-exclamation-circle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-pink">
+                    DES OPÉRATIONS ONT ÉTÉ FAITS SUR CE DEVIS. VEUILLEZ SVP LES DÉVALIDER ÉGALEMENT.
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalSucces" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-green">
+                <h4>
+                    REQUÊTE ACCEPTÉE
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-check-circle fa-4x animated rotateIn col-green"></i>
+                <h4 class="col-green">
+                    VALIDATION EN COURS ....
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="Traitement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-primary">
+                <h4 class="font-bold">
+                    TRAITEMENT
+                </h4>
+            </div>
+            <div class="modal-body p-t-25" style="height: 100px !important;">
+                <div class="preloader">
+                    <div class="spinner-layer pl-blue">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ÊTES VOUS SUR ?
+                </h4>
+            </div>
+            <div class="modal-body" style="height: 100px !important;">
+                <i class="fas fa-times fa-4x animated rotateIn col-pink"></i>
+            </div>
+            <div class="text-center">
+                <div type="button" id="accept" class="btn btn-link waves-effect text-white bg-primary">
+                    OUI
+                </div>
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    NON
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmDevaDevis" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-blue">
+                <h4>DES OPÉRATIONS PEUVENT ÊTRE LIÉES À CE DEVIS.</h4>
+                <h4>CONTINUER ?</h4>
+            </div>
+            <div class="modal-body">
+                <i class="fa fa-exclamation-circle col-deep-orange" style="font-size: 50px"></i>
+            </div>
+            <div class="text-center">
+                <div type="button" id="acceptDeva" class="btn btn-link waves-effect text-white bg-primary">
+                    OUI
+                </div>
+                <div type="button" id="closeDeva" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    NON
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="large" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="shadow bg-white devtohide"
+                 style="height:29.7cm; margin: auto; padding: 0.6cm;" id="shacontent">
+                <iframe id="frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar bg-blue">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse"
+               data-target="#navbar-collapse" aria-expanded="false"></a>
+            <a href="javascript:void(0);" class="bars"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-right m-t-5">
+                {% if libre is not defined %}
+                    {% if app.user %}
+                        <li class="col-yellow h4 bolo600 m-l-20">
+                            {{ app.user.nom|upper }}
+                            {{ app.user.prenoms|upper }}
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% if app.user %}
+                    {% if libre is not defined and app.user %}
+                        <li class="hidere"><a href="javascript:void(0);" data-close="true">
+                           <span class="js-right-sidebars badge bg-purple">CHANTIERS EN ÉTUDE</span></a>
+                        </li>
+                        <li class="hidere"><a href="javascript:void(0);" data-close="true">
+                           <span class="js-right-sidebar badge bg-pink">CHANTIERS EN COURS</span></a>
+                        </li>
+                        <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                            <i class="material-icons">notifications</i>
+                        </a>
+                        <ul class="dropdown-menu bg-light" style="width: 370px !important">
+                            <li class="header col-pink" style="font-size: 16px">ACTIONS</li>
+                            <li class="body">
+                                <ul class="menu" style="width: 340px !important">
+                                    {% for history in history %}
+                                        <li>
+                                            <a href="javascript:void(0);">
+                                                <div class="menu-info">
+                                                    <h5 class="col-indigo font-weight-bold">{{ history.action|striptags|raw }}</h5>
+                                                    <h5 class="col-pink font-weight-bold">
+                                                        Par: {{ history.dobyuser.nom|upper }} {{ history.dobyuser.prenoms|upper }}</h5>
+                                                    <p class="col-black">
+                                                        <i class="material-icons">access_time</i> <span
+                                                                style="font-size: 14px">{{ history.date|date('d.m.Y H.m') }}</span>
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="footer bg-blue col-white">
+                                <a href="{{ path('historique') }}" class="bolo text-white" style="font-size: 16px">
+                                    Voir toutes les actions
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                    <li class="hidere">
+                        <a data-toggle="modal" data-target="#ModalSearch">
+                            <i class="material-icons">search</i>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="#" id="tgol" title="Page d'acceuil">
+                        <i class="material-icons">exit_to_app</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section>
+    <aside id="leftsidebar" class="sidebar text-center bg-pri"
+           style="z-index: 1000 !important; margin-top: -70px; width: 240px; height: 100%">
+        <div class="user-info" style="height: 150px !important;">
+            <img src="{{ asset('img/logoy.png') }}" style="float: left; width: 200px !important;margin-top: 10px"/>
+        </div>
+        <div class="menu">
+            <ul class="list">
+                <li class="active">
+                    {% if page is defined and page == 'page' %}
+                        <a href="{{ path('welcome') }}" class="bolo">
+                            <i class="material-icons col-yellow">home</i>
+                            <span class="col-yellow">ACCUEIL</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('welcome') }}" class="bolo">
+                            <i class="material-icons text-white">home</i>
+                            <span class="text-white">Accueil</span>
+                        </a>
+                    {% endif %}
+                </li>
+                {% if app.user %}
+                    <li class="active">
+                        {% if page is defined and page == 'message' %}
+                            <a href="{{ path('message') }}" class="bolo">
+                                <i class="material-icons col-yellow">email</i>
+                                <span class="col-yellow">MESSAGERIE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('message') }}" class="bolo">
+                                <i class="material-icons text-white">email</i>
+                                <span class="text-white">Messagerie</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'article' %}
+                            <a href="{{ path('article') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">GESTION DES ARTICLES</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('article') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Gestion des articles</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'listeclient' %}
+                            <a href="{{ path('listeclient') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">LISTE DES CLIENTS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('listeclient') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Liste des clients</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanetude' %}
+                            <a href="{{ path('chanetude') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">CHANTIERS EN ÉTUDE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanetude') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Chantiers en étude</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chancours' %}
+                            <a href="{{ path('chancours') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS EN COURS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chancours') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers en cours</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanechouer' %}
+                            <a href="{{ path('chanechouer') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS ÉCHOUÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanechouer') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers échoués</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanclotures' %}
+                            <a href="{{ path('chanclotures') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS CLÔTURÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanclotures') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers clôturés</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chantermines' %}
+                            <a href="{{ path('chantermines') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS TERMINÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chantermines') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers terminés</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'technique' %}
+                            <a href="{{ path('technique') }}" class="bolo">
+                                <i class="material-icons col-yellow">open_with</i>
+                                <span class="col-yellow">GESTION TECHNIQUE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('technique') }}" class="bolo">
+                                <i class="material-icons text-white">open_with</i>
+                                <span class="text-white">Gestion technique</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'materiel' %}
+                            <a href="{{ path('materiel') }}" class="bolo">
+                                <i class="material-icons col-yellow">bubble_chart</i>
+                                <span class="col-yellow">GESTION DU MATÉRIEL</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('materiel') }}" class="bolo">
+                                <i class="material-icons text-white">bubble_chart</i>
+                                <span class="text-white">Gestion du matériel</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'personnel' %}
+                            <a href="{{ path('personnel') }}" class="bolo">
+                                <i class="material-icons col-yellow">people_outline</i>
+                                <span class="col-yellow">GESTION DU PERSONNEL</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('personnel') }}" class="bolo">
+                                <i class="material-icons text-white">people_outline</i>
+                                <span class="text-white">Gestion du personnel</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'paie' %}
+                            <a href="{{ path('paie') }}" class="bolo">
+                                <i class="material-icons col-yellow">toll</i>
+                                <span class="col-yellow">POINTS DE PAIE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('paie') }}">
+                                <i class="material-icons text-white">toll</i>
+                                <span class="text-white">Points de paie</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'parametre' %}
+                            <a href="{{ path('parametre') }}" class="bolo">
+                                <i class="material-icons col-yellow">center_focus_weak</i>
+                                <span class="col-yellow">PARAMÈTRES</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('parametre') }}" class="bolo">
+                                <i class="material-icons text-white">center_focus_weak</i>
+                                <span class="text-white">Paramètres</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'historique' %}
+                            <a href="{{ path('historique') }}" class="bolo">
+                                <i class="material-icons col-yellow">history</i>
+                                <span class="col-yellow">HISTORIQUE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('historique') }}" class="bolo">
+                                <i class="material-icons text-white">history</i>
+                                <span class="text-white">Historique</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'corbeille' %}
+                            <a href="{{ path('corbeille') }}" class="bolo">
+                                <i class="material-icons col-yellow">delete</i>
+                                <span class="col-yellow">CORBEILLE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('corbeille') }}" class="bolo">
+                                <i class="material-icons text-white">delete</i>
+                                <span class="text-white">Corbeille</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+
+    </aside>
+    <aside id="rightsidebars" class="right-sidebars m-t--25 p-t-10" style="overflow: scroll">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="chantier">
+                <div class="table-responsive" style="padding: 10px !important;">
+                    {% if libre is not defined %}
+                        {% set q = 0 %}
+                        {% for client in clients %}
+                            {% set p = 0 %}
+                            {% if client.corbeille is null and client.chantiers.count > 0 %}
+                                {% if client.type is null %}
+                                    <table class="table-bordered shadow" style=" overflow: scroll; width: 100%">
+                                        {% if q == 0 %}
+                                            <tr>
+                                                <td colspan="2" class="bg-purple text-white"
+                                                    style="padding-left: 5px;">CHANTIERS EN ÉTUDE
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null %}
+                                                {% if chantier.etat == "etude" %}
+                                                    {% if p == 0 %}
+                                                        <tr>
+                                                            <td colspan="2" class="bg-blue text-white"
+                                                                style="padding-left: 5px;">
+                                                                <a href="{{ path('client',{id: client.id}) }}"
+                                                                   class="text-white" title="{{ client.nomclient }}">
+                                                                    -
+                                                                    {{ client.nomclient }}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <tr>
+                                                        <td style="padding-left: 5px" colspan="2" class="bg-light">
+                                                            <a href="{{ path(
+                                                                'chantier',
+                                                                {
+                                                                    id: chantier.id
+                                                                }
+                                                            ) }}" class="text-pri" title="{{ chantier.nomchantier }}">
+                                                                # {{ chantier.nomchantier[0:55]|upper }}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% set p = p + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                    {% set q = q + 1 %}
+                                {% endif %}
+                            {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </aside>
+    <aside id="rightsidebar" class="right-sidebar m-t--25 p-t-10" style="overflow: scroll">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="chantier">
+                <div class="table-responsive" style="padding: 10px !important;">
+                    {% if libre is not defined %}
+                        {% set q = 0 %}
+                        {% for client in clients %}
+                            {% set p = 0 %}
+                            {% if client.corbeille is null and client.chantiers.count > 0 %}
+                                {% if client.type is null %}
+                                    <table class="table-bordered shadow" style=" overflow: scroll; width: 100%">
+                                        {% if q == 0 %}
+                                            <tr>
+                                                <td colspan="2" class="bg-pink text-white"
+                                                    style="padding-left: 5px;">CHANTIERS EN COURS
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null %}
+                                                {% if chantier.etat == "encours" %}
+                                                    {% if p == 0 %}
+                                                        <tr>
+                                                            <td colspan="2" class="bg-blue text-white"
+                                                                style="padding-left: 5px;">
+                                                                <a href="{{ path('client',{id: client.id}) }}"
+                                                                   class="text-white" title="{{ client.nomclient }}">
+                                                                    -
+                                                                    {{ client.nomclient }}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <tr>
+                                                        <td style="padding-left: 5px" colspan="2" class="bg-light">
+                                                            <a href="{{ path(
+                                                                'chantier',
+                                                                {
+                                                                    id: chantier.id
+                                                                }
+                                                            ) }}" class="text-pri" title="{{ chantier.nomchantier }}">
+                                                                # {{ chantier.nomchantier[0:55]|upper }}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% set p = p + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                    {% set q = q + 1 %}
+                                {% endif %}
+                            {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
+<input type="text" class="hide" id="idchantier" value="{{ chantier.id }}">
+<input type="text" class="hide" id="iddevis" value="{{ devis.id }}">
+<input type="text" class="hide" id="idgroupe" value="{{ groupe.id }}">
+<input type="text" class="hide" id="idgligne" value="{{ idgligne }}">
+<input type="text" class="hide" id="idligne" value="{{ ligne.id }}">
+<input type="text" class="hide" id="devdate" value="{{ devis.date|date('d/m/Y') }}">
+
+<input type="text" class="hide" id="jsondevis" value="{{ jsondevis }}">
+<input type="text" class="hide" id="jsondede" value="{{ jsondede }}">
+<input type="text" class="hide" id="jsonforme" value="{{ jsonforme }}">
+<input type="text" class="hide" id="jsonformes" value="{{ jsonformes }}">
+<input type="text" class="hide" id="jsonusers" value="{{ jsonusers }}">
+<input type="text" class="hide" id="idmaster" value="{{ idmaster }}">
+
+<div class="modal fade right" id="modalDevis" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pri text-white">
+                <h4 class="modal-title" id="defaultModalLabel p-l-20">CRÉER UN NOUVEAU DEVIS</h4>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formneDevis, {'attr': {'id': 'addDevisForm'}}) }}
+                    {{ form_row(formneDevis._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 pri bolo">DATE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.date,{'attr':{'class':'form-control' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 pri bolo">AFFAIRE SUIVIE PAR:</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.suivie,{'attr':{'class':'form-control' }}) }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">TVA(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.tva,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">VALIDITÉ DU DEVIS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.validit,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE OU OBJET</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.devreference,{'required':'','id': 'editor','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DEVISE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.monnaie,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">CODE ARTICLE?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.aaref,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">OPTION TVA</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.ptva,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC BASE TVA?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.abasetva,{'attr':{'class':'form-control'}}) }}
+                                    <label class="form-label"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">REMISE SUR LIGNES?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.aarem,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC COLONNE SECTION?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.zone,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">MODÈLE D'INFORMATIONS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.modele,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">MODÈLE DE RÉSULTAT</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.model,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">INFORMATIONS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formneDevis.conditions,{'required':'','id': 'editor2','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addDevis" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-pri">
+                        <div type="button" id="closeDevis" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">
+                            FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width:50px; display:none;"
+                             class="align-justify" id="loadDevis">
+                    </div>
+                    <br><br><br>
+                    {{ form_end(formneDevis) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pink text-white">
+                <h4 class="modal-title text-white" id="defaultModalLabel">INFORMATIONS SUR LE DEVIS</h4>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {{ form_start(formDevis, {'attr': {'id': 'updateDevisForm'}}) }}
+                    {{ form_row(formDevis._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 pri bolo">DATE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.date,{'attr':{'class':'form-control' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 pri bolo">AFFAIRE SUIVIE PAR:</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.suivie,{'attr':{'class':'form-control' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE OU OBJET DU DEVIS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.devreference,{'id': 'editor3','attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DEVISE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.monnaie,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">TVA(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.tva,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">OPTION TVA</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.ptva,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC BASE TVA?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.abasetva,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC REMISE?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.aarem,{'attr':{'class':'form-control col-pink' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC COLONNE SECTION?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.zone,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">AVEC COLONNE RÉF?</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.aaref,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DATE DE VALIDITÉ</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.validit,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">INFORMATIONS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.conditions,{'id': 'editor4','required':'','attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">MODÈLE D'INFORMATIONS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.modele,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">MODÈLE DE RÉSULTATS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDevis.model,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center" style="margin-bottom: 50px !important;">
+                        <input type="button" id="updateDevis" value="MODIFIER"
+                               class="btn btn-link waves-effect text-white bg-green">
+                        <div type="button" id="closeupDevis" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">
+                            FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadupDevis">
+                    </div>
+                    {{ form_end(formDevis) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            {% if groupe.id is not null %}
+                <div class="p-5 bg-pink">
+                    <div class="modal-header text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">MODIFIER UN GROUPE</h4>
+                    </div>
+                </div>
+            {% else %}
+                <div class="modal-header bg-pri">
+                    <div class="p-5 text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">CRÉER UN GROUPE</h4>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formGroup, {'attr': {'id': 'addGroupeDevisForm'}}) }}
+                    {{ form_row(formGroup._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE</label>
+                            <div class="form-group">
+                                <div class="form-line  {% if devis.aaref != 'oui' %}disabled{% endif %}">
+                                    {% if devis.aaref == 'oui' %}
+                                        {% if groupe.id is not null %}
+                                            {{ form_widget(formGroup.reference,{'attr':{'class':'form-control col-pink'}}) }}
+                                        {% else %}
+                                            {{ form_widget(formGroup.reference,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ form_widget(formGroup.reference,{'attr':{'class':'form-control col-pink','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">GROUPE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if groupe.id is not null %}
+                                        {{ form_widget(formGroup.groupe,{'attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(formGroup.groupe,{'attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        {% if groupe.id is not null %}
+                            <input type="submit" id="updateGroupDev" value="MODIFIER"
+                                   class="btn btn-link waves-effect text-white bg-green">
+                            <a href="{{ path('editdevis', {'id': devis.id,'idchantier':devis.chantier.id}) }}"
+                               id="closeGroup" class="btn btn-link waves-effect text-white bg-pink">FERMER
+                            </a>
+                        {% else %}
+                            <input type="submit" id="addGroupDev" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeGroup" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">FERMER
+                            </div>
+                        {% endif %}
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadGroup">
+                    </div>
+                    {{ form_end(formGroup) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalLigne" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            {% if ligne.id is not null %}
+                <div class="p-5 bg-pink">
+                    <div class="modal-header text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">MODIFIER UNE LIGNE</h4>
+                    </div>
+                </div>
+            {% else %}
+                <div class="p-5 bg-pri">
+                    <div class="modal-header text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">AJOUTER UNE LIGNE</h4>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(forme, {'attr': {'id': 'addLigneDevisForm'}}) }}
+                    {{ form_row(forme._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">LOTS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if ligne.id is not null %}
+                                        {{ form_widget(forme.groupe,{'attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(forme.groupe,{'attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if devis.aaref == 'oui' %}
+                                        {% if ligne.id is not null %}
+                                            {{ form_widget(forme.reference,{'attr':{'class':'form-control col-pink'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.reference,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ form_widget(forme.reference,{'attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">DÉSIGNATION<span
+                                        class="col-pink">*</span></label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if ligne.id is not null %}
+                                        {{ form_widget(forme.designation,{'required':'','id':'editor1','attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(forme.designation,{'required':'','id':'editor1','attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">SECTION</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if devis.zone == 'oui' %}
+                                        {% if ligne.id is not null %}
+                                            {{ form_widget(forme.zone,{'attr':{'class':'form-control col-pink'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.zone,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ form_widget(forme.zone,{'attr':{'class':'form-control form-control-user','readonly':'true','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">UNITÉ<span
+                                        class="col-pink">*</span></label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if ligne.id is not null %}
+                                        {{ form_widget(forme.unite,{'attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(forme.unite,{'attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">QUANTITÉ<span
+                                        class="col-pink">*</span></label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if ligne.id is not null %}
+                                        {{ form_widget(forme.quantite,{'attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(forme.quantite,{'attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">PRIX UNITAIRE<span
+                                        class="col-pink">*</span></label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if ligne.id is not null %}
+                                        {{ form_widget(forme.pu,{'attr':{'class':'form-control col-pink'}}) }}
+                                    {% else %}
+                                        {{ form_widget(forme.pu,{'attr':{'class':'form-control'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">REMISE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if devis.aarem== 'oui' %}
+                                        {% if ligne.id is not null %}
+                                            {{ form_widget(forme.remise,{'required':'','attr':{'class':'form-control col-pink','type':'number'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.remise,{'required':'','attr':{'class':'form-control','type':'number'}}) }}
+                                        {% endif %}
+                                    {% else %}
+                                        {{ form_widget(forme.remise,{'required':'','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        {% if ligne.id is not null %}
+                            <input type="submit" id="updateLigneDevis" value="MODIFIER"
+                                   class="btn btn-link waves-effect text-white bg-green">
+                            <a href="{{ path('editdevis', {'id': devis.id,'idchantier':devis.chantier.id}) }}"
+                               id="closeLigne" class="btn btn-link waves-effect text-white bg-pink">FERMER
+                            </a>
+                        {% else %}
+                            <input type="submit" id="addLigneDevis" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeLigne" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">FERMER
+                            </div>
+                        {% endif %}
+
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadLigne">
+                    </div>
+                    {{ form_end(forme) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalBase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="p-5 bg-pri">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">BASE TVA</h4>
+                </div>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+
+                    {{ form_start(formba, {'attr': {'id': 'addBaseDevisForm'}}) }}
+                    {{ form_row(formba._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">Base TVA</label>
+                            <div class="form-group">
+                                <div class="form-line {% if devis.abasetva != 'oui' %}disabled{% endif %}">
+                                    {% if devis.abasetva == 'oui' %}
+                                        {{ form_widget(formba.basetva,{'required':'required','type':'number','attr':{'class':'form-control'}}) }}
+                                    {% else %}
+                                        {{ form_widget(formba.basetva,{'required':'required','type':'number', 'attr':{'class':'form-control','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addBase" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-pri">
+                        <div type="button" id="closeBase" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadBase">
+                    </div>
+                    {{ form_end(formba) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalRemise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="p-5 bg-pri">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">REMISE SUR TOTAL HT</h4>
+                </div>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+
+                    {{ form_start(formrem, {'attr': {'id': 'addRemiseThtForm'}}) }}
+                    {{ form_row(formrem._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">REMISE SUR TOTAL HT (%)</label>
+                            <div class="form-group">
+                                <div class="form-line {% if devis.aarem != 'tht' %}disabled{% endif %}">
+                                    {% if devis.aarem == 'tht' %}
+                                        {{ form_widget(formrem.remtht,{'required':'required','type':'number','attr':{'class':'form-control'}}) }}
+                                    {% else %}
+                                        {{ form_widget(formrem.remtht,{'required':'required','type':'number', 'attr':{'class':'form-control','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addRem" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-pri">
+                        <div type="button" id="closeRem" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadRem">
+                    </div>
+                    {{ form_end(formrem) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalChoisir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="p-5 bg-pri">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">CHOISIR UN BIEN / SERVICE</h4>
+                </div>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formez,{'attr': {'id': 'addChoisirDevisForm'}}) }}
+                    {{ form_row(formez._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">RECHERCHER</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formez.code,{'id':'refarticle','required':'','attr':{'class':'form-control refarticle'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">CODE ARTICLE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formez.reference,{'required':'','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">ARTICLE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formez.article,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">LOT</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formez.groupe,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">QUANTITÉ</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formez.quantite,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">ZONE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if devis.zone == 'oui' %}
+                                        {{ form_widget(formez.zone,{'required':'','attr':{'class':'form-control'}}) }}
+                                    {% else %}
+                                        {{ form_widget(formez.zone,{'required':'','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">REMISE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {% if devis.aarem == 'oui' %}
+                                        {{ form_widget(formez.remise,{'required':'','type':'number','attr':{'class':'form-control'}}) }}
+                                    {% else %}
+                                        {{ form_widget(formez.remise,{'required':'','type':'number','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addChoisirDevis" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-pri">
+                        <div type="button" id="closeChoisirDevis"
+                             class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadChoisirDevis">
+                    </div>
+                    {{ form_end(formez) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalDeplacer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="p-5 bg-pri">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">DÉPLACER VERS UN AUTRE CHANTIER</h4>
+                </div>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    <select class="form-control show-tick" id="deplacerDevis"
+                            style=" width: 100%">
+
+                        {% for client in clients %}
+                            {% set check  = 0 %}
+                            {% for chantier in client.chantiers %}
+                                {% if chantier.corbeille is null and chantier.archiver == "non" %}
+                                    {% set check = check + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if client.corbeille is null and client.type is null %}
+                                {% if check  > 0 %}
+                                    <optgroup label="{{ client.nomclient }}">
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null and chantier.archiver == "non" %}
+                                                <option value="{{ chantier.id }}"
+                                                        class="font-weight-normal">{{ chantier.nomchantier }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endif %}
+                                </table>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <div class="text-center m-t-30">
+                        <input type="submit" id="addDeplacerDevis" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-pri">
+                        <div type="button" id="closeDeplacer" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadDeplacer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalMise" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="p-5 bg-pri">
+                <div class="modal-header text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">MISE EN FORME DU DEVIS</h4>
+                </div>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formes, {'enctype':'multipart/form-data','attr': {'id': 'addforme'}}) }}
+                    {{ form_row(formes._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <h5 class="col-black bolo600">LIBELLÉ</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.intituler,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <h5 class="col-black bolo600">TYPE D'ENTÊTE</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.typeEntete,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="col-black bolo600">TYPE DE PIED DE PAGE</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.typeFooter,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-black bolo600">ENTÊTE EN IMAGE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.enteteImage,{'required':'','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-black bolo600">PIED DE PAGE EN IMAGE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.footImage,{'required':'','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-black bolo600">ENTÊTE EN TEXTE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.headerText,{'required':'','id':'editor5','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-black bolo600">PIED DE PAGE EN TEXTE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.pied,{'required':'','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-4">
+                            <h5 class="col-black bolo600">POLICE(en pixel)</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.dsize,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <h5 class="col-black bolo600">FOND(Hexa)</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.decolor,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <h5 class="col-black bolo600">TEXTE(Hexa)</h5>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.decolortex,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">LARGEUR ENTÊTE(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.headerWith,{'required':'','attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">HAUTEUR ENTÊTE(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.headerHeight,{'required':'','attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">HAUTEUR DU LOGO(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteY,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">LARGEUR DU LOGO(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteH,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">DÉCALAGE HAUT(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteDH,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">DÉCALAGE BAS(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteDB,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">DÉCALAGE À DROITE(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteDD,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">DÉCALAGE À GAUCHE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.teteDG,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">TAILLE DU TEXTE DU PIED DE
+                                PAGE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.piedsize,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-black bolo600">HAUTEUR DU PIED DE PAGE(cm)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formes.footerHeight,{'required':'','attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center" style="margin-bottom: 50px !important;">
+                        <input type="submit" id="updateForme" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-blue">
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadupForme">
+                    </div>
+                    {{ form_end(formes) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalOper" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pri">
+                <h5 class="modal-title text-white" id="exampleModalLabel">OPÉRATIONS SUR LES LIGNES</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="d table-bordered" width="100%">
+                        <tr class="bg-pri bolderrer text-white">
+                            <td colspan="2">&raquo; OPÉRATIONS SUR TOUTES LES QUANTITÉS</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">AJOUTER</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="addqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('add','qte','addqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">SOUSTRAIRE</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="sousqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('sous','qte','sousqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">MULTIPLIER PAR</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="multiqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('multi','qte','multiqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">DIVISER PAR</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="diviseqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('divi','qte','diviseqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">PLUS UN POURCENTAGE DE</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="pourcenteqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('pourcentplus','qte','pourcenteqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">MOINS UN POURCENTAGE DE</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="pourcentesqte" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-primary btn-sm"
+                                        onclick="gaoula('pourcentmoins','qte','pourcentesqte','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <br><br>
+                    <table class="d table-bordered" width="100%">
+                        <tr class="bg-secondary bolderrer text-white">
+                            <td colspan="2">&raquo; OPÉRATIONS SUR TOUS LES PRIX</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">AJOUTER</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="addpri" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('add','pri','addpri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">SOUSTRAIRE</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="souspri" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('sous','pri','souspri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">MULTIPLIER PAR</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="multipri" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('multi','pri','multipri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderrer" width="50%">DIVISER PAR</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="divisepri" min="1" max="10"
+                                       style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('divi','pri','divisepri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bolderr text-pri bolderrer">PLUS UN POURCENTAGE DE</td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="pourcentepri"
+                                       min="1" max="10" style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('pourcentplus','pri','pourcentepri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bolderr text-pri bolderrer" width="50%">MOINS UN POURCENTAGE
+                                DE
+                            </td>
+                            <td width="50%" align="center">
+                                <input type="number" name="add" id="pourcentespri"
+                                       min="1" max="10" style="width: 10em;">
+                                <button class="btn btn-secondary btn-sm"
+                                        onclick="gaoula('pourcentmoins','pri','pourcentespri','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                            </td>
+                        </tr>
+
+                    </table>
+                    <br><br>
+                    {% if devis.aarem== 'oui' %}
+                        <table class="table-bordered" width="100%">
+                            <tr class="bg-info bolderrer text-white">
+                                <td colspan="3">&raquo; OPÉRATIONS SUR TOUS
+                                    LES REMISES
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. AJOUTER</td>
+                                <td>
+                                    <input type="number" name="add" id="addrem" style="width: 50%">
+                                </td>
+                                <td width="10%">
+                                    <button class="btn btn-info btn-sm"
+                                            onclick="gaoula('add','rem','addrem','devis',{{ devis.id }});">
+                                        Valider
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. SOUSTRAIRE</td>
+                                <td>
+                                    <input type="number" name="add" id="sousrem" style="width: 50%">
+                                </td>
+                                <button class="btn btn-info btn-sm"
+                                        onclick="gaoula('sous','rem','sousrem','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. MULTIPLIER PAR</td>
+                                <td>
+                                    <input type="number" name="add" id="multirem"
+                                           style="width: 50%">
+                                </td>
+                                <td width="10%">
+                                    <button class="btn btn-info btn-sm"
+                                            onclick="gaoula('multi','rem','multirem','devis',{{ devis.id }});">
+                                        Valider
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. DIVISER PAR</td>
+                                <td>
+                                    <input type="number" name="add" id="diviserem"
+                                           style="width: 50%">
+                                </td>
+                                <button class="btn btn-info btn-sm"
+                                        onclick="gaoula('divi','rem','diviserem','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. PLUS UN POURCENTAGE DE
+                                </td>
+                                <td>
+                                    <input type="number" name="add" id="pourcenterem"
+                                           style="width: 50%">
+                                </td>
+                                <button class="btn btn-info btn-sm"
+                                        onclick="gaoula('pourcentplus','rem','pourcenterem','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bolderr text-pri bolderrer">::. MOINS UN POURCENTAGE DE
+                                </td>
+                                <td>
+                                    <input type="number" name="add" id="pourcentesrem"
+                                           style="width: 50%">
+                                </td>
+                                <button class="btn btn-info btn-sm"
+                                        onclick="gaoula('pourcentmoins','rem','pourcentesrem','devis',{{ devis.id }});">
+                                    Valider
+                                </button>
+                                </td>
+                            </tr>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalDecompte" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-blue col-white">
+                <h4 class="modal-title" id="defaultModalLabel p-l-20">CRÉER UN DÉCOMPTE</h4>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formDecompte, {'attr': {'id': 'addDecompteForm' }}) }}
+                    <input type="hidden" name="token" value="{{ csrf_token('dectoken') }}"/>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-5">
+                            <label class="form-label m-b--30 col-blue bolo">DEVIS VALIDÉS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <select id="devdec" name="devdec" class="form-control">
+                                        <option disabled="disabled" selected="selected">Choisir un devis</option>
+                                        {% for client in clients %}
+                                            {% if client.type is null and  client.corbeille is null %}
+                                                {% for chantier in client.chantiers %}
+                                                    {% if chantier.corbeille is null %}
+                                                        {% set oop = 0 %}
+                                                        {% for dev in chantier.devis %}
+                                                            {% set op = 0 %}
+                                                            {% for dec in dev.decomptes %}
+                                                                {% if dec.avancement == 100 %}
+                                                                    {% set op = op + 1 %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            {% if dev.etat == "valide" and op == 0 %}
+                                                                {% set oop = oop + 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+
+                                                        {% if oop > 0 %}
+                                                            <optgroup
+                                                                    label="{{ client.nomclient|upper }} | {{ chantier.nomchantier|upper }}">
+                                                                {% for dev in chantier.devis %}
+                                                                    {% set op = 0 %}
+                                                                    {% for dec in dev.decomptes %}
+                                                                        {% if dec.avancement == 100 %}
+                                                                            {% set op = op + 1 %}
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    {% if dev.etat == "valide" and op == 0 %}
+                                                                        <option value="{{ dev.id }}"
+                                                                                class="{{ dev.id }}">{{ dev.iddevis }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </optgroup>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <label class="form-label m-b--30 col-blue bolo">ACOMPTE DE DEMARRAGE(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" id="acomrage" name="acompte" class="form-control" required>
+                                </div>
+                                <p class="h6 devcoy"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">RETENUE DE GARANTIE(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDecompte.garantie,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                                <p class="h6 devcoy"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">RETENUE DE FINITION(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDecompte.finition,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                                <p class="h6 devcoy"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">COMPTE PRORATA(%)</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDecompte.prorata,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                                <p class="h6 devcoy"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DATE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formDecompte.date,{'attr':{'class':'form-control datepicker' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addeDecompte" value="ENREGISTRER"
+                               class="btn btn-link waves-effect col-white bg-blue">
+                        <div type="button" id="closeDecompte" class="btn btn-link waves-effect col-white bg-pink"
+                             data-dismiss="modal">
+                            FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadDecompte"></div>
+                    <br>
+                    <br>
+                    <br>
+                    {{ form_end(formDecompte) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalFacture" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-blue text-white">
+                <h4 class="modal-title" id="defaultModalLabel p-l-20">CRÉER UNE FACTURE</h4>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+                    {{ form_start(formFacture, {'attr': {'id': 'addFactureForm'}}) }}
+                    {{ form_row(formFacture._token) }}
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DATE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.date,{'attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">TYPE D'OPÉRATION<span
+                                        class="col-red">*</span></label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.type,{'id':'facselectez','attr':{'class':'form-control', 'id':'facselect'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DEVIS VALIDÉS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.devis,{'required':'','attr':{'class':'form-control devo'}}) }}
+                                </div>
+                                <p class="col-pink h6 dvo"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label m-b--30 col-blue bolo">DÉCOMPTES VALIDÉS</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.decompte,{'required':'','attr':{'class':'form-control deco'}}) }}
+                                </div>
+                                <p class="col-pink h6 dco"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE OU OBJET</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.factreference,{'id': 'editor3','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label m-b--30 col-blue bolo">INFORMATIONS SUR LA FACTURE</label>
+                            <div class="form-group">
+                                <div class="form-line">
+                                    {{ form_widget(formFacture.information,{'id': 'editor4','attr':{'class':'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" id="addFacture" value="ENREGISTRER"
+                               class="btn btn-link waves-effect text-white bg-blue">
+                        <div type="button" id="closeFacture" class="btn btn-link waves-effect text-white bg-pink"
+                             data-dismiss="modal">
+                            FERMER
+                        </div>
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadFacture">
+                    </div>
+                    <br><br><br>
+                    {{ form_end(formFacture) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade right" id="modalTechnique" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-full-height modal-right" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-pri text-white">
+                <h4 class="modal-title" id="defaultModalLabel p-l-20">OPÉRATIONS LIÉES</h4>
+            </div>
+            <div class="modal-body m-t-10 bien">
+                <div class="body">
+
+                    <h4 class="bolo700 col-blue">DEVIS Nº {{ devis.iddevis }} | <span
+                                class="col-pink">ÉTAT: {% if devis.etat == "valide" %} VALIDÉ {% endif %} {% if devis.etat == "save" %} NON VALIDÉ {% endif %}</span>
+                    </h4>
+                    <br>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="4" class="bolo700 text-left h5">BONS DE COMMANDE ACHAT VALIDÉS</td>
+                        </tr>
+                        <tr>
+                            <td>Bon Nº</td>
+                            <td class="text-right">Total HT</td>
+                            <td class="text-right">Total TTC</td>
+                            <td class="text-right">Fournisseur</td>
+                        </tr>
+                        {% set thbon = 0 %}
+                        {% set ttcbon = 0 %}
+                        {% for bon in devis.bons %}
+                            {% if bon.corbeille is null and bon.etat == "valide" %}
+                                {% if bon.fournisseur is not null and bon.fournisseur.type == 1 %}
+                                    {% if bon.type != "non" %}
+                                        {% set thbon = bon.totalht + thbon %}
+                                        {% set ttcbon = bon.totalttc + ttcbon %}
+                                    {% endif %}
+                                    {% if bon.type == "non" %}
+                                        {% set thbon = bon.totalht - thbon %}
+                                        {% set ttcbon = bon.totalttc - ttcbon %}
+                                    {% endif %}
+                                    <tr>
+                                        <td><a href="#" onclick="shasha({{ bon.id }},'imprimbon');">
+                                                <i class="fa fa-eye col-green"
+                                                   aria-hidden="true"></i>
+                                            </a><a href="{{ path('editbon',{'id':bon.id , 'idchantier': bon.chantier.id}) }}"
+                                                   class="col-indigo">Nº {{ bon.numbon }}</a><br>
+                                        </td>
+                                        <td class="text-right">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-right">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-left col-pink bolo600" colspan="3"
+                                            style="margin-left: 60px !important;">
+                                            {% if bon.fournisseur %}
+                                                {{ bon.fournisseur.fournisseur }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                                {% if bon.fournisseur is null %}
+                                    {% if bon.type != "non" %}
+                                        {% set thbon = bon.totalht + thbon %}
+                                        {% set ttcbon = bon.totalttc + ttcbon %}
+                                    {% endif %}
+                                    {% if bon.type == "non" %}
+                                        {% set thbon = bon.totalht - thbon %}
+                                        {% set ttcbon = bon.totalttc - ttcbon %}
+                                    {% endif %}
+                                    <tr>
+                                        <td><a href="#" onclick="shasha({{ bon.id }},'imprimbon');">
+                                                <i class="fa fa-eye col-green"
+                                                   aria-hidden="true"></i>
+                                            </a><a href="{{ path('editbon',{'id':bon.id , 'idchantier': bon.chantier.id}) }}"
+                                                   class="col-indigo">Nº {{ bon.numbon }}</a><br>
+                                        </td>
+                                        <td class="text-right">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-right">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-right"></td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <td class="bolo600 col-blue text-right">TOTAUX</td>
+                        <td class="text-right col-blue">{{ thbon|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right col-blue">{{ ttcbon|number_format(2, ',', ' ') }}</td>
+                    </table>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="4" class="bolo700 text-left h5">BONS DE COMMANDE PRESTATAIRE VALIDÉS</td>
+                        </tr>
+                        <tr>
+                            <td>Bon Nº</td>
+                            <td class="text-right">Total HT</td>
+                            <td class="text-right">Total TTC</td>
+                            <td class="text-right">Prestataire</td>
+                        </tr>
+                        {% set thebon = 0 %}
+                        {% set ttecbon = 0 %}
+                        {% for bon in devis.bons %}
+                            {% if bon.corbeille is null and bon.etat == "valide" %}
+                                {% if bon.fournisseur is not null and bon.fournisseur.type == 3 %}
+                                    {% if bon.type != "non" %}
+                                        {% set thebon = bon.totalht + thebon %}
+                                        {% set ttecbon = bon.totalttc + ttecbon %}
+                                    {% endif %}
+                                    {% if bon.type == "non" %}
+                                        {% set thebon = bon.totalht - thebon %}
+                                        {% set ttecbon = bon.totalttc - ttecbon %}
+                                    {% endif %}
+                                    <tr>
+                                        <td><a href="#" onclick="shasha({{ bon.id }},'imprimbon');">
+                                                <i class="fa fa-eye col-green"
+                                                   aria-hidden="true"></i>
+                                            </a><a href="{{ path('editbon',{'id':bon.id , 'idchantier': bon.chantier.id}) }}"
+                                                   class="col-indigo">Nº {{ bon.numbon }}</a><br>
+                                        </td>
+                                        <td class="text-right">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-right">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                                        <td class="text-left col-pink bolo600" colspan="3"
+                                            style="margin-left: 60px !important;">
+                                            {% if bon.fournisseur %}
+                                                {{ bon.fournisseur.fournisseur }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        <td class="bolo600 col-blue text-right">TOTAUX</td>
+                        <td class="text-right col-blue">{{ thebon|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right col-blue">{{ ttecbon|number_format(2, ',', ' ') }}</td>
+                        <td class="text-right col-blue"></td>
+                    </table>
+                    <table class="table table-striped">
+                        <tr class="bg-light-green">
+                            <td class="bolo700 col-orange h5"></td>
+                            <td class="text-center col-white">TOTAL HT</td>
+                            <td class="text-center col-white">TOTAL TTC</td>
+                        </tr>
+                        <tr class="bg-light">
+                            <td class="bolo700 col-blue-grey h5">TOTAUX DEVIS</td>
+                            <td class="text-right col-blue-grey bolo700">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right col-blue-grey bolo700">{{ devis.totalttc|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr class="bg-light">
+                            <td class="bolo700 col-blue-grey h5">TOTAUX BONS DE COMMANDE</td>
+                            <td class="text-right col-blue-grey bolo700">{{ (thbon + thebon)|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right col-blue-grey bolo700">{{ (ttcbon + ttecbon)|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr class="bg-light">
+                            <td class="bolo700 col-blue-grey h5">MARGE</td>
+                            <td class="text-right col-black bolo700">{{ (devis.totalht - (thbon + thebon))|number_format(2, ',', ' ') }}</td>
+                            <td class="text-right col-black bolo700">{{ (devis.totalttc - (ttcbon + ttecbon))|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    </table>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="4" class="bolo700 text-left h5">DÉCOMPTES</td>
+                        </tr>
+                        <tr>
+                            <td>Décompte Nº</td>
+                            <td>Facture Nº</td>
+                            <td class="text-right">Total HT</td>
+                            <td class="text-right">Total TTC</td>
+                            <td class="text-right">État</td>
+                        </tr>
+                        {% for dec in devis.decomptes %}
+                            <tr>
+                                <td>
+                                    <a href="#"
+                                       onclick="shasha({{ dec.id }},'imprimdecompte');">
+                                        <i class="fa fa-eye col-green"
+                                           aria-hidden="true"></i>
+                                    </a>
+                                    <a href="{{ path('editdecompte',{'id':dec.id , 'idchantier': dec.chantier.id}) }}"
+                                       class="col-indigo">Nº{{ dec.numdecompte }}
+                                    </a>
+                                </td>
+                                <td>{% if dec.facture %}{{ dec.facture.numfacture }}{% endif %}</td>
+                                <td class="text-right col-blue">{{ dec.apayer|number_format(2, ',', ' ') }}</td>
+                                <td class="text-right col-blue">{{ dec.ttc|number_format(2, ',', ' ') }}</td>
+                                <td class="text-right col-blue">{% if dec.etat == "valide" %}Validé{% endif %} {% if dec.etat == "save" %}Non validé{% endif %}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="5" class="bolo700 text-left h5">FACTURES</td>
+                        </tr>
+                        <tr>
+                            <td>Fac Nº</td>
+                            <td>Déc Nº</td>
+                            <td class="text-right">Total HT</td>
+                            <td class="text-right">Total TTC</td>
+                            <td class="text-right">État</td>
+                        </tr>
+                        {% for fac in devis.chantier.factures %}
+                            {% if fac.devis and fac.devis.id  == devis.id %}
+                                <tr>
+                                    <td>
+                                        <a href="#"
+                                           onclick="shasha({{ fac.id }},'imprimfacture');">
+                                            <i class="fa fa-eye col-green"
+                                               aria-hidden="true"></i>
+                                        </a>
+                                        <a href="{{ path('editfacture',{'id':fac.id , 'idchantier': fac.chantier.id}) }}"
+                                           class="col-indigo">Nº {{ fac.numfacture }}
+                                        </a>
+                                    </td>
+                                    <td>{% if fac.decompte %}{{ fac.decompte.numdecompte }}{% endif %}</td>
+                                    <td class="text-right">{{ fac.totalht|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ fac.totalttc|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{% if fac.etat == "valide" %}<span
+                                                class="col-blue">Validée</span>{% endif %} {% if fac.etat == "save" %}
+                                            <span class="col-pink">Non validée</span>{% endif %}</td>
+                                </tr>
+                            {% endif %}
+                            {% if fac.acompte and fac.acompte.devis.id  == devis.id %}
+                                <tr>
+                                    <td>
+                                        <a href="#"
+                                           onclick="shasha({{ fac.id }},'imprimfacture');">
+                                            <i class="fa fa-eye col-green"
+                                               aria-hidden="true"></i>
+                                        </a>
+                                        <a href="{{ path('editfacture',{'id':fac.id , 'idchantier': fac.chantier.id}) }}"
+                                           class="col-indigo">Nº {{ fac.numfacture }}
+                                        </a>
+                                    </td>
+                                    <td>{% if fac.decompte %}{{ fac.decompte.numdecompte }}{% endif %}</td>
+                                    <td class="text-right">{{ fac.totalht|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ fac.totalttc|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{% if fac.etat == "valide" %}<span
+                                                class="col-blue">Validée</span>{% endif %} {% if fac.etat == "save" %}
+                                            <span class="col-pink">Non validée</span>{% endif %}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="5" class="bolo700 text-left h5">RÈGLEMENTS EFFECTUÉS</td>
+                        </tr>
+                        <tr>
+                            <td>Règlements</td>
+                            <td>Facture Nº</td>
+                            <td class="text-right">FACTURÉE</td>
+                            <td class="text-right">VERSÉE</td>
+                            <td class="text-right">RESTE</td>
+                        </tr>
+                        {% for rele in devis.relevers %}
+                            {% if rele.facture %}
+                                <tr>
+                                    <td class="col-blue">{{ rele.versement }}</td>
+                                    <td>{{ rele.facture.numfacture }}</td>
+                                    <td class="text-right">{{ rele.facture.totalttc|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ rele.montant|number_format(2, ',', ' ') }}</td>
+                                    <td class="text-right">{{ (rele.facture.totalttc - rele.montant)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                    <table class="table table-striped">
+                        <tr>
+                            <td colspan="5" class="bolo700 text-left h5">ARTICLES COMPOSÉS</td>
+                        </tr>
+                    </table>
+                    <br><br> <br><br> <br><br> <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content fixed-top">
+    <div class="container-fluid" style="margin: 0 14px 0 14px">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="ressult" style="width: 100%; align-content: start" class="text-left"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content" style="margin-top: 100px !important;">
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-md-12">
+                <div class="mb-2 m-t--25"
+                     style="background-color: #d1d3e2 !important;">
+                    <div class="ont tohidbut">
+                        <div id="shacontentDevis">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    localStorage.setItem('reloadd', 'devis/' + document.getElementById('iddevis').value + '/' + document.getElementById('idchantier').value);
+</script>
+{{ encore_entry_script_tags('apdevis') }}
+</body>
+</html>
+

@@ -1,0 +1,575 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+    <style>
+        .btn {
+            text-align: left !important;
+        }
+    </style>
+
+    <input type="text" class="hide" id="idfamille" value="{{ idfamille }}">
+    <input type="text" class="hide" id="idfourn" value="{{ idfourn }}">
+    <input type="text" class="hide" id="idarticle" value="{{ idarticle }}">
+
+    <div class="modal fade right" id="modalFamille" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editFamille %}
+                    <div class="p-5 bg-green">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">1- MODIFIER UNE FAMILLE</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-5 bg-pri">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">1- AJOUTER UNE FAMILLE</h4>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(forme, {'attr': {'id': 'addFamilleForm'}}) }}
+                        {{ form_row(forme._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">FAMILLE D'ARTICLES<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editFamille %}
+                                            {{ form_widget(forme.famille,{'attr':{'class':'form-control col-pink'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.famille,{'attr':{'class':'form-control form-control-user'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            {% if editFamille %}
+                                <input type="submit" id="updateFamille" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                            {% else %}
+                                <input type="submit" id="addFamille" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-pri">
+                            {% endif %}
+
+                            <a href="{{ path('article') }}" type="button" id="closeFamille"
+                               class="btn btn-link waves-effect text-white bg-pink">FERMER
+                            </a>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFamille">
+                        </div>
+                        {{ form_end(forme) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalFournisseur" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editFourn %}
+                    <div class="p-5 bg-green">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">3- MODIFIER UN FOURNISSEUR</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-5 bg-pri">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">3- AJOUTER UN FOURNISSEUR</h4>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+
+                        {{ form_start(formfourn, {'attr': {'id': 'addFournisseurForm'}}) }}
+                        {{ form_row(formfourn._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">FOURNISSUER
+                                    <span class="col-pink">*</span></label>
+
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formfourn.fournisseur,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TÉLÉPHONE MOBILE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formfourn.mobile,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">ADRESSE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formfourn.adresse,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">E-MAIL</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formfourn.mail,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            {% if editFourn %}
+                                <input type="submit" id="updateFourn" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                            {% else %}
+                                <input type="submit" id="addFourn" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-pri">
+                            {% endif %}
+
+                            <div type="button" id="closeFourn" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFourn">
+                        </div>
+                        {{ form_end(formfourn) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalArticle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editArticle %}
+                    <div class="p-5 bg-green">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">MODIFIER UN MATÉRIAU / MATÉRIEL</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-5 bg-pri">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">AJOUTER UN MATÉRIAU / MATÉRIEL</h4>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(form, {'attr': {'id': 'form4'}}) }}
+                        {{ form_row(form._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">FAMILLE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.famille,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TYPE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.typear,{'id':'typear','attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">FOURNISSEUR</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.fournisseur,{'attr':{'class':'form-control four'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">UNITÉ<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.unite,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">DÉSIGNATION<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.designation,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">MARQUE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.marque,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.reference,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DEVISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.monnaies,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">PRIX D'ACHAT<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.pu,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">STOCK INITIAL</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.stock,{'type':'number','attr':{'class':'form-control stock'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DISPONIBILITÉ</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.disponibilite,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">DESCRIPTION TECHNIQUE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(form.description,{'id':'editor','attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            {% if editArticle %}
+                                <input type="text" class="hide" id="idarticle" value="{{ idarticle }}">
+                                <input type="submit" id="updateArticle" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                            {% else %}
+                                <input type="submit" id="addArticle" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-pri">
+                            {% endif %}
+
+                            <a href="{{ path('article') }}" type="button" id="closeArticle"
+                               class="btn btn-link waves-effect text-white bg-pink"
+                               data-dismiss="modal">FERMER
+                            </a>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadArticle">
+                        </div>
+                        {{ form_end(form) }}
+                        <br><br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalPartage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-pri">
+                    <div class="modal-header text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">5- PARTAGER VOS ARTICLES</h4>
+                    </div>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+
+                        {{ form_start(formpart, {'attr': {'id': 'form5'}}) }}
+                        {{ form_row(formpart._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">Famille d'article
+                                    <span class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formpart.metier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">Article</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formpart.article,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addArticle" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeArticle" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 60px; display:none;"
+                                 class="align-justify" id="loadArticle">
+                        </div>
+                        {{ form_end(formpart) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content fixed-top">
+        <div class="container-fluid" style="margin: 0 14px 0 14px">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="ressult" style="width: 100%; align-content: start" class="text-left"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content" style="margin-top: 100px !important;">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 p-0"
+                     style="background-color:#d1d3e2 !important;">
+                    <h3 class="col-pink bolo700 ">MATÉRIELS & MATÉRIAUX</h3>
+
+                    <div class=" row clearfix text-center m-t-20 p-b-5">
+                        <div class="col-sm-12">
+                            <div class="btn-group btn-group-sm " style="margin: auto" role="group"
+                                 aria-label="Small button group">
+                                <button type="button" data-toggle="modal" data-target="#modalFamille"
+                                        class="btn bg-pri text-white" style="border:1px solid #dddfeb">+ FAMILLE
+                                </button>
+
+                                <button type="button" data-toggle="modal" data-target="#modalFournisseur"
+                                        class="btn bg-pri text-white" style="border:1px solid #dddfeb">+ FOURNISSEUR
+                                </button>
+
+                                <button type="button" data-toggle="modal" data-target="#modalArticle"
+                                        class="btn bg-blue text-white" style="border:1px solid #dddfeb">+ MATÉRIAU / MATÉRIEL
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                     <br>
+
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            <div class="card shadow ">
+                                <div class="card-body" style="padding: 20px">
+                                    <div class="table-responsive" style="padding-bottom: 20px">
+                                        <h4 class="pri bolo700">FAMILLES</h4>
+                                        <hr class="m-t--5">
+                                        <table class="table-bordered" id="dataFAMILLE"
+                                               style="padding: 0; width: 100%">
+                                            <thead class="bg-blue">
+                                            <th style="width: 10px !important;" class="col-white"></th>
+                                            <th class="col-white">FAMILLES</th>
+                                            <th></th>
+                                            </thead>
+                                            <tbody>
+                                            {% for famille in app.user.famille %}
+                                                {% if famille.type == 1 and famille.corbeille is null %}
+                                                    <tr>
+                                                        <td align="center">
+                                                            <input type="checkbox" data-toggle="toggle"
+                                                                   class="FAMY"
+                                                                   value="{{ famille.id }}"></td>
+                                                        <td class="col-black bolo600">{{ famille.famille|capitalize }}</td>
+                                                        <td class="col-blue-grey bolo600 text-center">{{ famille.articles.count }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card shadow ">
+                                <div class="card-body" style="padding: 20px">
+                                    <div class="table-responsive" style="padding-bottom: 20px">
+                                        <h4 class="pri  bolo700">FOURNISSEURS</h4>
+                                        <hr class="m-t--5">
+                                        <table class="table-bordered" id="dataFOURNISSEUR"
+                                               style="padding: 0; width: 100%">
+                                            <thead class="bg-blue">
+                                            <th style="width: 10px !important;" class="col-white"></th>
+                                            <th class="col-white">FOURNISSEURS</th>
+                                            </thead>
+                                            <tbody>
+                                            {% for fourn in app.user.fournisseurs %}
+                                                {% if fourn.type == 1 and fourn.corbeille == null  %}
+                                                    <tr>
+                                                        <td align="center">
+                                                            <input type="checkbox" data-toggle="toggle"
+                                                                   class="FOUR"
+                                                                   value="{{ fourn.id }}"></td>
+
+                                                        <td class="bolo600">
+                                                            <span class="col-blue bolo600">{{ fourn.fournisseur|upper }}</span><br>
+                                                            Adresse: <span class="col-blue bolo600">{{ fourn.adresse }}</span><br>
+                                                            E-mail: <span class="col-blue bolo600">{{ fourn.mail }}</span><br>
+                                                            Mobile: <span class="col-blue bolo600">{{ fourn.mobile }}</span><br>
+                                                            Téléphone: <span class="col-blue bolo600">{{ fourn.telephone }}</span>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            {# BIENS #}
+                            <div class="card shadow ">
+                                <div class="card-body" style="padding: 20px">
+                                    <div class="table-responsive" style="padding-bottom: 30px">
+                                        <h4 class="pri  bolo700">MATÉRIELS & MATÉRIAUX</h4>
+                                        <hr class="m-t--5">
+                                        <table class="table-bordered" id="dataARTICLES"
+                                               style="padding: 0; width: 100%">
+                                            <thead class="bg-blue">
+                                            <th style="width: 10px !important;"></th>
+                                            <th class="col-white">FAMILLES </th>
+                                            <th class="col-white mw250">DÉSIGNATION</th>
+                                            <th class="col-white" style="text-align: center !important;">
+                                                P.&nbsp;D'ACHAT
+                                            </th>
+                                            <th class="col-white" style="text-align: center !important;">UNITÉ
+                                            </th>
+                                            <th class="col-white" style="text-align: center !important;">
+                                                STOCK&nbsp;RÉEL
+                                            </th>
+                                            </thead>
+                                            <tbody>
+                                            {% for article in articles %}
+                                                {% if article.typear.id == 1  or article.typear.id == 3 %}
+                                                    <tr>
+                                                        <td align="center">
+                                                            <input type="checkbox" data-toggle="toggle"
+                                                                   class="ARTYS"
+                                                                   value="{{ article.id }}"></td>
+
+                                                        <td class="bolo700 bg-light">{% if article.famille is not null %}{{ article.famille.famille|upper }}{% endif %}</td>
+
+                                                        <td class="col-black bolo600"
+                                                            title="{{ article.description|capitalize }}">
+                                                            {{ article.designation }}<br><span
+                                                                    class="col-pink">{% if article.reference != null %}Réf:{% endif %} {{ article.reference }}</span>
+                                                        </td>
+
+                                                        <td class="text-right bolo600">{{ article.pu|number_format(2, ',', ' ') }}
+                                                            &nbsp;{% if article.monnaies is not null %}{{ article.monnaies.code }}{% endif %}</td>
+                                                        <td class="text-center bolo600">{{ article.unite }}</td>
+                                                        <td class="text-center bolo600">{{ article.stock }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {# SERVICES #}
+                            <div class="card shadow">
+                                <div class="card-body" style="padding: 20px 20px 50px 20px">
+                                    <h4 class="pri  bolo700">SERVICES</h4>
+                                    <table class="table-bordered" id="dataARTY"
+                                           style="padding: 0; width: 100%">
+                                        <thead class="bg-blue">
+                                        <th style="width: 10px !important;" class="col-white"></th>
+                                        <th class="col-white">FAMILLES</th>
+                                        <th class="col-white">DÉSIGNATION</th>
+                                        <th class="col-white"
+                                            style="text-align: center !important;width:150px !important">PRIX&nbsp;DE&nbsp;VENTE
+                                        </th>
+                                        <th class="col-white" style="text-align: center !important; ">UNITÉ</th>
+                                        </thead>
+                                        <tbody>
+                                        {% for article in articles %}
+                                            {% if article.typear.id == 2 %}
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <input type="checkbox" data-toggle="toggle"
+                                                               class="ARTYS2"
+                                                               value="{{ article.id }}"></td>
+
+                                                    <td class="bolo600">{{ article.famille.famille|upper }}</td>
+
+                                                    <td class="col-black bolo600"
+                                                        title="{{ article.designation|capitalize }}">
+                                                        <a href="{{ path('addBonArticle',{'id':article.id}) }}">{{ article.designation }}</a><br><span
+                                                                class="col-pink">{% if article.reference != null %}Réf:{% endif %} {{ article.reference }}</span>
+                                                    </td>
+                                                    <td class="text-right bolo600">
+                                                        {{ article.pu|number_format(2, ',', ' ') }}
+                                                        &nbsp;{{ article.monnaies.code }}</td>
+                                                    <td class="text-center bolo600">{{ article.unite }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,1016 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+    <script>
+        function printFrame() {
+            var frm = document.getElementById('frame').contentWindow;
+            frm.focus();// focus on contentWindow is needed on some ie versions
+            frm.print();
+            return false;
+        }
+    </script>
+    <style>
+        .btn {
+            text-align: left !important;
+        }
+        .floater {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #FF5722;
+            color: #FFF;
+            font-weight: 600;
+            border-radius: 50px;
+            text-align: center;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 1000;
+            animation: bot-to-top 2s ease-out;
+        }
+
+    </style>
+    <input type="text" class="hide" id="idchantier" value="{{ chantier.id }}">
+    <input type="text" class="hide" id="idbon" value="{{ bon.id }}">
+    <input type="text" class="hide" id="idgroupe" value="{{ idgroupe }}">
+    <input type="text" class="hide" id="idligne" value="{{ idligne }}">
+
+    <button type="button"
+            class="btn bg-pink btn-circle-lg waves-effect waves-circle waves-float floater fonter text-white"
+            data-toggle="modal" data-target="#sideModalTR">
+        FAIRE
+    </button>
+
+    <div class="modal fade right" id="modalList" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-green text-white">
+                    <h4 class="modal-title text-white" id="defaultModalLabel">MODIFIER LES LIGNES</h4>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        <style>
+                            .hider {
+                                float: right;
+                                margin-top: -17px;
+                                visibility: hidden;
+                            }
+
+                            p {
+                                margin: 2px;
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+                            }
+
+                            #borde td, th {
+                                border: solid #D3D3D3;
+                                border-width: 1px 1px 1px 1px;
+                                padding: 5px;
+                            }
+
+
+                            td.bord {
+                                border: 0 solid #FFFFFF !important;
+                                padding: 5px;
+                                text-align: right;
+                                font-weight: 600;
+                            }
+
+                            td.bordz {
+                                border: 0 solid #FFFFFF !important;
+                                padding: 0 0 0 5px !important;
+                            }
+
+                            h3 {
+                                font-weight: 500;
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+                            }
+                        </style>
+
+                        <div class="table-responsive">
+                            <table id="borde" cellspacing="0" cellpadding="5" style="width:100%;">
+                                {# ENTETE DU TABLEAU#}
+                                <tr style="background-color:#4e73df; color: #FFFFFF !important; ">
+                                    {% if bon.aaref == 'oui' %}
+                                        <th style="text-align: center">RÉF</th>
+                                    {% endif %}
+                                    <th style="text-align: left !important;">
+                                        DÉSIGNATION
+                                    </th>
+                                    {% if bon.etat == 'save' %}
+                                        <th id="dis" style="width:50px !important;"></th>
+                                    {% endif %}
+                                </tr>
+                                {% if editMode %}
+                                    {# GROUPE ET LIGNE A GROUPE #}
+                                    {% for group in listGroup %}
+                                        <tr class="bg-gray-200 bolderrer">
+                                            {% if bon.aaref == 'oui' %}
+                                                <td align="center">{{ group.reference }}</td>
+                                            {% endif %}
+                                            <td>{{ group.groupe|raw }}</td>
+                                            <td class="text-center" style="padding: 2px">
+                                                <a href="{{ path('bongroupe',{'idgroupe':group.id,'id':bon.id,'idchantier':bon.getchantier.id}) }}#groupe">
+                                                    <i class="fa fa-edit col-green" aria-hidden="true"
+                                                       title="Modifier"></i>
+                                                </a>
+                                                <a href="{{ path('supgroupe',{'id':bon.id,  'idchantier':bon.getchantier.id,   'idgroupe':group.id, 'type':'bon'}) }}"
+                                                   class="sholigne">
+                                                    <i class="fa fa-trash col-pink" aria-hidden="true"
+                                                       title="Supprimer"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+
+                                        {% set st = 0 %}
+
+                                        {% for lign in group.lignes %}
+                                            <tr>
+                                                {% if bon.aaref == 'oui' %}
+                                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                                {% endif %}
+                                                <td>
+                                                    <span class="pri font-bold">{{ lign.designation|raw }}</span><br>
+                                                    <table style="width: 100%; margin-top: 10px" border="0"
+                                                           cellspacing="0"
+                                                           cellpadding="0">
+                                                        <tr>
+                                                            <td class="text-right bordz">Unité:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.unite }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-right bordz">Quantité:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-right bordz">Prix unitaire:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                                        </tr>
+                                                        {% if bon.aarem == 'oui' %}
+                                                            <tr>
+                                                                <td class="text-right bordz">Remise:</td>
+                                                                <td class="text-left bordz font-bold text-black"> {{ lign.remise }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                        <tr>
+                                                            <td class="text-right bordz">Montant HT:</td>
+                                                            <td class="text-left bordz font-bold text-black">
+                                                                {% if bon.aarem == 'non' %}
+                                                                    {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                                                {% else %}
+                                                                    {{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </td>
+                                                {% if bon.etat == 'save' %}
+                                                    <td class="text-center" style="padding: 2px">
+                                                        <a href="{{ path('editlignebon',{'id':bon.id,  'idchantier':bon.getchantier.id,   'idligne':lign.id}) }}">
+                                                            <i class="fa fa-edit text-success"
+                                                               aria-hidden="true"
+                                                               title="Modifier"></i>
+                                                        </a>
+                                                        <a href="{{ path('supligne',{'id':bon.id,  'idchantier':bon.getchantier.id,   'idligne':lign.id,  'type':'bon'}) }}"
+                                                           class="sholigne">
+                                                            <i class="fa fa-trash text-del" aria-hidden="true"
+                                                               title="Supprimer"></i>
+                                                        </a></td>
+                                                {% endif %}
+                                            </tr>
+                                            {% if bon.aarem == 'non' %}
+                                                {% set st = (lign.pu * lign.quantite)+ st %}
+                                            {% else %}
+                                                {% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        <tr class="bg-gray-200" style="font-weight: 600">
+                                            <td></td>
+                                            <td COLSPAN="2" align="right">
+                                                SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {# FIN GROUPE ET LIGNE #}
+
+                                    {# LIGNE SANS GROUPE  #}
+                                    {% for lign in lignes %}
+                                        {% if lign.groupe is null %}
+                                            <tr>
+                                                {% if bon.aaref == 'oui' %}
+                                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                                {% endif %}
+                                                <td>
+                                                    <span class="pri font-bold">{{ lign.designation|raw }}</span><br>
+                                                    <table style="width: 100%; margin-top: 10px" border="0" cellspacing="0"
+                                                           cellpadding="0">
+                                                        <tr>
+                                                            <td class="text-right bordz">Unité:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.unite }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-right bordz">Quantité:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-right bordz">Prix unitaire:</td>
+                                                            <td class="text-left bordz font-bold text-black"> {{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                                        </tr>
+                                                        {% if bon.aarem == 'oui' %}
+                                                            <tr>
+                                                                <td class="text-right bordz">Remise:</td>
+                                                                <td class="text-left bordz font-bold text-black"> {{ lign.remise }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                        <tr>
+                                                            <td class="text-right bordz">Montant HT:</td>
+                                                            <td class="text-left bordz font-bold text-black">
+                                                                {% if bon.aarem == 'non' %}
+                                                                    {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                                                {% else %}
+                                                                    {{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </td>
+                                                {% if bon.etat == 'save' %}
+                                                    <td class="text-center" style="padding: 2px">
+                                                        <a href="{{ path('editlignebon',{'id':bon.id,  'idchantier':bon.getchantier.id,   'idligne':lign.id}) }}">
+                                                            <i class="fa fa-edit col-green"
+                                                               aria-hidden="true"
+                                                               title="Modifier"></i>
+                                                        </a>
+                                                        <a href="{{ path('supligne',{'id':bon.id,  'idchantier':bon.getchantier.id,   'idligne':lign.id,  'type':'bon'}) }}"
+                                                           class="sholigne">
+                                                            <i class="fa fa-trash col-pink" aria-hidden="true"
+                                                               title="Supprimer"></i>
+                                                        </a></td>
+                                                {% endif %}
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+
+
+                                {% endif %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-green text-white">
+                    <h4 class="modal-title" id="defaultModalLabel p-l-20">1- MODIFIER LES INFORMATIONS</h4>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formBon, {'attr': {'id': 'form1'}}) }}
+                        {{ form_row(formBon._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">N° DU BON <span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.numbon,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TYPE DE BON<span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.type,{'required':'','attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">CONTACT</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.contact,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">OBJET OU RÉFÉRENCE<span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.reference,{'id':'editor1','attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DEVISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.monnaie,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TVA(%)</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.tva,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">APPLIQUER LA TVA?</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.ptva,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">BON AVEC REMISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.aarem,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">BON AVEC RÉF?</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.aaref,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DATE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.date,{'attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">INFORMATIONS SUR LE BON</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formBon.conditions,{'id':'editor2','attr':{'class':'form-control col-green'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="updateBon" value="MODIFIER" class="btn btn-link waves-effect text-white bg-green">
+                            <div type="button" id="closeBon" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;" class="align-justify" id="loadBon">
+                        </div>
+                        <br><br><br>
+                        {{ form_end(formBon) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalGroup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editGrou %}
+                    <div class="p-5 bg-pink">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">2- MODIFIER UN GROUPE</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="modal-header bg-pri">
+                        <div class="p-5 text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">2- CRÉER UN GROUPE</h4>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formGroup, {'attr': {'id': 'form2'}}) }}
+                        {{ form_row(formGroup._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">RÉFÉRENCE</label>
+                                <div class="form-group">
+                                    <div class="form-line  {% if bon.aaref != 'oui' %}disabled{% endif %}">
+                                        {% if bon.aaref == 'oui' %}
+                                            {% if editGrou %}
+                                                {{ form_widget(formGroup.reference,{'attr':{'class':'form-control col-pink'}}) }}
+                                            {% else %}
+                                                {{ form_widget(formGroup.reference,{'attr':{'class':'form-control'}}) }}
+                                            {% endif %}
+                                        {% else %}
+                                            {{ form_widget(formGroup.reference,{'attr':{'class':'form-control col-pink','placeholder':'Désactivé'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">GROUPE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editGrou %}
+                                            {{ form_widget(formGroup.groupe,{'attr':{'class':'form-control col-pink'}}) }}
+                                        {% else %}
+                                            {{ form_widget(formGroup.groupe,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            {% if editGrou %}
+                                <input type="submit" id="updateGroupBon" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                                <a href="{{ path('editbon', {'id': bon.id, 'idchantier': bon.chantier.id}) }}"  id="closeGroup" class="btn btn-link waves-effect text-white bg-pink">FERMER
+                                </a>
+                            {% else %}
+                                <input type="submit" id="addGroupBon" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-pri">
+                                <div type="button" id="closeGroup" class="btn btn-link waves-effect text-white bg-pink"
+                                     data-dismiss="modal">FERMER
+                                </div>
+                            {% endif %}
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadGroup">
+                        </div>
+                        {{ form_end(formGroup) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalLigne" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editMod %}
+                    <div class="p-5 bg-green">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">4- MODIFIER UNE DÉSIGNATION</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-5 bg-pri">
+                        <div class="modal-header text-white">
+                            <h4 class="modal-title text-white" id="defaultModalLabel">4- AJOUTER UNE DÉSIGNATION</h4>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(forme, {'attr': {'id': 'form3'}}) }}
+                        {{ form_row(forme._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">GROUPE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editMod %}
+                                            {{ form_widget(forme.groupe,{'attr':{'class':'form-control col-green'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.groupe,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">RÉFÉRENCE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+
+
+                                        {% if bon.aaref == 'oui' %}
+                                            {% if editMod %}
+                                                {{ form_widget(forme.reference,{'attr':{'class':'form-control col-green'}}) }}
+                                            {% else %}
+                                                {{ form_widget(forme.reference,{'attr':{'class':'form-control'}}) }}
+                                            {% endif %}
+                                        {% else %}
+                                            {{ form_widget(forme.reference,{'attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">DÉSIGNATION<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editMod %}
+                                            {{ form_widget(forme.designation,{'id':'editor4','attr':{'class':'form-control col-green'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.designation,{'id':'editor4','attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">UNITÉ<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editMod %}
+                                            {{ form_widget(forme.unite,{'attr':{'class':'form-control col-green'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.unite,{'attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">QUANTITÉ<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editMod %}
+                                            {{ form_widget(forme.quantite,{'type':'number','attr':{'class':'form-control col-green'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.quantite,{'type':'number','attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">PRIX UNITAIRE<span
+                                            class="col-pink">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if editMod %}
+                                            {{ form_widget(forme.pu,{'type':'number','attr':{'class':'form-control col-green'}}) }}
+                                        {% else %}
+                                            {{ form_widget(forme.pu,{'type':'number','attr':{'class':'form-control'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 pri bolo">REMISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if bon.aarem== 'oui' %}
+                                            {% if editMod %}
+                                                {{ form_widget(forme.remise,{'required':'required','attr':{'class':'form-control col-green','type':'number'}}) }}
+                                            {% else %}
+                                                {{ form_widget(forme.remise,{'required':'required','attr':{'class':'form-control','type':'number'}}) }}
+                                            {% endif %}
+                                        {% else %}
+                                            {{ form_widget(forme.remise,{'attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            {% if editMod %}
+                                <input type="submit" id="updateLigneBon" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                                <a href="{{ path('editbon', {'id': bon.id, 'idchantier': bon.chantier.id}) }}"  id="closeLigne"  class="btn btn-link waves-effect text-white bg-pink">FERMER
+                                </a>
+                            {% else %}
+                                <input type="submit" id="addLigneBon" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-pri">
+                                <div type="button" id="closeLigne" class="btn btn-link waves-effect text-white bg-pink"
+                                     data-dismiss="modal">FERMER
+                                </div>
+                            {% endif %}
+
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadLigne">
+                        </div>
+                        {{ form_end(forme) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalChoisir" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="p-5 bg-pri">
+                    <div class="modal-header text-white">
+                        <h4 class="modal-title text-white" id="defaultModalLabel">3- CHOISIR UN BIEN / SERVICE</h4>
+                    </div>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formez,{'attr': {'id': 'form5'}}) }}
+                        {{ form_row(formez._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">Rechercher une désignation</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formez.code,{'required':'','attr':{'class':'form-control refarticle'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if bon.aaref == 'oui' %}
+                                            {{ form_widget(formez.reference,{'required':'','attr':{'class':'form-control'}}) }}
+                                        {% else %}
+                                            {{ form_widget(formez.reference,{'required':'','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">ARTICLE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formez.article,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">GROUPE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formez.groupe,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">QUANTITÉ</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formez.quantite,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">REMISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {% if bon.aarem == 'oui' %}
+                                            {{ form_widget(formez.remise,{'required':'required','type':'number','attr':{'class':'form-control'}}) }}
+                                        {% else %}
+                                            {{ form_widget(formez.remise,{'required':'','type':'number','attr':{'class':'form-control','readonly':'true','placeholder':'Désactivé'}}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addChoisirBon" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeChoisir" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadChoisir">
+                        </div>
+                        {{ form_end(formez) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalBon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <!-- Add class .modal-full-height and then add class .modal-right (or other classes from list above) to set a position to the modal -->
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-blue text-white">
+                    <h4 class="modal-title" id="defaultModalLabel p-l-20">CRÉER UN NOUVEAU BON</h4>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formneBon, {'attr': {'id': 'addBonForm'}}) }}
+                        {{ form_row(formneBon._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">DERNIER N° DE BON DE COMMANDE</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ lastbon }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">N° DU BON <span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.numbon,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TYPE DE BON<span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.type,{'required':'','attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">CONTACT</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.contact,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">RÉFÉRENCE OU OBJET<span class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.reference,{'id':'editor6','attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DEVISE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.monnaie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">TVA(%)</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.tva,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">APPLIQUR LA TVA?</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.ptva,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">AVEC REMISE ?</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.aarem,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">AVEC COLONNE RÉF?</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.aaref,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label m-b--30 col-blue bolo">DATE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.date,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">INFORMATIONS SUR LE BON</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formneBon.conditions,{'id':'editor7','attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addBon" value="ENREGISTRER" class="btn btn-link waves-effect text-white bg-blue">
+                            <div type="button" id="closeneBon" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;" class="align-justify" id="loadneBon">
+                        </div>
+                        <br><br><br>
+                        {{ form_end(formneBon) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <section class="content" style="margin-top: 80px !important;">
+        <div class="container-fluid">
+            <div class="row clearfix">
+                <div class="col-sm-12">
+                    <div class="mb-2 m-t--25 "
+                         style="padding:20px; background-color: #d1d3e2 !important;">
+                        <div class="ont tohidbut">
+                            <div class="row clearfix " style=" padding: 0.1cm;">
+                                <div class="col-sm-12 text-center">
+                                    <h3 class="font-bold col-pink">{{ chantier.chantier }}</h3>
+                                    <h3 class="font-bold m-t--10 pri">BON N°: {{ bon.numbon }}</h3>
+                                    {% if bon.etat == "valide" %}
+                                        <h4 class="font-bold col-black">CE BON EST VALIDÉ - <a href="#" id="devabon">DÉVALIDER</a></h4>
+                                    {% endif %}
+                                    <a href="{{ path('chantier', {'id': bon.chantier.id}) }}" class="btn bg-green  align-left m-b-10 text-white waves-effect ">
+                                        ACCÉDER AU PROJET</a>
+                                    <button type="button"  class="btn bg-blue  align-left m-b-10 text-white waves-effect"
+                                            data-toggle="modal" data-target="#mdModalBon">CRÉER UN NOUVEAU BON
+                                    </button>
+                                    <div class="modal fade right" id="sideModalTR" tabindex="-1" role="dialog"
+                                         aria-labelledby="myModalLabel"
+                                         aria-hidden="true" style="z-index: 1050;">
+                                        <!-- Add class .modal-side and then add class .modal-top-right (or other classes from list above) to set a position to the modal -->
+                                        <div class="modal-dialog modal-side modal-bottom-right" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body bien" style="padding:20px 10px 20px 20px!important">
+                                                    {% if bon.etat == "save" %}
+                                                        <button type="button"
+                                                                class="btn btn-labeled bg-pink btn-sm text-white"
+                                                                data-toggle="modal"
+                                                                data-target="#modalInfo" style="width: 100%;" id="bouton1">1
+                                                            - MODIFIER LES
+                                                            INFORMATIONS
+                                                        </button>
+                                                        {# AJOUTER UN GROUPE #}
+                                                        {% if editGrou %}
+                                                            <button type="button" class="btn btn-labeled btn-danger btn-sm"
+                                                                    data-toggle="modal" data-target="#modalGroup"
+                                                                    style="width: 100%;" id="bouton2">2- MODIFIER
+                                                                UN GROUPE D'ARTICLES
+                                                            </button><br>
+                                                        {% else %}
+                                                            <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                                                    data-toggle="modal" data-target="#modalGroup"
+                                                                    style="width: 100%;" id="bouton2">2 - AJOUTER
+                                                                UN GROUPE D'ARTICLES
+                                                            </button>
+                                                        {% endif %}
+                                                        {# FIN  AJOUTER UN GROUPE #}
+
+                                                        {# CHOISIR #}
+                                                        <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#modalChoisir"
+                                                                style="width: 100%;" id="bouton3">3 - CHOISIR UN
+                                                            BIEN / SERVICE
+                                                        </button>
+                                                        {# FIN CHOISIR #}
+
+                                                        {# AJOUTER UNE DESIGNATION #}
+                                                        {% if editMod %}
+                                                            <button type="button" class="btn btn-labeled btn-danger btn-sm"
+                                                                    data-toggle="modal" data-target="#modalLigne"
+                                                                    style="width: 100%;" id="bouton4">4 - MODIFIER
+                                                                UNE DÉSIGNATION
+                                                            </button>
+                                                        {% else %}
+                                                            <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                                                    data-toggle="modal" data-target="#modalLigne"
+                                                                    style="width: 100%;" id="bouton4">4 - AJOUTER
+                                                                UNE DÉSIGNATION
+                                                            </button>
+                                                        {% endif %}
+                                                        {# FIN DESIGNATION #}
+
+
+                                                        {# DEPLACER #}
+                                                        <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#modalDeplacer"
+                                                                style="width: 100%;" id="bouton6">5
+                                                            - DÉPLACER VERS UN AUTRE PROJET
+                                                        </button>
+                                                        {# FIN DEPLACER #}
+
+                                                        {# DUPLIQUER #}
+                                                        <button type="button" class="btn btn-labeled btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#modalDupliquer"
+                                                                style="width: 100%;" id="bouton7">6 - DUPLIQUER CE
+                                                            BON
+                                                        </button>
+                                                        {# FIN DUPLIQUER #}
+                                                        <br><br>
+                                                        <button type="button"
+                                                                class="btn btn-labeled bg-green text-white btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#modalList" style="width: 100%"
+                                                                id="bouton8"> - MODIFIER LES LIGNES ET GROUPES
+                                                        </button>
+                                                        <button type="button" class="btn btn-labeled bg-pri text-white btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#ModalOper" style="width: 100%"
+                                                                id="bouton9">+ OPÉRATIONS SUR LES LIGNES
+                                                        </button>
+
+                                                        <button type="button" class="btn btn-labeled bg-pri text-white btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#ModalInfo" style="width: 100%"
+                                                                id="bouton10">+ MISE EN FORME DU BON
+                                                        </button>
+
+                                                        <button type="button" class="btn btn-labeled bg-pri text-white btn-sm"
+                                                                style="width: 100%;"
+                                                                id="valideBon">+ VALIDER LE BON
+                                                        </button>
+                                                    {% endif %}
+                                                    <a href="{{ path('attacher', {'charger': 'oui', 'id': bon.id, 'type': 'bon'}) }}"
+                                                       class="btn btn-labeled bg-pri text-white btn-sm"
+                                                       style="width: 100%;" id="bouton12">+ OBTENIR UN FICHIER
+                                                        PDF</a><br>
+                                                    <a href="{{ path('attacher', {'charger': 'oui', 'id': bon.id, 'type': 'bon'}) }}"
+                                                       class="btn btn-labeled bg-pri text-white btn-sm"
+                                                       style="width: 100%;" id="bouton13">+ OBTENIR UN FICHIER
+                                                        EXCEL</a><br>
+                                                    <a href="{{ path('attacher', {'charger': 'oui', 'id': bon.id, 'type': 'bonord'}) }}"
+                                                       class="btn btn-labeled bg-pri text-white btn-sm"
+                                                       style="width: 100%;" id="bouton14">+ OBTENIR UN FICHIER
+                                                        WORD</a><br>
+
+                                                    <button type="button" class="btn btn-labeled bg-pri text-white btn-sm"
+                                                            style="width: 100%;"
+                                                            onclick='printFrame();' id="bouton15">+ IMPRIMER
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="shadow bg-white devtohide"
+                                 style="width: 21cm; height:29.7cm; margin: auto; padding: 0.6cm;">
+                                <iframe id="frame"
+                                        src="{{ path('attacher',{'id':bon.id, 'type':'imprimbon', 'charger':'oui'}) }}"
+                                        style="width: 100%; height: 100%; border: none;"></iframe>
+                            </div>
+                            <br><br><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

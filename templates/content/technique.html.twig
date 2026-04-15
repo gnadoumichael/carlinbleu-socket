@@ -1,0 +1,1465 @@
+{% extends 'baser.html.twig' %}
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+    <input type="text" class="hide" id="pager" value="technique"/>
+    <input type="text" class="hide" id="idclient" value="{{ client.id }}"/>
+    <input type="text" class="hide" id="idchantier" value="{{ chantier.id }}"/>
+    <input type="text" class="hide" id="pager" value="techniques"/>
+
+    <div class="modal fade right" id="modalClient" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header col-white bg-green p-l-20 hide" id="clfa">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-minus-circle icofont-1x"></i>
+                        MODIFIER UN CLIENT</h3>
+                </div>
+                <div class="modal-header col-white bg-pri p-l-20" id="clfb">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-plus-circle icofont-1x"></i>
+                        AJOUTER UN CLIENT</h3>
+                </div>
+
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formClient, {'attr': {'id':'addClientForm' }}) }}
+                        {{ form_row(formClient._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label pri bolo">CLIENT<span class="col-red">*</span>
+                                </label>
+                                <div class="form-group m-t--5">
+                                    <div class="form-line">
+                                        {{ form_widget(formClient.nomclient,{'attr':{'class':'form-control cls' }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label pri bolo">ADRESSE</label>
+                                <div class="form-group m-t--5">
+                                    <div class="form-line">
+                                        {{ form_widget(formClient.adresse,{'attr':{'class':'form-control cls' }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label pri bolo">CONTACTS</label>
+                                <div class="form-group m-t--5">
+                                    <div class="form-line">
+                                        {{ form_widget(formClient.contact,{'attr':{'class':'form-control cls' }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label pri bolo">COMPTE CONTRIBUABLE</label>
+                                <div class="form-group m-t--5">
+                                    <div class="form-line">
+                                        {{ form_widget(formClient.contribuable,{'attr':{'class':'form-control cls' }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center hide" id="divClienter">
+                            <input type="submit" id="updateClient" value="MODIFIER"
+                                   class="btn btn-link waves-effect col-white bg-green"/>
+                            <div type="button" id="closeCliente" class="btn btn-link waves-effect col-white bg-pink">
+                                ANNULER
+                            </div>
+                        </div>
+
+
+                        <div class="text-center" id="divClient">
+                            <input type="submit" id="addTechClient" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect col-white bg-pri">
+                            <div type="button" id="closeClient" class="btn btn-link waves-effect col-white bg-pink"
+                                 data-dismiss="modal">
+                                FERMER
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadClient"/>
+                        </div>
+                    </div>
+                    {{ form_end(formClient) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalChantier" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header col-white bg-green p-l-20 hide" id="chfa">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-minus-circle icofont-1x"></i>
+                        MODIFIER UN CHANTIER</h3>
+                </div>
+
+                <div class="modal-header col-white bg-pri p-l-20" id="chfb">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-plus-circle icofont-1x"></i>
+                        AJOUTER UN CHANTIER</h3>
+                </div>
+
+                <div class="modal-body m-t-10 bien">
+                    {{ form_start(formChantier, {'attr': {'id':'addChantierForm' }}) }}
+                    <input type="hidden" name="token" value="{{ csrf_token('addChantierToken') }}"/>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">CLIENT<span class="col-red">*</span>
+                            </label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    <select class="form-control chrs supper selclient" name="client"
+                                            id="client"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">NOM DU CHANTIER<span class="col-red">*</span>
+                            </label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    {{ form_widget(formChantier.nomchantier,{'attr':{'class':'form-control chr'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">RÉFÉRENCE CONTRAT
+                            </label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    {{ form_widget(formChantier.contrat,{'attr':{'class':'form-control col-pink'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">SITUATION GÉOGRAPHIQUE</label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    {{ form_widget(formChantier.localisation,{'attr':{'class':'form-control chr'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">SOUS-CHANTIER DU CHANTIER</label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    {{ form_widget(formChantier.sous,{'required':'','attr':{'class':'form-control chr' }}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <label class="form-label pri bolo">DESCRIPTION</label>
+                            <div class="form-group m-t--5">
+                                <div class="form-line">
+                                    {{ form_widget(formChantier.description,{'required':'','id':'description','attr':{'class':'form-control chr'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-6">
+                            <div class="form-group m-t--5">
+                                <label class="form-label pri bolo">DÉBUTE LE</label>
+                                <div class="input-group date" id="id_0">
+                                    <input type="text" placeholder="Date..." id="ddebut" name="ddebut"
+                                           style="border-bottom: 1px solid #000" class="form-control chr"/>
+                                    <div class="input-group-addon input-group-append">
+                                        <div class="input-group-text">
+                                            <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group m-t--5">
+                                <label class="form-label pri bolo">TERMINE LE</label>
+                                <div class="input-group date" id="id_1">
+                                    <input type="text" placeholder="Date..." id="dfin" name="dfin"
+                                           style="border-bottom: 1px solid #000" class="form-control chr"/>
+                                    <div class="input-group-addon input-group-append">
+                                        <div class="input-group-text">
+                                            <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="text-center hide" id="divChantiere">
+                        <input type="submit" id="updateChan" value="MODIFIER"
+                               class="btn btn-link waves-effect col-white bg-green">
+                        <div type="button" id="closeChantiere" class="btn btn-link waves-effect col-white bg-pink"
+                             data-dismiss="modal">
+                            ANNULER
+                        </div>
+                    </div>
+
+                    <div class="text-center" id="divChantier">
+                        <input type="submit" id="adduChantier" value="ENREGISTRER"
+                               class="btn btn-link waves-effect col-white bg-pri">
+                        <div type="button" id="closeChantier" class="btn btn-link waves-effect col-white bg-pink"
+                             data-dismiss="modal">
+                            FERMER
+                        </div>
+                    </div>
+
+
+                    <div class="text-center">
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadChantier"></div>
+                    {{ form_end(formChantier) }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalPersonnel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                {% if editPer %}
+                    <div class="modal-header bg-green text-white p-l-20">
+                        <h4 class="modal-title" id="defaultModalLabel">MODIFIER UN PERSONNEL</h4>
+                    </div>
+                {% else %}
+                    <div class="modal-header bg-pri text-white p-l-20">
+                        <h4 class="modal-title" id="defaultModalLabel">AJOUTER UN PERSONNEL</h4>
+                    </div>
+                {% endif %}
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formPersonnel, {'attr': {'id':'addPersonnelForm' }}) }}
+                        {{ form_row(formPersonnel._token) }}
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">NOM & PRÉNOMS<span class="col-red">*</span>
+                                </label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPersonnel.noms,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.noms,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">SERVICE</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPeronnel.service,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.service,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">FONCTION</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPersonnel.fonction,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.fonction,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">TYPE DE CONTRAT</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPersonnel.contrat,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.contrat,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">EMAIL</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPersonnel.mail,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.mail,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CONTACTS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {% if editPer %}
+                                            {{ form_widget(formPersonnel.contact,{'attr':{'class':'form-control col-pink ' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formPersonnel.contact,{'attr':{'class':'form-control' }}) }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <div class="text-center">
+                            {% if editPer %}
+                                <input type="text" class="hide" id="idperson" value="{{ person.id }}"/>
+                                <input type="submit" id="updatePers" value="MODIFIER"
+                                       class="btn btn-link waves-effect text-white bg-green">
+                            {% else %}
+                                <input type="submit" id="addPers" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-blue">
+                            {% endif %}
+
+                            <div type="button" id="closePers" class="btn btn-link waves-effect text-white bg-pink"
+                                 data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadPers"></div>
+                        <br>
+                        <br>
+                        <br>
+                        {{ form_end(formPersonnel) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalSuperviseur" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" 8
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-pri text-white p-l-20">
+                    <h4 class="modal-title" id="defaultModalLabel">CHANTIER / SUPERVISEURS</h4>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        <form id="addSuperviseurForm">
+                            <input type="hidden" name="token" value="{{ csrf_token('addSuperviseurToken') }}"/>
+                            <div class="row clearfix m-b-10">
+                                <div class="col-sm-12">
+                                    <label class="form-label m-b--30 col-blue bolo">CHANTIERS</label>
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <select class="js-example-basic-multiple" name="chantiers[]"
+                                                    multiple="multiple" style="width: 100%" required>
+                                                {% for client in clients %}
+                                                    {% if client.corbeille is null %}
+                                                        {% set check = 0 %}
+                                                        {% for chantier in client.chantiers %}
+                                                            {% if chantier.corbeille is null and chantier.archiver != 'oui' %}
+                                                                {% set check = check + 1 %}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        {% if check > 0 %}
+                                                            <optgroup label="{{ client.nomclient|upper }}">
+                                                                {% for chantier in client.chantiers %}
+                                                                    {% if chantier.corbeille is null and chantier.archiver != 'oui' %}
+                                                                        <option class="col-blue"
+                                                                                value="{{ chantier.id }}">{{ chantier.nomchantier|upper }}</option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </optgroup>
+
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix m-b-10">
+                                <div class="col-sm-12">
+                                    <label class="form-label m-b--30 col-blue bolo">SUPERVISEURS</label>
+                                    <div class="form-group">
+                                        <select class="js-example-basic-multiple" name="superviseurs[]"
+                                                multiple="multiple" style="width: 100%" required>
+                                            {% for personnel in personnels %}
+                                                <option value="{{ personnel.id }}">{{ personnel.noms|upper }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <input type="submit" id="addSuper" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect text-white bg-blue">
+                                <div type="button" id="closeSuper" class="btn btn-link waves-effect text-white bg-pink"
+                                     data-dismiss="modal">FERMER
+                                </div>
+                                <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                     class="align-justify" id="loadSuper"></div>
+                            <br>
+                            <br>
+                            <br>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalDocument" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">LIER DES FICHIERS À UN CHANTIERS</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUpload, {'enctype':'multipart/form-data','attr': {'id': 'addFileForm'}}) }}
+                        {{ form_row(formUpload._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileChantier') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICHIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUpload.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CHANTIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUpload.chantier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileChantier" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileChantier"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileChantier">
+                        </div>
+                        {{ form_end(formUpload) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalFiche" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">AJOUTER DES FICHIERS TECHNIQUES</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUploada, {'enctype':'multipart/form-data','attr': {'id': 'addFileTechniqueForm'}}) }}
+                        {{ form_row(formUploada._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileTech') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICHIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploada.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CATÉGORIES</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploada.categorie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileTechnique" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileTechnique"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileTechnique">
+                        </div>
+                        {{ form_end(formUploada) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="mdModalFicheDesc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-white bg-green p-l-20">
+                    <h3 class="modal-title" id="defaultModalLabel">AJOUTER DES DESCRIPTIFS TECHNIQUES</h3>
+                </div>
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+                        {{ form_start(formUploado, {'enctype':'multipart/form-data','attr': {'id': 'addFileDescForm'}}) }}
+                        {{ form_row(formUploado._token) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addFileDesc') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">IMPORTER DES FICIERS</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploado.nomfichier,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 pri bolo">CATÉGORIES</label>
+                                <div class="form-group">
+                                    <div class="form-line col-pink">
+                                        {{ form_widget(formUploado.categorie,{'attr':{'class':'form-control'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <input type="submit" id="addFileDesc" value="ENREGISTRER"
+                                   class="btn btn-link waves-effect text-white bg-pri">
+                            <div type="button" id="closeFileDesc"
+                                 class="btn btn-link waves-effect text-white bg-pink" data-dismiss="modal">
+                                FERMER
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadFileDesc">
+                        </div>
+                        {{ form_end(formUploada) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade right" id="modalContact" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-full-height modal-right" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header col-white bg-green p-l-20 hide" id="cofa">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-minus-circle icofont-1x"></i>
+                        MODIFIER UN CONTACT</h3>
+                </div>
+
+                <div class="modal-header col-white bg-pri p-l-20" id="cofb">
+                    <h3 class="modal-title" id="defaultModalLabel">
+                        <i class="icofont-plus-circle icofont-1x"></i>
+                        AJOUTER UN CONTACT</h3>
+                </div>
+
+                <div class="modal-body m-t-10 bien">
+                    <div class="body">
+
+                        {{ form_start(formContact, {'attr': {'id': 'addContactForm'}}) }}
+                        <input type="hidden" name="token" value="{{ csrf_token('addContactToken') }}"/>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">CLIENTS<span
+                                            class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        <select class="form-control cohr supper selclient" name="client"
+                                                id="client"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">NOM & PRÉNOMS<span
+                                            class="col-red">*</span></label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formContact.contact,{'attr':{'class':'form-control chors'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">FONCTION</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formContact.fonction,{'attr':{'class':'form-control cohr'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">E-MAIL</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formContact.mail,{'attr':{'class':'form-control cohr'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">TÉLÉPHONE MOBILE</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formContact.phone,{'attr':{'class':'form-control cohr'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row clearfix m-b-10">
+                            <div class="col-sm-12">
+                                <label class="form-label m-b--30 col-blue bolo">TÉLÉPHONE BUREAU</label>
+                                <div class="form-group">
+                                    <div class="form-line">
+                                        {{ form_widget(formContact.bureau,{'attr':{'class':'form-control cohr'}}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-center hide" id="divContacte">
+                                <input type="text" class="hide" id="idcontact" value="{{ contact.id }}">
+                                <input type="submit" id="updateContact" value="MODIFIER"
+                                       class="btn btn-link waves-effect col-white bg-green">
+                                <div type="button" id="closeContact"
+                                     class="btn btn-link waves-effect col-white bg-pink"
+                                     data-dismiss="modal">
+                                    ANNULER
+                                </div>
+                            </div>
+
+                            <div class="text-center" id="divContact">
+                                <input type="submit" id="addeContact" value="ENREGISTRER"
+                                       class="btn btn-link waves-effect col-white bg-blue">
+                                <div type="button" id="closeContact"
+                                     class="btn btn-link waves-effect col-white bg-pink"
+                                     data-dismiss="modal">
+                                    FERMER
+                                </div>
+                            </div>
+                            <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                                 class="align-justify" id="loadContact">
+
+                        </div>
+                        {{ form_end(formContact) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content fixed-top">
+        <div class="container-fluid" style="margin: 0 14px 0 14px">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="ressult" style="width: 100%; align-content: start" class="text-left"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content" style="margin-top: 20px !important;">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row clearfix m-t-50">
+                    <div class="col-sm-12 ">
+                        <h4 class="bolo700 col-deep-orange">GESTION TECHNIQUE</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="block-header">
+                <div class="row clearfix">
+                    <div class="col-sm-12 ">
+                        <h4 class="bolo700">
+                            Clients - Chantiers - Contacts
+                        </h4>
+                    </div>
+                </div>
+                <div class="row clearfix p-b-5">
+                    <div class="col-sm-12">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                            <button type="button" data-toggle="modal" data-target="#modalClient"
+                                    class="btn bg-purple text-white" style="border:1px solid #dddfeb">+ CLIENT
+                            </button>
+                            <button type="button" data-toggle="modal" data-target="#modalChantier"
+                                    class="btn bg-blue text-white" style="border:1px solid #dddfeb">+ CHANTIER
+                            </button>
+                            <button type="button" data-toggle="modal" data-target="#modalContact"
+                                    class="btn bg-blue-grey text-white" style="border:1px solid #dddfeb">+ CONTACT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
+
+                    {% set countClient = 0 %}
+                    {% for client in clients %}
+                        {% if client.type is null %}
+                            {% if client.corbeille is null %}
+                                {% set  countClient = countClient + 1 %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="panel panel-pri shadow" style="border-left: 2px solid #A9A9A9">
+                        <div class="panel-heading" role="tab" id="headingOne_1">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_0" href="#collapseOne_0" aria-expanded="false"
+                                   aria-controls="collapseOne_0">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Clients<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countClient }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseOne_0" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne_0">
+                            <div class="panel-body">
+                                <div class="table-responsive shadow" style="padding: 20px; overflow:scroll">
+                                    <table class="table-bordered  display nowrape" style="width: 100%" id="dataClientsTech">
+                                        <thead>
+                                        <tr>
+                                            <th>CLIENTS</th>
+                                            <th>CODE CLIENT</th>
+                                            <th class="text-center">ADRESSE</th>
+                                            <th class="text-center">CONTACTS</th>
+                                            <th class="text-center">COMPTE&nbsp;C.</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for client in clients %}
+                                            {% if client.type is null %}
+                                                {% if client.corbeille is null %}
+                                                    <tr>
+                                                        <td class="bolo700 col-blue">{{ client.nomclient|upper }}</td>
+                                                        <td class="text-left">{{ client.code }}</td>
+                                                        <td class="text-left">{{ client.adresse }}</td>
+                                                        <td class="text-left">{{ client.contact }}</td>
+                                                        <td class="text-left">{{ client.contribuable }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {% set countEtude = 0 %}
+                    {% set countEchouer = 0 %}
+                    {% set countEncours = 0 %}
+                    {% set countSous = 0 %}
+                    {% set countTerminer = 0 %}
+                    {% set countCloturer = 0 %}
+                    {% set countTout = 0 %}
+
+                    {% for client in clients %}
+                        {% if client.type is null %}
+                            {% if client.corbeille is null %}
+                                {% for chantier in client.chantiers %}
+                                    {% if chantier.etat == "etude" and chantier.corbeille is null %}
+                                        {% set countEtude = countEtude + 1 %}
+                                    {% endif %}
+                                    {% if chantier.etat == "encours" and chantier.corbeille is null %}
+                                        {% set countEncours = countEncours + 1 %}
+                                    {% endif %}
+                                    {% if chantier.sous is not null %}
+                                        {% if chantier.etat == "encours" and chantier.corbeille is null %}
+                                            {% set countSous = countSous + 1 %}
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if chantier.corbeille is null %}
+                                        {% set countTout = countTout + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="panel panel-pri shadow" style="border-left: 2px solid #6636f6; margin-top: 20px !important">
+                        <div class="panel-heading" role="tab" id="headingEtu_1">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordionEtu_1" href="#collapseEtu_1" aria-expanded="false"
+                                   aria-controls="collapseEtu_1">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Chantiers en étude<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countEtude }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseEtu_1" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingEtu_1">
+                            <div class="panel-body">
+                                <div class="table-responsive shadow" style="padding: 20px; overflow: scroll">
+                                    <table class="table-bordered shadow display nowrape" id="listeChantiers"
+                                           style="width:100%">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th class="col-blue-grey">CHANTIERS / CLIENT</th>
+                                            <th>CLIENT</th>
+                                            <th class="text-center">DÉBUT</th>
+                                            <th class="text-center">FIN</th>
+                                            <th>SUPERVISEURS</th>
+                                            <th class="text-center">PROGRESSION</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set check = 0 %}
+                                        {% for client in clients %}
+                                            {% if client.type is null %}
+                                                {% if client.corbeille is null %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% if chantier.corbeille is null  and chantier.etat == "etude" %}
+                                                            <tr>
+                                                                <td style="padding-left: 20px !important;">
+                                                                    <a href="{{ path('gestion', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.client.nomclient|upper }}|{{ chantier.nomchantier|upper }}">
+                                                                        {% if chantier.sous is not null %}
+                                                                            <span class="badge bg-orange">SP</span>
+                                                                        {% endif %}
+                                                                        <span class="col-blue font-bold"> {{ chantier.nomchantier|upper }}
+                                                                    </a>
+                                                                </td>
+                                                                <td class="font-bold">{{ client.nomclient|upper }}</td>
+                                                                <td class="text-center">{{ chantier.ddebut|date('d/m/Y') }}</td>
+                                                                <td class="text-center">{{ chantier.dfin|date('d/m/Y') }}</td>
+                                                                <td>
+                                                                    {% for superviseur in chantier.superviseurs %}
+                                                                        <span class="pri m-l-5"><a
+                                                                                    href="{{ path('upSuperviseur', {'idchantier': chantier.id, 'idsup': superviseur.id}) }}"
+                                                                                    title="Supprimer"
+                                                                                    class="sholigne"><i
+                                                                                        class="material-icons col-pink"
+                                                                                        style="font-size: 18px;float: left">highlight_off</i></a>{{ superviseur.noms }}</span>
+                                                                        <br>
+                                                                    {% endfor %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar bg-green"
+                                                                             role="progressbar"
+                                                                             aria-valuenow=" {{ chantier.progression|number_format(0, ',', ' ') }}"
+                                                                             aria-valuemin="0" aria-valuemax="100"
+                                                                             style="width: {{ chantier.progression|number_format(0, ',', ' ') }}%"></div>
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="text-center">{{ chantier.progression|number_format(0, ',', ' ') }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <p>
+                                        <span class="col-orange">&raquo; SC:</span>
+                                        <span class="col-blue-grey">SOUS-CHANTIER</span>
+                                        <br></p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-pri shadow"
+                         style="border-left: 2px solid #00BCD4;">
+                        <div class="panel-heading bg-pri" role="tab" id="headingEcho_1">
+                            <h4 class="panel-title">
+                                <a class="collapsed outai col-white" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseEcho_1" aria-expanded="false"
+                                   aria-controls="collapseEcho_1">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Chantiers
+                                    échoués<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countEchouer }}</span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseEcho_1" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingEcho_1">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 20px;">
+                                    <table class="table-striped table-bordered display nowrape" id="listeChantiersEchouer" style="width: 100%">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th class="col-blue-grey">CHANTIERS / CLIENT</th>
+                                            <th>CLIENT</th>
+                                            <th class="text-center">DÉBUT</th>
+                                            <th class="text-center">FIN</th>
+                                            <th>SUPERVISEURS</th>
+                                            <th class="text-center">PROGRESSION</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set check = 0 %}
+                                        {% for client in clients %}
+                                            {% if client.type is null %}
+                                                {% if client.corbeille is null %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% if chantier.corbeille is null  and chantier.etat == "echouer" %}
+                                                            <tr>
+                                                                <td style="padding-left: 20px !important;">
+                                                                    <a href="{{ path('gestion', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.client.nomclient|upper }}|{{ chantier.nomchantier|upper }}">
+                                                                        {% if chantier.sous is not null %}
+                                                                            <span class="badge bg-orange">SP</span>
+                                                                        {% endif %}
+                                                                        <span class="col-blue font-bold"> {{ chantier.nomchantier|upper }}
+                                                                    </a>
+                                                                </td>
+                                                                <td class="font-bold">{{ client.nomclient|upper }}</td>
+                                                                <td class="text-center">{{ chantier.ddebut|date('d/m/Y') }}</td>
+                                                                <td class="text-center">{{ chantier.dfin|date('d/m/Y') }}</td>
+                                                                <td>
+                                                                    {% for superviseur in chantier.superviseurs %}
+                                                                        <span class="pri m-l-5"><a
+                                                                                    href="{{ path('upSuperviseur', {'idchantier': chantier.id, 'idsup': superviseur.id}) }}"
+                                                                                    title="Supprimer"
+                                                                                    class="sholigne"><i
+                                                                                        class="material-icons col-pink"
+                                                                                        style="font-size: 18px;float: left">highlight_off</i></a>{{ superviseur.noms }}</span>
+                                                                        <br>
+                                                                    {% endfor %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar bg-green"
+                                                                             role="progressbar"
+                                                                             aria-valuenow=" {{ chantier.progression|number_format(0, ',', ' ') }}"
+                                                                             aria-valuemin="0" aria-valuemax="100"
+                                                                             style="width: {{ chantier.progression|number_format(0, ',', ' ') }}%"></div>
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="text-center">{{ chantier.progression|number_format(0, ',', ' ') }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-pri shadow" style="border-left: 2px solid #E91E63">
+                        <div class="panel-heading" role="tab" id="headingOne_1">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseOne_1" aria-expanded="false"
+                                   aria-controls="collapseOne_1">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Chantiers
+                                    en cours<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countEncours }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseOne_1" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne_1">
+                            <div class="panel-body">
+                                <div class="table-responsive shadow" style="padding: 20px; overflow: scroll">
+                                    <table class="table-bordered shadow display nowrape" id="listeChantiersCours"
+                                           style="width:100%">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th class="col-blue-grey">CHANTIERS / CLIENT</th>
+                                            <th>CLIENT</th>
+                                            <th class="text-center">DÉBUT</th>
+                                            <th class="text-center">FIN</th>
+                                            <th>SUPERVISEURS</th>
+                                            <th class="text-center">PROGRESSION</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set check = 0 %}
+                                        {% for client in clients %}
+                                            {% if client.type is null %}
+                                                {% if client.corbeille is null %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% if chantier.corbeille is null  and chantier.etat == "encours" %}
+                                                            <tr>
+                                                                <td style="padding-left: 20px !important;">
+                                                                    <a href="{{ path('gestion', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.client.nomclient|upper }}|{{ chantier.nomchantier|upper }}">
+                                                                        {% if chantier.sous is not null %}
+                                                                            <span class="badge bg-orange">SC</span>
+                                                                        {% endif %}
+                                                                        <span class="col-blue font-bold">{{ chantier.nomchantier|upper }}
+                                                                    </a>
+                                                                </td>
+                                                                <td class="font-bold">{{ client.nomclient|upper }}</td>
+                                                                <td class="text-center">{{ chantier.ddebut|date('d/m/Y') }}</td>
+                                                                <td class="text-center">{{ chantier.dfin|date('d/m/Y') }}</td>
+                                                                <td>
+                                                                    {% for superviseur in chantier.superviseurs %}
+                                                                        <span class="pri m-l-5"><a
+                                                                                    href="{{ path('upSuperviseur', {'idchantier': chantier.id, 'idsup': superviseur.id}) }}"
+                                                                                    title="Supprimer"
+                                                                                    class="sholigne"><i
+                                                                                        class="material-icons col-pink"
+                                                                                        style="font-size: 18px;float: left">highlight_off</i></a>{{ superviseur.noms }}</span>
+                                                                        <br>
+                                                                    {% endfor %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar bg-green"
+                                                                             role="progressbar"
+                                                                             aria-valuenow=" {{ chantier.progression|number_format(0, ',', ' ') }}"
+                                                                             aria-valuemin="0" aria-valuemax="100"
+                                                                             style="width: {{ chantier.progression|number_format(0, ',', ' ') }}%"></div>
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="text-center">{{ chantier.progression|number_format(0, ',', ' ') }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <p>
+                                        <span class="col-orange">&raquo; SC:</span>
+                                        <span class="col-blue-grey">SOUS-CHANTIER</span>
+                                        <br></p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-pri shadow" style="border-left: 2px solid #FF9800; margin-top: 20px !important">
+                        <div class="panel-heading" role="tab" id="headingOneSS">
+                            <h5 class="panel-title">
+                                <a class="collapsed outai  col-white" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseOneSS" aria-expanded="false"
+                                   aria-controls="collapseOne_1">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Chantiers
+                                    | Sous-chantiers<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countSous }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseOneSS" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOneSS">
+                            <div class="panel-body">
+                                <div class="table-responsive shadow" style="padding: 20px">
+                                    <table class="table-bordered  display nowrape" style="width: 100%"
+                                           id="listeSous">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th class="col-blue-grey">CHANTIERS</th>
+                                            <th>CLIENT</th>
+                                            <th class="text-center">DÉBUT</th>
+                                            <th class="text-center">FIN</th>
+                                            <th>SUPERVISEURS</th>
+                                            <th>ÉTAT</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set check = 0 %}
+                                        {% for client in clients %}
+                                            {% for chantier in client.chantiers %}
+                                                {% if chantier.archiver != 'oui' %}
+                                                    {% if chantier.sous is null %}
+                                                        {% if chantier.corbeille is null %}
+                                                            {% for pro in chantier.chantiers %}
+                                                                {% set count = 0 %}
+                                                                {% set progres = 0 %}
+                                                                {% for planning in pro.plannings %}
+                                                                    {% set count = count + 1 %}
+                                                                    {% set progres = progres + planning.progression %}
+                                                                {% endfor %}
+                                                                <tr>
+                                                                    <td style="padding-left: 20px !important;">
+                                                                        <a href="{{ path('gestion', {'id': pro.id}) }}"
+                                                                           class="font-bold"
+                                                                           title="{{ pro.sous.nomchantier|upper }}|{{ pro.nomchantier|upper }}">
+                                                                            {{ pro.nomchantier|upper }}
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="{{ path('gestion', {'id': chantier.id}) }}"
+                                                                           class="font-bold col-pink">{{ client.nomclient|upper }}
+                                                                            | {{ chantier.nomchantier|upper }}</a></td>
+
+                                                                    <td class="text-center">{{ pro.ddebut|date('d/m/Y') }}</td>
+                                                                    <td class="text-center">{{ pro.dfin|date('d/m/Y') }}</td>
+                                                                    <td>
+                                                                        {% for superviseur in pro.superviseurs %}
+                                                                            <span class="pri m-l-5"><a
+                                                                                        href="{{ path('upSuperviseur', {'idchantier': pro.id, 'idsup': superviseur.id}) }}"
+                                                                                        title="Supprimer"
+                                                                                        class="sholigne"><i
+                                                                                            class="material-icons col-pink"
+                                                                                            style="font-size: 18px;float: left">highlight_off</i></a>{{ superviseur.noms }}</span>
+                                                                            <br>
+                                                                        {% endfor %}
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="progress">
+                                                                            <div class="progress-bar bg-green"
+                                                                                 role="progressbar"
+                                                                                 aria-valuenow=" {{ chantier.progression|number_format(0, ',', ' ') }}"
+                                                                                 aria-valuemin="0" aria-valuemax="100"
+                                                                                 style="width: {{ chantier.progression|number_format(0, ',', ' ') }}%"></div>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td class="text-center">{{ chantier.progression|number_format(0, ',', ' ') }}
+                                                                        %
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-pri shadow"  style="border-left: 2px solid #79A807">
+                        <div class="panel-heading" role="tab" id="headingOne_1">
+                            <h5 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseCHTT" aria-expanded="false"
+                                   aria-controls="collapseCHTT">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Tous
+                                    les chantiers<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countTout }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseCHTT" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingCHTT">
+                            <div class="panel-body">
+                                <div class="table-responsive shadow" style="padding: 20px">
+                                    <table class="table-bordered  display nowrape" style="width: 100%"
+                                           id="listeTout">
+                                        <thead>
+                                        <tr class="text-gray-600 text-center">
+                                            <th class="col-blue-grey mw250">CHANTIERS</th>
+                                            <th>CLIENT</th>
+                                            <th class="text-center">DÉBUT</th>
+                                            <th class="text-center">FIN</th>
+                                            <th>SUPERVISEURS</th>
+                                            <th class="text-center">ETAT</th>
+                                            <th class="text-center"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% set check = 0 %}
+                                        {% for client in clients %}
+                                            {% if client.type is null %}
+                                                {% if client.corbeille is null %}
+                                                    {% for chantier in client.chantiers %}
+                                                        {% set count = 0 %}
+                                                        {% set progres = 0 %}
+                                                        {% if chantier.corbeille is null %}
+                                                            {% for planning in pro.plannings %}
+                                                                {% set count = count + 1 %}
+                                                                {% set progres = progres + planning.progression %}
+                                                            {% endfor %}
+                                                            <tr>
+                                                                <td style="padding-left: 20px !important;">
+                                                                    <a href="{{ path('gestion', {'id': chantier.id}) }}"
+                                                                       title="{{ chantier.client.nomclient|upper }}|{{ chantier.nomchantier|upper }}">
+                                                                        {% if chantier.sous is not null %}
+                                                                            <span class="badge bg-orange">SC</span>
+                                                                        {% endif %}
+                                                                        <span class="col-blue font-bold">{{ chantier.nomchantier|upper }}
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{ client.nomclient|upper }}</td>
+                                                                <td class="text-center">{{ chantier.ddebut|date('d/m/Y') }}</td>
+                                                                <td class="text-center">{{ chantier.dfin|date('d/m/Y') }}</td>
+                                                                <td>
+                                                                    {% for superviseur in chantier.superviseurs %}
+                                                                        <span class="pri m-l-5"><a
+                                                                                    href="{{ path('upSuperviseur', {'idchantier': chantier.id, 'idsup': superviseur.id}) }}"
+                                                                                    title="Supprimer"
+                                                                                    class="sholigne"><i
+                                                                                        class="material-icons col-pink"
+                                                                                        style="font-size: 18px;float: left">highlight_off</i></a>{{ superviseur.noms }}</span>
+                                                                        <br>
+                                                                    {% endfor %}
+                                                                </td>
+                                                                <td>
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar bg-green"
+                                                                             role="progressbar"
+                                                                             aria-valuenow=" {{ chantier.progression|number_format(0, ',', ' ') }}"
+                                                                             aria-valuemin="0" aria-valuemax="100"
+                                                                             style="width: {{ chantier.progression|number_format(0, ',', ' ') }}%"></div>
+                                                                    </div>
+                                                                </td>
+
+                                                                <td class="text-center">{{ chantier.progression|number_format(0, ',', ' ') }}
+                                                                    %
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    <p>
+                                        <span class="col-orange">&raquo; SC:</span>
+                                        <span class="col-blue-grey">SOUS-CHANTIER</span>
+                                        <br></p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% set countContact = 0 %}
+                    {% for client in clients %}
+                        {% for contact in client.contacts %}
+                            {% if contact.corbeille is null and client.corbeille is null %}
+                                {% set countContact = countContact + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+                    <div class="panel panel-pri shadow" style="margin-top: 20px !important">
+                        <div class="panel-heading bg-pri" role="tab" id="headingDeu">
+                            <h5 class="panel-title ">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordion_1" href="#collapseDeu" aria-expanded="false"
+                                   aria-controls="collapseDeu">
+                                    <i class="material-icons col-white" style="font-size: 18px;float: left">keyboard_arrow_down</i>Contacts<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countContact }}</span>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseDeu" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingDeu">
+                            <div class="panel-body" style="overflow: scroll">
+                                <div class="table-responsive shadow" style="padding: 10px">
+                                    <table class="table-striped table-bordered display nowrape" style="width: 100%"
+                                           id="daCon">
+                                        <thead>
+                                        <tr class="text-center">
+                                            <th>CONTACT</th>
+                                            <th>FONCTION</th>
+                                            <th>EMAIL</th>
+                                            <th>TÉLÉPHONE</th>
+                                            <th>BUREAU</th>
+                                            <th>CREÉ PAR</th>
+                                            <th>CLIENT</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for client in clients %}
+                                            {% for contact in client.contacts %}
+                                                {% if contact.corbeille is null and client.corbeille is null %}
+                                                    <tr>
+                                                        <td class="font-bold" style="padding-left: 20px !important;">{{ contact.contact|upper }}</td>
+                                                        <td>{{ contact.fonction|capitalize }}</td>
+                                                        <td>{{ contact.mail }}</td>
+                                                        <td>{{ contact.phone }}</td>
+                                                        <td>{{ contact.bureau }}</td>
+                                                        <td class="text-left col-blue bolo600">
+                                                            <i class="fa fa-user col-blue bolo600"></i>&nbsp;
+                                                            {% if contact.dobyuser is not null %}
+                                                                {{ contact.dobyuser.nom|upper }}
+                                                                &nbsp;{{ contact.dobyuser.prenoms|upper }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td><b>{{ client.nomclient }}</b></td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% set countPers = 0 %}
+                    {% for person in personnels %}
+                    {% if person.corbeille is null and person.type != "personnelle" %}
+                        {% set countPers = countPers + 1 %}
+                    {% endif %}
+                    {% endfor %}
+                    <div class="panel panel-pri shadow m-t-5">
+                        <div class="panel-heading" role="tab" id="headingPers">
+                            <h4 class="panel-title">
+                                <a class="collapsed col-white outai" role="button" data-toggle="collapse"
+                                   data-parent="#accordionPers" href="#collapsePers" aria-expanded="false"
+                                   aria-controls="collapsePers">
+                                    <i class="material-icons text-white"
+                                       style="font-size: 18px;float: left">keyboard_arrow_down</i>Le personnel<span
+                                            class="badge bg-pink"
+                                            style="float: right !important;">{{ countPers }}</span>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapsePers" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingPers">
+                            <div class="panel-body " style="overflow: scroll;">
+                                <div class="button-demo">
+
+                                </div>
+                                <div class="table-responsive shadow" style="padding: 20px">
+                                    <div class="table-responsive shadow">
+                                                    <span id="projetvale"
+                                                          style="visibility: hidden">{{ chantier.id }}</span>
+                                        <h4 class="bolo700 col-blue">LE PERSONNEL</h4>
+                                        <table class="table-striped table-bordered display nowrap"
+                                               style="width: 100%;" id="dataPersonTech">
+                                            <thead>
+                                            <tr class="text-center">
+                                                <th>NOM & PRÉNOMS</th>
+                                                <th>PROFESSION</th>
+                                                <th>CONTACTS</th>
+                                                <th>EMAIL</th>
+                                                <th>SALAIRE</th>
+                                                <th>AJOUTER PAR</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for person in personnels %}
+                                                {% if person.corbeille is null and person.type != "personnelle" %}
+                                                    <tr>
+                                                        <td class="text-left font-bold mw300">{{ person.noms|upper }}</td>
+                                                        <td class="text-left">{{ person.fonction|upper }}</td>
+                                                        <td>{{ person.contact }}</td>
+                                                        <td>{{ person.mail }}</td>
+                                                        <td class="text-right">{{ person.salaire|number_format(2,',',' ') }}</td>
+                                                        <td class="text-left col-blue"><i
+                                                                    class="fa fa-user col-blue"></i>&nbsp;
+                                                            {% if person.dobyuser is not null %}
+                                                                {{ person.dobyuser.nom|upper }}
+                                                                &nbsp;{{ person.dobyuser.prenoms|upper }}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                {% if person.corbeille is null and person.type == "personnelle" %}
+                                                    <tr>
+                                                        <td class="col-pink font-bold text-left mw300">{{ person.noms|upper }}</td>
+                                                        <td class="text-left mw250">{{ person.fonction|upper }}</td>
+                                                        <td class="mw150">{{ person.contact }}</td>
+                                                        <td class="mw150">{{ person.mail }}</td>
+                                                        <td class="text-right">-</td>
+                                                        <td class="text-left col-blue mw250"><i
+                                                                    class="fa fa-user col-blue"></i>&nbsp;
+                                                            {% if person.dobyuser is not null %}
+                                                                {{ person.dobyuser.nom|upper }}
+                                                                &nbsp;{{ person.dobyuser.prenoms|upper }}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

@@ -1,0 +1,3 @@
+<?php //App%255CController%255CStarteController%2523getCheckMaster
+
+return [PHP_INT_MAX, []];

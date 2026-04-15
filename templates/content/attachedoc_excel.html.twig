@@ -1,0 +1,2784 @@
+{% if type == 'devis' %}
+    <p style="clear: both"></p>
+    <div class="bood">
+        {% if devis.modele == 1 %}
+            <div>
+                <table style="line-height: 1.5;float: right;">
+                    <tr>
+                        <td style="border: none !important;text-align: center;  ;">
+                            <b>{{ devis.client.nomclient|upper }}</b><br>
+                            {% if devis.client.adresse  == " " %}
+                                {{ devis.client.adresse }}<br>
+                            {% endif %}
+                            {% if devis.client.code is not null %}
+                                <b>N° DE CLIENTS:</b> {{ devis.client.code }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                {% if devis.type == "esti" %}
+                    <h3 class="font-bold m-t--10 col-blue">DEVIS ESTIMATIF</h3>
+                {% endif %}
+                <table>
+                    <tr style="background-color: #f8f9fa !important; font-weight: 700;width: 45%">
+                        <td class="align-center">DATE</td>
+                        <td class="align-center">N° DEVIS</td>
+                        {% if devis.type != "cps" %}
+                            <td class="align-center">AFFAIRE SUIVIE PAR</td>
+                            <td class="align-center">VALIDITÉ</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="align-center">{{ devis.date|date('d/m/Y') }}</td>
+                        <td class="align-center">{{ devis.iddevis }}</td>
+                        {% if devis.type != "cps" %}
+                            <td class="align-center"></td>
+                            <td class="align-center">{{ devis.validit }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td {% if devis.type != "cps" %} colspan="4" {% else %} colspan="2" {% endif %}>
+                            <span style="text-decoration: underline; line-height: 1.5; font-weight: bold">RÉFÉRENCE</span><br>{{ devis.devreference|raw }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <table style="width: 100%;">
+                {% if devis.type != "cps" %}
+                    <tr class="printer">
+                        {% if devis.aaref == 'oui' %}
+                            <th style="text-align: center">RÉF</th>
+                        {% endif %}
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                            DÉSIGNATION
+                        </th>
+                        {% if devis.zone == 'oui' %}
+                            <th style="text-align: center">SECTION</th>
+                        {% endif %}
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center">QTÉ</th>
+                        <th style="text-align: center">PRIX&nbsp;U.</th>
+                        {% if devis.aarem == 'oui' %}
+                            <th style=" text-align: center">%REM</th>
+                        {% endif %}
+                        <th style="text-align: center">MONTANT&nbsp;HT</th>
+                    </tr>
+                    {% for group in listGroup %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td COLSPAN="7"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="5"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% set st = 0 %}
+
+                        {% for lign in group.lignes %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td align="left">{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', '.') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(5, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% else %}
+                                    <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="8" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="5" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% endif %}
+
+                        </tr>
+
+                    {% endfor %}
+                    {% for lign in lignes %}
+                        {% if lign.groupe == null %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td>{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', ' ') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(4, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% endif %}
+                                {% if devis.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    {% if devis.aarem == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b></td>
+                                {% else %}
+                                    {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                        {% if devis.model == 1 %}
+                                            <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b>
+                                            </td>
+                                        {% else %}
+                                            <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b>
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT SANS REMISE</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            <td style="text-align: right">{{ (devis.totalht + devis.vremise)|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>REMISE</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>REMISE</b></td>
+                            {% endif %}
+                            <td style="text-align: right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        {% if devis.aarem == 'tht' %}
+                            <td style="text-align: right">{{ (devis.totalht + devis.vremise)|number_format(2, ',', ' ') }}</td>
+                        {% else %}
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                    </tr>
+                    {% if devis.aarem == 'tht' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}%</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}% </b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.abasetva == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.basetva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.model == 1 %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td align="right">{{ devis.vtva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord"
+                                style="color: #000;border-bottom: 1px solid #D3D3D3 !important;font-weight: 700">
+                                <b>TOTAL TTC</b></td>
+                        {% else %}
+                            <td colspan="2" class="bord"
+                                style="color: #000; border-bottom: 1px solid #D3D3D3 !important;font-weight: 700">
+                                <b>TOTAL TTC</b></td>
+                        {% endif %}
+                        <td style="text-align: right"><b>{{ devis.totalttc|number_format(2, ',', ' ') }}</b><br><span
+                                    class="hider">{{ devis.totalttc|number_format(4, ',', '.') }}</span></td>
+                    </tr>
+                {% endif %}
+
+                {% if devis.type == "cps" %}
+                    <tr class="printer">
+                        <th style="text-align: center">Nº COMMANDE</th>
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                            colspan="2">
+                            DÉSIGNATION
+                        </th>
+                        }
+                        <th style="text-align: center; min-width: 80px !important;">RÉF</th>
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                    </tr>
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+        {% endif %}
+        {% if devis.modele == 2 %}
+            <p style="clear: both"></p>
+            <div>
+                <table style="width: 100% ; margin-top: 20px; border: 1px solid #D3D3D3">
+                    <tr>
+                        <td style="width: 60%;  border-style: none">
+                            <p style="padding-left:10px">Titre du projet: <b>{{ devis.chantier.nomchantier }}</b></p>
+                            <p style="padding-left:10px">Référence/Oblet:</p>
+                            <p style="padding-left:20px;"><b>{{ devis.devreference|raw }}</b></p>
+                            </br>
+                            <p style="padding-left:10px">Date: <b>{{ devis.date|date('d/m/Y') }}</b></p>
+                            <p style="padding-left:10px">Validité du devis: <b>{{ devis.validit }}</b></p>
+                            <p style="padding-left:10px">Affaire suivie par: {{ devis.contact.contact }}</p>
+                        </td>
+                        <td style="width: 40% ; border-style: none">
+                            <h3>DEVIS Nº: {{ devis.iddevis }}</h3></br>
+                            <p>Client: <b>{{ devis.chantier.client.nomclient }}</b></p>
+                            <p>Nº Client: <b>{{ devis.chantier.client.code }}</b></p>
+                            <p>Adresse: <b>{{ devis.chantier.client.adresse }}</b></p>
+                            <p>Téléphone: <b>{{ devis.chantier.client.contact }}</b></p>
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+            </div>
+            <br>
+            <table style="width: 100%;">
+                {% if devis.type != "cps" %}
+                    <tr class="printer">
+                        {% if devis.aaref == 'oui' %}
+                            <th style="text-align: center">RÉF</th>
+                        {% endif %}
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                            DÉSIGNATION
+                        </th>
+                        {% if devis.zone == 'oui' %}
+                            <th style="text-align: center">SECTION</th>
+                        {% endif %}
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center">QTÉ</th>
+                        <th style="text-align: center">PRIX&nbsp;U.</th>
+                        {% if devis.aarem == 'oui' %}
+                            <th style=" text-align: center">REMISE</th>
+                        {% endif %}
+                        <th style="text-align: center">MONTANT&nbsp;HT</th>
+                    </tr>
+                    {% for group in listGroup %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td COLSPAN="7"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="5"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% set st = 0 %}
+
+                        {% for lign in group.lignes %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td align="left">{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', '.') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(5, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% else %}
+                                    <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="8" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="5" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% endif %}
+
+                        </tr>
+
+                    {% endfor %}
+                    {% for lign in lignes %}
+                        {% if lign.groupe == null %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td>{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', ' ') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(4, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% endif %}
+                                {% if devis.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        {% if devis.aarem == 'tht' %}
+                            <td style="text-align: right">{{ (devis.totalht + devis.vremise)|number_format(2, ',', ' ') }}</td>
+                        {% else %}
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                    </tr>
+                    {% if devis.aarem == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>REMISE</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>REMISE</b></td>
+                            {% endif %}
+                            <td style="text-align: right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.aarem == 'tht' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}%</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}% </b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.abasetva == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.basetva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.model == 1 %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td align="right">{{ devis.vtva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord"
+                                style="color: #4e73df;border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>TOTAL TTC</b></td>
+                        {% else %}
+                            <td colspan="2" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>TOTAL TTC</b></td>
+                        {% endif %}
+                        <td align="right"><b>{{ devis.totalttc|number_format(2, ',', ' ') }}</b><br><span
+                                    class="hider">{{ devis.totalttc|number_format(4, ',', '.') }}</span></td>
+                    </tr>
+                {% endif %}
+                {% if devis.type == "cps" %}
+                    <tr class="printer">
+                        <th style="text-align: center">Nº COMMANDE</th>
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                            colspan="2">
+                            DÉSIGNATION
+                        </th>
+                        }
+                        <th style="text-align: center; min-width: 80px !important;">RÉF</th>
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                    </tr>
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+        {% endif %}
+        {% if devis.modele == 3 %}
+            <div>
+                <table style="width: 19cm; margin-top: 50px">
+                    <tr>
+                        <td style="width:70%; border-style: none !important;">
+                            <h1 style="font-weight: bold">{{ usa.societe|upper }}</h1>
+                            <p style="text-align:left" }>
+                                Mail: <b>{{ usa.username }}</b><br/>
+                                Téléphone: <b>{{ usa.contact }}</b><br/>
+                                Adresse: <b>{{ usa.adresse }}</b>
+                            </p>
+                            <p style="text-align:left"><b><u>Référence/Objet:</u></b><br/>
+                                <span>{{ devis.devreference|raw }}</span>
+                            </p>
+                        </td>
+                        <td style="width: 30% ; text-align:right; border-style: none !important;">
+                            <p style="text-align:center ; float: right ; padding:10px ; border:1px solid #D3D3D3 ; border-radius:20px">
+                                Client: <b>{{ devis.chantier.client.nomclient }}</b><br/>
+                                Nº Client: <b>{{ devis.chantier.client.code }}</b><br/>
+                                Adresse: <b>{{ devis.chantier.client.adresse }}</b><br/>
+                                Téléphone: <b>{{ devis.chantier.client.contact }}</b></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <br>
+            <table style="width: 100%;">
+                {% if devis.type != "cps" %}
+                    <tr class="printer">
+                        {% if devis.aaref == 'oui' %}
+                            <th style="text-align: center">RÉF</th>
+                        {% endif %}
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                            DÉSIGNATION
+                        </th>
+                        {% if devis.zone == 'oui' %}
+                            <th style="text-align: center">SECTION</th>
+                        {% endif %}
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center">QTÉ</th>
+                        <th style="text-align: center">PRIX&nbsp;U.</th>
+                        {% if devis.aarem == 'oui' %}
+                            <th style=" text-align: center">REMISE</th>
+                        {% endif %}
+                        <th style="text-align: center">MONTANT&nbsp;HT</th>
+                    </tr>
+                    {% for group in listGroup %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td COLSPAN="7"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="5"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td align="center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% set st = 0 %}
+
+                        {% for lign in group.lignes %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td align="left">{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', '.') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(5, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% else %}
+                                    <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="8" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="5" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% endif %}
+
+                        </tr>
+
+                    {% endfor %}
+                    {% for lign in lignes %}
+                        {% if lign.groupe == null %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td>{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', ' ') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(4, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% endif %}
+                                {% if devis.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                            {% else %}
+                                {% if devis.model == 1 %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                                {% else %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC</b></td>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                        {% if devis.aarem == 'tht' %}
+                            <td style="text-align: right">{{ (devis.totalht + devis.vremise)|number_format(2, ',', ' ') }}</td>
+                        {% else %}
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                    </tr>
+                    {% if devis.aarem == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>REMISE</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>REMISE</b></td>
+                            {% endif %}
+                            <td style="text-align: right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.aarem == 'tht' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                {% if devis.ptva == 'oui' or devis.ptva == 'susp' %}
+                                    <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                                {% else %}
+                                    {% if devis.model == 1 %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b>
+                                        </td>
+                                    {% else %}
+                                        <td colspan="2" class="bord" style="text-align: right;"><b>TOTAL TTC REMISÉ</b>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+
+                            <td style="text-align: right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}%</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    <b>REMISE {{ devis.remtht|number_format(0, ',', ' ') }}% </b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.abasetva == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.basetva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.model == 1 %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;">
+                                    {% if devis.ptva == 'oui' %}
+                                        <b>TVA {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'susp' %}
+                                        <b>TVA SUSPENDUE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                    {% if devis.ptva == 'non' %}
+                                        <b>TVA NON FACTURÉE {{ devis.tva }}%</b>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            <td align="right">{{ devis.vtva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord"
+                                style="color: #4e73df;border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>TOTAL TTC</b></td>
+                        {% else %}
+                            <td colspan="2" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>TOTAL TTC</b></td>
+                        {% endif %}
+                        <td align="right"><b>{{ devis.totalttc|number_format(2, ',', ' ') }}</b><br><span
+                                    class="hider">{{ devis.totalttc|number_format(4, ',', '.') }}</span></td>
+                    </tr>
+                {% endif %}
+                {% if devis.type == "cps" %}
+                    <tr class="printer">
+                        <th style="text-align: center">Nº COMMANDE</th>
+                        <th style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                            colspan="2">
+                            DÉSIGNATION
+                        </th>
+                        }}
+                        <th style="text-align: center; min-width: 80px !important;">RÉF</th>
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                    </tr>
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    {% for bon in devis.bons %}
+                        <tr>
+                            <td style="text-align: center; min-width: 120px !important;">Bon Nº {{ bon.numbon }}</td>
+                            <td style="max-width:500px !important; min-width: 250px !important; text-align: left"
+                                colspan="2">{{ bon.articlecomposer.designation }}</td>
+                            }
+                            <td style="text-align: center; min-width: 80px !important;">{{ bon.articlecomposer.reference }}</td>
+                            <td style="text-align: center">{{ bon.articlecomposer.unite }}</td>
+                            <td style="text-align: center; min-width: 120px !important;">{{ bon.articlecomposer.pu|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                        <tr style="background-color:#f8f9fa; font-weight: 700">
+                            <th style="text-align: center">RÉF</th>
+                            <th style="max-width:500px !important; min-width: 200px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                            }
+                            <th style="text-align: center">UNITÉ</th>
+                            <th style="text-align: center">QTÉ</th>
+                            <th style="text-align: center; min-width: 120px !important;">PRIX&nbsp;U.</th>
+                            <th style="text-align: center; min-width: 120px !important;">MONTANT HT</th>
+                        </tr>
+                        {% for lign in bon.lignes %}
+                            {% if lign.groupe == null %}
+                                <tr>
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                    <td>{{ lign.designation|raw }}</td>
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ lign.pu|number_format(2, ',', ' ') }}</td>
+                                    <td style="text-align: center">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endif %}
+            </table>
+        {% endif %}
+        {% if devis.type != "cps" %}
+            <p style="clear: both"></p>
+            <br>
+            <p style="text-align: left">
+                Arrêté le présent devis à la somme de:<br>
+                <span><b>{{ devis.totalttc|craue_spellout('fr-FR') }} {{ devis.monnaie.code }}</b></span>
+            </p><br>
+            <p style="float: right; text-decoration: underline">SIGNATURE AUTORISÉE</p><br><br><br>
+            {% if devis.conditions is not null %}
+                <p style="float: left; color: #4e73df;"><u>INFORMATIONS ADDITIONNELLES</u></p>
+                <p style="clear: both"></p>
+                <p style="color: #000000;">{{ devis.conditions|raw }}</p>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endif %}
+{% if type == 'bon' %}
+    <div class="bood">
+
+            <table style="margin-top: {{ formes.teteDB }}px !important; float: right">
+                <tr>
+                    <td style="border: none !important; text-align: center">
+                        <b>{{ bon.client.nomclient|upper }}</b> <br>
+                        {{ bon.client.adresse }} <br>
+                    </td>
+                </tr>
+            </table>
+            <table style="text-align: left">
+                <tr>
+                    <td style="border: none !important; font-size: 25px">
+                        {% if bon.type == "oui" %}
+                            <b>BON DE COMMANDE - FOURNISSEUR</b>
+                        {% endif %}
+                        {% if bon.type == "non" %}
+                            <b>BON DE RETOUR DE COMMANDE - FOURNISSEUR</b>
+                        {% endif %}
+                        {% if bon.type == "none" %}
+                            <b>BON DE LIVRAISON</b>
+                        {% endif %}
+                        {% if bon.type == "pst" %}
+                            <b>BON DE COMMANDE - PRESTATAIRE</b>
+                        {% endif %}
+                        {% if bon.type == "cps" %}
+                            <b>PRÉVISION ARTICLE COMPOSÉ</b>
+                        {% endif %}
+                        {% if bon.type == "prepa" %}
+                            <b>BON DE SUIVI DE COMMANDE</b>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr style="background-color: #f8f9fa !important; font-weight: 700">
+                    <td class="text-center">DATE</td>
+                    {% if bon.type == "prepa" %}
+                        <td class="text-center">N° DE BON DE SUIVI</td>
+                    {% else %}
+                        <td class="text-center">N° DE BON</td>
+                    {% endif %}
+
+                    {% if bon.type == "oui" or bon.type == "none" %}
+                        <td class="text-center">N° DE BON DE SUIVI</td>
+                    {% endif %}
+                    <td class="text-center">SELON DEVIS N°</td>
+
+                    {% if bon.type == "pst" %}
+                        <td class="text-center">PRESTATAIRE</td>
+                    {% endif %}
+
+                    {% if bon.type == "none" or bon.type == "oui" %}
+                        <td class="text-center">FOURNISSEUR</td>
+                    {% endif %}
+
+                </tr>
+                <tr>
+                    <td class="text-center">{{ bon.date|date('d/m/y') }}</td>
+                    <td class="text-center">{{ bon.numbon }}</td>
+                    {% if bon.type == "oui" or bon.type == "non" %}
+                        <td class="text-center">{% if bon.preparation is not null %}{{ bon.preparation.numbon }}{% endif %}</td>
+                    {% endif %}
+                    <td class="text-center">
+                        {% if bon.devis is not null %}
+                            {{ bon.devis.iddevis }}
+                        {% endif %}
+                    </td>
+
+                    {% if bon.type != "prepa" %}
+                        {% if bon.type != "none" or bon.type != "cps" %}
+                            {% if bon.fournisseur is not null %}
+                                <td class="text-center">{{ bon.fournisseur.fournisseur|upper }}</td>
+                            {% else %}
+                                <td class="text-center"></td>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+
+                </tr>
+                <tr>
+                    <td
+                            {% if bon.type == "none" or bon.type == "cps" %} colspan="3" {% endif %}
+                            {% if bon.type == "prepa" or bon.type == "pst" %} colspan="4" {% endif %}
+                            {% if bon.type == "oui" or bon.type == "non" %} colspan="5" {% endif %}
+                    >
+                        <span style="text-decoration: underline; font-weight: bold">RÉFÉRENCE</span><br>{{ bon.bonreference|raw }}
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%;">
+                <tr class="printer">
+                    {% if bon.aaref == 'oui' %}
+                        <th style="text-align: center">RÉF</th>
+                    {% endif %}
+                    <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                        DÉSIGNATION
+                    </th>
+                    <th style="text-align: center">UNITÉ</th>
+
+                    {% if bon.type == "none" %}
+                        <th style="text-align: center">QUANTITÉ LIVRÉE</th>
+                    {% endif %}
+                    {% if bon.type == "prepa" %}
+                        <th style="text-align: center">QTÉ<br>PRÉVUE</th>
+                        <th style="text-align: center">QTÉ<br>LIVRÉE</th>
+                        <th style="text-align: center">RESTE&nbsp;À <br>LIVRER</th>
+                    {% endif %}
+                    {% if bon.type == "oui" or bon.type == "non" %}
+                        {% if bon.preparation is not null %}
+                            <th style="text-align: center">QTÉ<br>PRÉVUE</th>
+                            <th style="text-align: center">QTÉ<br>LIVRÉE</th>
+                            <th style="text-align: center">RESTE&nbsp;À <br>LIVRER</th>
+                            <th style="text-align: center"> QTÉ<br>DEMANDÉE</th>
+                        {% else %}
+                            <th style="text-align: center"> QTÉ</th>
+                        {% endif %}
+                    {% endif %}
+                    {% if bon.type == "cps" or bon.type == "pst" %}
+                        <th style="text-align: center"> QTÉ</th>
+                    {% endif %}
+                    <th style="text-align: center">PRIX U.</th>
+                    {% if bon.aarem == 'oui' %}
+                        <th style=" text-align: center">REMISE</th>
+                    {% endif %}
+                    <th style="text-align: center">MONTANT&nbsp;HT</th>
+
+                </tr>
+
+
+                {% for group in listGroup %}
+                    <tr class="togo">
+                        {% if bon.aaref == 'oui' and bon.aarem == 'oui' %}
+                            <td class="text-center">{{ group.reference }}</td>
+                            <td colspan="7" style="font-weight: bold">{{ group.groupe|striptags|raw }}</td>
+                        {% endif %}
+                        {% if bon.aaref == 'non' and bon.aarem == 'non' %}
+                            <td colspan="5" style="font-weight: bold">{{ group.groupe|striptags|raw }}</td>
+                        {% endif %}
+                        {% if bon.aaref == 'oui' and bon.aarem == 'non' %}
+                            <td class="text-center">{{ group.reference }}</td>
+                            <td colspan="6" style="font-weight: bold">{{ group.groupe|striptags|raw }}</td>
+                        {% endif %}
+                        {% if bon.aaref == 'non' and bon.aarem == 'oui' %}
+                            <td colspan="6" style="font-weight: bold">{{ group.groupe|striptags|raw }}</td>
+                        {% endif %}
+
+                    </tr>
+
+                    {% set st = 0 %}
+
+                    {% for lign in group.lignes %}
+                        <tr>
+                            {% if bon.aaref == 'oui' %}
+                                <td style="text-align: center">{{ lign.reference }}</td>
+                            {% endif %}
+                            <td class="text-left">{{ lign.designation|raw }}</td>
+                            <td style="text-align: center">{{ lign.unite }}</td>
+                            <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                        class="hider">{{ lign.quantite|number_format(5, '', '') }}</span></td>
+                            {% if bon.type != "none" %}
+                                <td style="text-align: right">
+                                    {{ lign.pu|number_format(2, ',', ' ') }}<br>
+                                    <span class="hider">{{ lign.pu|number_format(6, '', '') }}</span>
+                                </td>
+                                {% if bon.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if bon.aarem == 'non' %}
+                                    <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                {% else %}
+                                    <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    <tr class="togo">
+                        {% if bon.aaref == 'oui' and bon.aarem == 'oui' %}
+                            <td colspan="7" style="text-align: right">
+                                <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b>
+                            </td>
+                        {% endif %}
+                        {% if bon.aaref == 'non' and bon.aarem == 'non' %}
+                            <td colspan="5" style="text-align: right">
+                                <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b>
+                            </td>
+                        {% endif %}
+                        {% if bon.aaref == 'oui' and bon.aarem == 'non' %}
+                            <td colspan="6" style="text-align: right">
+                                <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b>
+                            </td>
+                        {% endif %}
+                        {% if bon.aaref == 'non' and bon.aarem == 'oui' %}
+                            <td colspan="6" style="text-align: right">
+                                <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b>
+                            </td>
+                        {% endif %}
+
+                    </tr>
+
+                {% endfor %}
+
+                {% for lign in lignes %}
+                    {% if lign.groupe == null %}
+                        <tr>
+                            {% if bon.aaref == 'oui' %}
+                                <td style="text-align: center">{{ lign.reference }}</td>
+                            {% endif %}
+                            <td>{{ lign.designation|raw }}</td>
+                            <td style="text-align: center">{{ lign.unite }}</td>
+
+                            {% if bon.type == "prepa" %}
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                    <br><span
+                                            class="hider">{{ lign.quantite|number_format(5, '', '') }}</span></td>
+
+                                <td style="text-align: center">{{ lign.livrer|number_format(2, ',', ' ') }}
+                                    <br><span
+                                            class="hider">{{ lign.livrer|number_format(5, '', '') }}</span></td>
+
+                                <td style="text-align: center">{{ lign.reste|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.reste|number_format(5, '', '') }}</span></td>
+                            {% endif %}
+                            {% if bon.type == "oui" or bon.type == "non" %}
+                                {% if bon.preparation is not null %}
+                                    <td style="text-align: center">{{ (lign.livrer + lign.reste)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.livrer + lign.reste)|number_format(5, '', '') }}</span>
+                                    </td>
+                                    <td style="text-align: center">{{ lign.livrer|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ lign.livrer|number_format(5, '', '') }}</span></td>
+                                    <td style="text-align: center">{{ lign.reste|number_format(2, ',', ' ') }}<br><span
+                                                class="hider">{{ lign.reste|number_format(5, '', '') }}</span></td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ lign.quantite|number_format(5, '', '') }}</span></td>
+                                {% else %}
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ lign.quantite|number_format(5, '', '') }}</span></td>
+                                {% endif %}
+                            {% endif %}
+                            {% if bon.type == "cps" or bon.type == "pst" %}
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                    <br><span
+                                            class="hider">{{ lign.quantite|number_format(5, '', '') }}</span></td>
+                            {% endif %}
+                            {% if bon.type is not same as "none" %}
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(6, '', '') }}</span></td>
+                                {% if bon.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if bon.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                                {% if bon.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+
+                {% if bon.type != "none" and bon.type != "cps" %}
+                    {% if bon.type != "pst" %}
+                        {% if bon.caisses is not null %}
+                            {% if bon.aaref is same as 'oui' %}
+                                {% if bon.aarem is same as 'oui' %}
+                                    <tr>
+                                        <td colSpan="10" class="borde" style="color: red"><b>HISTORIQUE DES
+                                                PAIEMENTS</b>
+                                        </td>
+                                    </tr>
+                                    {% set recu = 0 %}
+                                    {% for caisse in bon.caisses %}
+                                        {% if caisse.etat == 'valide' %}
+                                            <tr>
+                                                <td colSpan="9">{{ caisse.date|date('d/m/y') }} |
+                                                    <span>N° Bon: {{ caisse.numcaisse }}</span> |
+                                                    Somme reçue
+                                                </td>
+                                                <td>
+                                                    {{ caisse.montant|number_format(2, ',', ' ') }}
+                                                    {% set recu = caisse.montant + recu %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if bon.aarem is not same as 'oui' %}
+                                    <tr>
+                                        <td colSpan="9" class="borde" style="color: red"><b>HISTORIQUE DES PAIEMENTS</b>
+                                        </td>
+                                    </tr>
+                                    {% set recu = 0 %}
+                                    {% for caisse in bon.caisses %}
+                                        {% if caisse.etat == 'valide' %}
+                                            <tr>
+                                                <td colSpan="5">{{ caisse.date|date('d/m/y') }} |
+                                                    <span>N° Bon: {{ caisse.numcaisse }}</span> |
+                                                    Somme reçue
+                                                </td>
+                                                <td>
+                                                    {{ caisse.montant|number_format(2, ',', ' ') }}
+                                                    {% set recu = caisse.montant + recu %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                            {% if bon.aaref is not same as 'oui' %}
+                                {% if bon.aarem is same as 'oui' %}
+                                    <tr>
+                                        <td colSpan="9" class="borde" style="color: red"><b>HISTORIQUE DES PAIEMENTS</b>
+                                        </td>
+                                    </tr>
+                                    {% set recu = 0 %}
+                                    {% for caisse in bon.caisses %}
+                                        {% if caisse.etat == 'valide' %}
+                                            <tr>
+                                                <td colSpan="6">{{ caisse.date|date('d/m/y') }} |
+                                                    <span>N° Bon: {{ caisse.numcaisse }}</span> |
+                                                    Somme reçue
+                                                </td>
+                                                <td>
+                                                    {{ caisse.montant|number_format(2, ',', ' ') }}
+                                                    {% set recu = caisse.montant + recu %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if bon.aarem != 'oui' %}
+                                    <tr>
+                                        <td colSpan="8" class="borde" style="color: red"><b>HISTORIQUE DES PAIEMENTS</b>
+                                        </td>
+                                    </tr>
+                                    {% set recu = 0 %}
+                                    {% for caisse in bon.caisses %}
+                                        {% if caisse.etat == 'valide' %}
+                                            <tr>
+                                                <td colSpan="4">{{ caisse.date|date('d/m/y') }} |
+                                                    <span>N° Bon: {{ caisse.numcaisse }}</span> |
+                                                    Somme reçue
+                                                </td>
+                                                <td>
+                                                    {{ caisse.montant|number_format(2, ',', ' ') }}
+                                                    {% set recu = caisse.montant + recu %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+            </table>
+            {% if bon.type is not same as "pst" and bon.type is not same as 'none' %}
+                {% if bon.type is not same as "prepa" %}
+                    <table class="table-bordered" style="float: right; width: 60% ; margin-top: 10px">
+                        <tr style="font-weight: 600">
+                            <td style="text-align: center ; background-color: #f8f9fa"><b>SOMME PERÇUE</b></td>
+                            <td style="text-align: center ; background-color: #f8f9fa"><b>RESTE À PAYER</b></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">{{ bon.recu|number_format(2, ',', ' ') }}</td>
+                            <td style="text-align: center">{{ bon.reste|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    </table>
+                {% endif %}
+                <table class="table-bordered" style="float: right; width: 60% ; margin-top: 10px">
+                    <tr style="font-weight: 600">
+                        <td style="text-align: center ; background-color: #f8f9fa"><b>TOTAL
+                                HT</b></td>
+                        {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                            <td style="text-align: center ; background-color: #f8f9fa">
+                                <b>REMISE</b></td>
+                        {% endif %}
+                        <td style="text-align: center ; background-color: #f8f9fa">
+                            <b>TVA {{ bon.tva }}%</b></td>
+                        <td style="text-align: center ; background-color: #f8f9fa"><b>NET À
+                                PAYER</b></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                        {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                            <td style="text-align: center">{{ bon.vremise|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                        <td style="text-align: center">{{ bon.vtva|number_format(2, ',', ' ') }}</td>
+                        <td style="text-align: center">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                </table>
+            {% endif %}
+            {% if bon.type == "pst" %}
+                {% if bon.type == "none" %}
+                    <table class="table-bordered" style="float: left; width: 60% ; margin-top: 10px">
+                        <tr style="font-weight: 600">
+                            <td style="text-align: center ; background-color: #f8f9fa"><b>TOTAL
+                                    HT</b></td>
+                            {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                                <td style="text-align: center ; background-color: #f8f9fa">
+                                    <b>REMISE</b></td>
+                            {% endif %}
+                            <td style="text-align: center ; background-color: #f8f9fa">
+                                <b>TVA {{ bon.tva }}%</b></td>
+                            <td style="text-align: center ; background-color: #f8f9fa"><b>NET À
+                                    PAYER</b></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                            {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                                <td style="text-align: center">{{ bon.vremise|number_format(2, ',', ' ') }}</td>
+                            {% endif %}
+                            <td style="text-align: center">{{ bon.vtva|number_format(2, ',', ' ') }}</td>
+                            <td style="text-align: center">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    </table>
+                {% endif %}
+                <table class="table-bordered" style="float: left; width: 60% ; margin-top: 10px">
+                    <tr style="font-weight: 600">
+                        <td style="text-align: center ; background-color: #f8f9fa"><b>TOTAL
+                                HT</b></td>
+                        {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                            <td style="text-align: center ; background-color: #f8f9fa">
+                                <b>REMISE</b></td>
+                        {% endif %}
+                        <td style="text-align: center ; background-color: #f8f9fa">
+                            <b>TVA {{ bon.tva }}%</b></td>
+                        <td style="text-align: center ; background-color: #f8f9fa"><b>NET À
+                                PAYER</b></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">{{ bon.totalht|number_format(2, ',', ' ') }}</td>
+                        {% if bon.aarem == 'oui' and  bon.type != "none" %}
+                            <td style="text-align: center">{{ bon.vremise|number_format(2, ',', ' ') }}</td>
+                        {% endif %}
+                        <td style="text-align: center">{{ bon.vtva|number_format(2, ',', ' ') }}</td>
+                        <td style="text-align: center">{{ bon.totalttc|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                </table>
+                <table class="table-bordered" style="float: right; width: 38% ; margin-top: 10px">
+                    <tr style="font-weight: 600">
+                        <td style="text-align: center ;  background-color: #f8f9fa; font-weight: 700">SOMME
+                            RECUE
+                        </td>
+                        <td style="text-align: center ; background-color: #f8f9fa; font-weight: 700">RESTE À
+                            PAYER
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">{{ bon.recu|number_format(2, ',', ' ') }}</td>
+                        <td style="text-align: center">{{ bon.reste|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                </table>
+            {% endif %}
+            {% if bon.type == "none" %}
+                <table style="width: 100%; margin-Top: 5px;">
+                    <tr>
+                        <td style="text-align: left ; text-decoration: underline; border: none !important;">VISA
+                            CHEF CHANTIER
+                        </td>
+                        <td style="text-align: center ; text-decoration: underline; border: none !important;">VISA
+                            CHEF DÉPÔT
+                        </td>
+                        <td style="text-align: right ; text-decoration: underline; border: none !important;">VISA
+                            DIRECTION
+                        </td>
+                    </tr>
+                </table>
+            {% endif %}
+            {% if bon.type != "none" %}
+                <p style="font-weight: 700; color: #111010; text-align: left">
+                    Arrêté le présent bon à la somme de: <br><span
+                            style="color: dimgray"> {{ bon.totalttc|craue_spellout() }} {{ bon.monnaie.code }}</span>
+                </p><br>
+                <p style="float: right"><u>SIGNATURE AUTORISÉE</u></p><br><br><br>
+            {% endif %}
+            {% if bon.conditions is not null %}
+                <p style="float: left; color: #4e73df;"><u>INFORMATIONS ADDITIONNELLES</u></p>
+                <p style="clear: both"></p>
+                <p style="color: #000000;">{{ bon.conditions|raw }}</p>
+            {% endif %}
+
+
+    </div>
+{% endif %}
+{% if type == 'facture' %}
+    <div class="bood">
+        <div>
+            <div>
+                <table style="margin-top:{{ formes.teteDB + formes.headerHeight }}cm; float: right; width: 100%">
+                    <tr>
+                        <td style="border: none !important; padding-left: 500px; text-align: center">
+                            <b style="font-size: 14px; text-align: center">{{ devis.client.nomclient|upper }}</b><br>
+
+                            {% if devis.client.contribuable is not null %}
+                                {{ devis.client.contribuable }}<br>
+                            {% endif %}
+
+                            {% if devis.client.adresse is not null %}
+                                {{ devis.client.adresse }}<br>
+                            {% endif %}
+
+                            {% if devis.client.mail is not null %}
+                                {{ devis.client.mail }}<br>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                <div>
+                    <table style="width:80%;">
+                        <tr>
+                            <td class="bordz"><b><u>DATE:</u></b> {{ facture.date|date('d/m/y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="bordz"><b><u>RÉFÉRENCE:</u></b><br/>
+                                FACTURE DE SOLDE<br/>
+                                {{ facture.factreference|striptags|raw }} selon
+                                <span style="font-weight: bold">Devis N° {{ devis.iddevis }}</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <table style="width: 100%;">
+                    <tr class="printer">
+                        {% if devis.aaref == 'oui' %}
+                            <th style="text-align: center">RÉF</th>
+                        {% endif %}
+                        {% if devis.modele == 2 %}
+                            <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                                DESCRIPTION
+                            </th>
+                        {% else %}
+                            <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                        {% endif %}
+                        {% if devis.zone == 'oui' %}
+                            <th style="text-align: center">SECTION</th>
+                        {% endif %}
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center">QTÉ</th>
+                        <th style="text-align: center">PRIX&nbsp;U.</th>
+                        {% if devis.aarem == 'oui' %}
+                            <th style=" text-align: center">REMISE</th>
+                        {% endif %}
+                        <th style="text-align: center">MONTANT&nbsp;HT</th>
+                    </tr>
+
+
+                    {% for group in listGroup %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td COLSPAN="7"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="5"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% set st = 0 %}
+
+                        {% for lign in group.lignes %}
+                            {% if lign.devis !=  null %}
+                                <tr>
+                                    {% if devis.aaref == 'oui' %}
+                                        <td style="text-align: center">{{ lign.reference }}</td>
+                                    {% endif %}
+                                    <td align="left">{{ lign.designation|raw }}</td>
+                                    {% if devis.zone == 'oui' %}
+                                        <td style="text-align: center">{{ lign.zone }}</td>
+                                    {% endif %}
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ lign.quantite|number_format(6, ',', '.') }}</span></td>
+                                    <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                                class="hider">{{ lign.pu|number_format(5, ',', '.') }}</span></td>
+                                    {% if devis.aarem == 'oui' %}
+                                        <td style="text-align: center">{{ lign.remise }}%</td>
+                                    {% endif %}
+                                    {% if devis.aarem == 'non' %}
+                                        <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                            <br><span
+                                                    class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                        </td>
+                                    {% else %}
+                                        <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="8" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="5" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% endif %}
+
+                        </tr>
+
+                    {% endfor %}
+                    {% for lign in lignes %}
+                        {% if lign.groupe == null %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td>{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', ' ') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(4, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% endif %}
+                                {% if devis.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if devis.aarem == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>REMISE</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>REMISE</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;"><b>DEVIS TOTAL HT</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;"><b>DEVIS TOTAL HT</b></td>
+                        {% endif %}
+                        <td align="right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;"><b>DÉDUCTION DES ACOMPTES</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;"><b>DÉDUCTION DES ACOMPTES</b></td>
+                        {% endif %}
+                        <td align="right">{{ totalacomptes|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;"><b>DÉDUCTION DES DÉCOMPTES</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;"><b>DÉDUCTION DES DÉCOMPTES</b></td>
+                        {% endif %}
+                        <td align="right">{{ totaldecomptes|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+
+                        {% if devis.zone == 'oui' %}
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="6" class="bord" style="text-align: right;"><b>ADDITION DES
+                                        RETENUES(FINITION-GARANTIE-PRORATA-TRC)</b></td>
+                            {% else %}
+                                <td class="bord" colspan="5" style="text-align: right;"><b>ADDITION DES
+                                        RETENUES(FINITION-GARANTIE-PRORATA-TRC)</b></td>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if devis.zone != 'oui' %}
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="5" class="bord" style="text-align: right;"><b>ADDITION DES
+                                        RETENUES(FINITION-GARANTIE-PRORATA-TRC)</b></td>
+                            {% else %}
+                                <td class="bord" colspan="4" style="text-align: right;"><b>ADDITION DES
+                                        RETENUES(FINITION-GARANTIE-PRORATA-TRC)</b></td>
+                            {% endif %}
+                        {% endif %}
+
+                        <td align="right">{{ totaldecomptes|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT</b></td>
+                        {% else %}
+                            <td class="bord" colspan="2" style="text-align: right;"><b>TOTAL HT</b></td>
+                        {% endif %}
+                        <td align="right">{{ totalhtsolde|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    {% if devis.abasetva == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.basetva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;"><b>TVA {{ devis.tva }}
+                                    % {% if devis.ptva == 'non' %}(non facturée){% endif %}{% if devis.ptva == 'susp' %}(suspendue){% endif %}</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;"><b>TVA {{ devis.tva }}
+                                    % {% if devis.ptva == 'non' %}(non facturée){% endif %}{% if devis.ptva == 'non' %}(suspendue){% endif %}</b></td>
+                        {% endif %}
+                        <td align="right">{{ totaltva|number_format(2, ',', ' ') }}</td>
+                    </tr>
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>NET À PAYER</b></td>
+                        {% else %}
+                            <td colspan="2" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>NET À PAYER</b></td>
+                        {% endif %}
+                        <td align="right" style="color: #4e73df;">
+                            {{ totalttcsolde|number_format(2, ',', ' ') }}<br><span
+                                    class="hider">{{ totalttcsolde|number_format(2, ',', ' ') }}</span></td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                <p style="text-align: left">
+                    Arrêté la présente facture à la somme de:<br>
+                    <span><b>{{ totalttcsolde|craue_spellout() }} {{ devis.monnaie.code }}</b></span>
+                </p>
+                <p style="clear: both"></p>
+                {% if facture.information is not null %}
+                    <br>
+                    <p style="float: left; color: #4e73df;"><u>INFORMATIONS ADDITIONNELLES</u></p>
+                    <p style="clear: both"></p>
+                    <p style="color: #000000;">{{ facture.information|raw }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if type == 'facturedecompte' %}
+    <div class="bood">
+        <div>
+            <div>
+                <table style="margin-top:{{ formes.headerHeight }}cm; float: right; width: 100%">
+                    <tr>
+                        <td style="border: none !important; padding-left: 500px; text-align: center">
+                            <b style="font-size: 14px; text-align: center">{{ devis.client.nomclient|upper }}</b><br>
+                            {% if devis.client.contribuable is not null %}
+                                {{ devis.client.contribuable }}<br>
+                            {% endif %}
+
+                            {% if devis.client.adresse is not null %}
+                                {{ devis.client.adresse }}<br>
+                            {% endif %}
+
+                            {% if devis.client.mail is not null %}
+                                {{ devis.client.mail }}<br>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                <div>
+                    <table style="width:80%;">
+                        <tr>
+                            <td class="bordz"><b><u>DATE:</u></b> {{ facture.date|date('d/m/y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="bordz"><b><u>RÉFÉRENCE:</u></b><br>FACTURE SUR DÉCOMPTE <br> {{ facture.factreference|raw }}
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <table style="width: 100%;">
+                    <tr class="printer" style="text-align: left !important;">
+                        <td colspan="5"><b>1. DÉPENSES ENGAGÉES</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right">MONTANT TOTAL HT</td>
+                        <td colspan="2" style="text-align: right"><b>{{ devis.totalht|number_format(2, ',', ' ') }}</b>
+                        </td>
+                    </tr>
+                    <tr class="printer" style="text-align: left !important;">
+                        <td colspan="5"><b>2. MODALITÉS DE RÈGLEMENT</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"
+                            style="text-align: left; padding-left: 20px; color: {{ formes.decolor }}!important;"><b>AVANCEMENT
+                                DES TRAVAUX</b></td>
+                        <td style="text-align: right;"><b>{{ decompte.avancement|number_format(2, ',', ' ') }}%</b></td>
+                        <td style="text-align: right"><b>{{ decompte.valeur|number_format(2, ',', ' ') }}</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="5"
+                            style="text-align: left; padding-left: 20px; color: {{ formes.decolor }}!important;"><b>À
+                                DÉDUIRE</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION ACOMPTE DE DEMARRAGE</td>
+                        <td style="text-align: right"><b>{{ decompte.acompte|number_format(2, ',', ' ') }}%</b></td>
+                        <td style="text-align: right">
+                            {% if decompte.deduction == "partielle" %}
+                                <b>{{ ((decompte.valeur * decompte.acompte)/100)|number_format(2, ',', ' ') }}</b>
+                            {% endif %}
+                            {% if decompte.deduction == "complete" %}
+                                <b>{{ ((decompte.totalht * decompte.acompte)/100)|number_format(2, ',', ' ') }}</b>
+                            {% endif %}
+                            {% if decompte.deduction == "aucune" %}
+                                <b>{{ 0|number_format(2, ',', ' ') }}</b>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION RETENUE GARANTIE</td>
+                        <td style="text-align: right">{{ decompte.garantie|number_format(2, ',', ' ') }}%</td>
+                        <td style="text-align: right">{{ ((decompte.valeur * decompte.garantie)/100)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION RETENUE ASSURANCE TRC</td>
+                        <td style="text-align: right">{{ decompte.trc|number_format(2, ',', ' ') }}%</td>
+                        <td style="text-align: right">{{ ((decompte.valeur * decompte.tr)/100)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION RETENUE DE FINITION</td>
+                        <td style="text-align: right">{{ decompte.finition|number_format(2, ',', ' ') }}%</td>
+                        <td style="text-align: right">{{ ((decompte.valeur * decompte.finition)/100)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION COMPTE PRORATA</td>
+                        <td style="text-align: right">{{ decompte.prorata|number_format(2, ',', ' ') }}%</td>
+                        <td style="text-align: right">{{ ((decompte.valeur * decompte.prorata)/100)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">DÉDUCTION DES DÉCOMPTES</td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right">{{ decompte.countdecompe|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5"
+                            style="text-align: left; padding-left: 20px; color: {{ formes.decolor }}!important;">
+                            <b>SOIT</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">MONTANT DE LA SITUATION À DÉLIVRER HT</td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right">{{ decompte.apayer|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right;">TVA {{ decompte.devis.tva }}%</td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right">{{ ((decompte.apayer * decompte.devis.tva)/100)|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align: right; color: {{ formes.decolor }}!important;"><b>MONTANT DE
+                                LA SITUATION
+                                À DÉLIVRER TTC</b></td>
+                        <td style="text-align: right"></td>
+                        <td style="text-align: right; color: {{ formes.decolor }}!important;">
+                            <b>{{ (decompte.ttc)|number_format(2, ',', ' ') }}</b>
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                <br>
+                <p style="text-align: left">
+                    Arrêté la présente facture à la somme de:<br>
+                    <span><b>{{ decompte.ttc|craue_spellout() }} {{ devis.monnaie.code }}</b></span>
+                </p><br>
+                <p style="float: right; text-decoration: underline">SIGNATURE AUTORISÉE</p><br><br><br>
+                {% if facture.information is not null %}
+                    <p style="float: left; color: #4e73df;"><u>INFORMATIONS ADDITIONNELLES</u></p>
+                    <p style="clear: both"></p>
+                    <p style="color: #000000;">{{ facture.information|raw }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% if type == 'factureacompte' %}
+    <div class="bood">
+        <div>
+            <div>
+                <table style="margin-top:{{ formes.teteDB + formes.headerHeight }}cm; float: right; width: 100%">
+                    <tr>
+                        <td style="border: none !important; padding-left: 500px; text-align: center">
+                            <b style="font-size: 14px; text-align: center">{{ devis.client.nomclient|upper }}</b><br>
+
+                            {% if devis.client.contribuable is not null %}
+                                {{ devis.client.contribuable }}<br>
+                            {% endif %}
+
+                            {% if devis.client.adresse is not null %}
+                                {{ devis.client.adresse }}<br>
+                            {% endif %}
+
+                            {% if devis.client.mail is not null %}
+                                {{ devis.client.mail }}<br>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                </table>
+                <p style="clear: both"></p>
+                <div>
+                    <table style="width:80%;">
+                        <tr>
+                            <td class="bordz"><b><u>DATE:</u></b> {{ facture.date|date('d/m/y') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="bordz"><b><u>RÉFÉRENCE:</u></b><br/>
+                                FACTURE D'ACOMPTE<br/>
+                                {{ facture.factreference|striptags|raw }} selon
+                                <span style="font-weight: bold">Devis N° {{ devis.iddevis }}</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <table style="width: 100%;">
+                    <tr class="printer">
+                        {% if devis.aaref == 'oui' %}
+                            <th style="text-align: center">RÉF</th>
+                        {% endif %}
+                        {% if devis.modele == 2 %}
+                            <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                                DESCRIPTION
+                            </th>
+                        {% else %}
+                            <th style="max-width:500px !important; min-width: 250px !important; text-align: left">
+                                DÉSIGNATION
+                            </th>
+                        {% endif %}
+                        {% if devis.zone == 'oui' %}
+                            <th style="text-align: center">SECTION</th>
+                        {% endif %}
+                        <th style="text-align: center">UNITÉ</th>
+                        <th style="text-align: center">QTÉ</th>
+                        <th style="text-align: center">PRIX&nbsp;U.</th>
+                        {% if devis.aarem == 'oui' %}
+                            <th style=" text-align: center">REMISE</th>
+                        {% endif %}
+                        <th style="text-align: center">MONTANT&nbsp;HT</th>
+                    </tr>
+
+                    {% for group in listGroup %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td COLSPAN="7"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="5"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td class="text-center"><b>{{ group.reference }}</b></td>
+                                {% endif %}
+                                <td colspan="6"><b>{{ group.groupe|striptags|raw }}</b></td>
+                            {% endif %}
+                        </tr>
+                        {% set st = 0 %}
+
+                        {% for lign in group.lignes %}
+                            {% if lign.devis !=  null %}
+                                <tr>
+                                    {% if devis.aaref == 'oui' %}
+                                        <td style="text-align: center">{{ lign.reference }}</td>
+                                    {% endif %}
+                                    <td align="left">{{ lign.designation|raw }}</td>
+                                    {% if devis.zone == 'oui' %}
+                                        <td style="text-align: center">{{ lign.zone }}</td>
+                                    {% endif %}
+                                    <td style="text-align: center">{{ lign.unite }}</td>
+                                    <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ lign.quantite|number_format(6, ',', '.') }}</span></td>
+                                    <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                                class="hider">{{ lign.pu|number_format(5, ',', '.') }}</span></td>
+                                    {% if devis.aarem == 'oui' %}
+                                        <td style="text-align: center">{{ lign.remise }}%</td>
+                                    {% endif %}
+                                    {% if devis.aarem == 'non' %}
+                                        <td style="text-align: right">{% set st = (lign.pu * lign.quantite) + st %} {{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                            <br><span
+                                                    class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                        </td>
+                                    {% else %}
+                                        <td style="text-align: right">{% set st = ((lign.pu * lign.quantite)*((100 - lign.remise)/100)) + st %}{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                    {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        <tr class="togo">
+                            {% if devis.zone == 'oui' and devis.aarem == 'oui' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="8" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% elseif devis.zone == 'non' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="5" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.zone == 'oui' and devis.aarem == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+
+                            {% elseif devis.aarem == 'oui' and devis.zone == 'non' %}
+                                {% if devis.aaref == 'oui' %}
+                                    <td COLSPAN="7" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% else %}
+                                    <td COLSPAN="6" align="right">
+                                        <b>SOUS-TOTAL: {{ st|number_format(2, ',', ' ') }}</b></td>
+                                {% endif %}
+                            {% endif %}
+
+                        </tr>
+
+                    {% endfor %}
+                    {% for lign in lignes %}
+                        {% if lign.groupe == null %}
+                            <tr>
+                                {% if devis.aaref == 'oui' %}
+                                    <td style="text-align: center">{{ lign.reference }}</td>
+                                {% endif %}
+                                <td>{{ lign.designation|raw }}</td>
+                                {% if devis.zone == 'oui' %}
+                                    <td style="text-align: center">{{ lign.zone }}</td>
+                                {% endif %}
+                                <td style="text-align: center">{{ lign.unite }}</td>
+                                <td style="text-align: center">{{ lign.quantite|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.quantite|number_format(6, ',', ' ') }}</span></td>
+                                <td style="text-align: right">{{ lign.pu|number_format(2, ',', ' ') }}<br><span
+                                            class="hider">{{ lign.pu|number_format(4, ',', '.') }}</span></td>
+                                {% if devis.aarem == 'oui' %}
+                                    <td style="text-align: center">{{ lign.remise }}%</td>
+                                {% endif %}
+                                {% if devis.aarem == 'non' %}
+                                    <td style="text-align: right">{{ (lign.pu * lign.quantite)|number_format(2, ',', ' ') }}
+                                        <br><span
+                                                class="hider">{{ (lign.pu * lign.quantite)|number_format(4, ',', '.') }}</span>
+                                    </td>
+                                {% endif %}
+                                {% if devis.aarem != 'non' %}
+                                    <td style="text-align: right">{{ ((lign.pu * lign.quantite)*((100 - lign.remise)/100))|number_format(2, ',', ' ') }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;"><b>DEVIS TOTAL HT</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;"><b>DEVIS TOTAL HT</b></td>
+                        {% endif %}
+                        <td align="right">{{ devis.totalht|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    {% if devis.aarem == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>REMISE TOTALE</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>REMISE TOTALE </b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.vremise|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if devis.aarem != 'non' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>TOTAL HT REMISÉ</b></td>
+                            {% endif %}
+                            <td align="right">{{ totalhtsolde|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="4" class="bord" style="text-align: right;">
+                                <b>ACOMPTE {{ facture.acompte.pourcentage|number_format(2, ',', ' ') }}% HT</b></td>
+                        {% else %}
+                            <td class="bord" colspan="3" style="text-align: right;">
+                                <b>ACOMPTE {{ facture.acompte.pourcentage|number_format(2, ',', ' ') }}% HT</b></td>
+                        {% endif %}
+                        <td align="right">{{ facture.totalht|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    {% if devis.abasetva == 'oui' %}
+                        <tr>
+                            {% if devis.aaref == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.zone == 'oui' %}
+                                <td class="bord"></td>
+                            {% endif %}
+                            <td class="bord"></td>
+                            {% if devis.aarem == 'oui' %}
+                                <td colspan="3" class="bord" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% else %}
+                                <td class="bord" colspan="2" style="text-align: right;"><b>BASE
+                                        TVA{% if devis.code is not null %}({{ devis.code }}){% endif %}</b></td>
+                            {% endif %}
+                            <td align="right">{{ devis.basetva|number_format(2, ',', ' ') }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        {% if devis.aarem == 'oui' %}
+                        <td colspan="4" class="bord" style="text-align: right;"><b>TVA {{ devis.tva }}
+                                % {% if devis.ptva == 'non' %}(non facturée){% endif %}{% if devis.ptva == 'susp' %}(suspendue){% endif %}
+                            </b></td>
+                        {% else %}
+                        <td class="bord" colspan="3" style="text-align: right;"><b>TVA {{ devis.tva }}
+                                % {% if devis.ptva == 'non' %}(non facturée){% endif %}{% endif %}{% if devis.ptva == 'susp' %}(suspendue){% endif %}
+                            </b></td>
+                        <td align="right">{{ facture.vtva|number_format(2, ',', ' ') }}</td>
+                    </tr>
+                    <tr>
+                        {% if devis.aaref == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.zone == 'oui' %}
+                            <td class="bord"></td>
+                        {% endif %}
+                        <td class="bord"></td>
+                        {% if devis.aarem == 'oui' %}
+                            <td colspan="3" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>NET À PAYER</b></td>
+                        {% else %}
+                            <td colspan="2" class="bord"
+                                style="color: #4e73df; border-bottom: 1px solid #D3D3D3 !important;">
+                                <b>NET À PAYER</b></td>
+                        {% endif %}
+                        <td align="right" style="color: #4e73df;">
+                            {{ facture.totalttc|number_format(2, ',', '.') }}<br><span
+                                    class="hider">{{ facture.totalttc|number_format(4, ',', '.') }}</span></td>
+                    </tr>
+
+                </table>
+                <p style="clear: both"></p>
+                <p style="text-align: left">
+                    Arrêté la présente facture à la somme de:<br>
+                    <span><b>{{ facture.totalttc|craue_spellout() }} {{ devis.monnaie.code }}</b></span>
+                </p>
+                {% if facture.information is not null %}
+                    <p style="float: left; color: #4e73df;"><u>CONDITIONS ET MODALITÉS DE PAIEMENT</u></p>
+                    <p style="clear: both"></p>
+                    <p style="color: #000000;">{{ facture.information|raw }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

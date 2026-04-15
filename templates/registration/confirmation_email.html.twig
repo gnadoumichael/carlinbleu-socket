@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Confirmation de votre compte</title>
+</head>
+<body>
+<div style="margin: 100px auto; width: 600px">
+
+    <h1 style="text-align: center; color: #4e73df; font-weight: bold">CARLINBLEU</h1>
+    <h2>Confirmation de votre compte</h2>
+    <p>
+        Veuillez confirmer votre compte e-mail en cliquant sur le lien suivant : <br><br>
+        <a href="{{ signedUrl|raw }}">Confirmer votre compte</a>.<br><br>
+        Ce lien expire dans  {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+    </p>
+    <p>
+        Merci !
+    </p>
+</div>
+
+</body>
+</html>
+
+

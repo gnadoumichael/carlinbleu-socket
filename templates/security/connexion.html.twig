@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html ; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Expires" CONTENT="Fri, 01 Jan 1990 00:00:00 GMT">
+    <meta http-equiv="Cache-Control"
+          CONTENT="private, no-store, max-age=0, no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="Pragma" CONTENT="no-cache">
+    <title>Carlinbleu | Gestionnaire de Chantiers</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description" content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,
+         Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="suivi, chantiers, gestion de chantiers, suivi de chantiers, projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , showroom , matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('admin') }}
+    {% endblock %}
+
+</head>
+<body class="bg-gradient-primary">
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-lg-12 col-md-8">
+            <h2 class="tet text-center text-white" style="margin-top: 50px">BIENVENUE SUR CARLINBLEU</h2>
+            <h4 class="text-center" style="color: #efd807;"> Suivi de chantiers</h4>
+            <h5 class="text-center m-t-20 text-white">Sécurité - Confidentialité - Intégrité</h5>
+            <div class="bg-white p-3" style="width: 320px; margin: 40px auto" >
+                <div class="text-center">
+                    <h4 class="text-primary font-weight-bold mb-4">CONNEXION</h4>
+                    {% if error %}
+                        <h6 class="text-danger mb-4">{{ error.messageKey|trans(error.messageData, 'security') }}</h6>
+                    {% endif %}
+                </div>
+
+                <form action="{{ path('login') }}" id="addUserForm" method="post">
+
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <div class="form-group m-t--5">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i
+                                                    class="fa fa fa-user text-primary"></i></span>
+                                    </div>
+                                    <input type="email" class="form-control" aria-label="Email"
+                                           aria-describedby="basic-addon1" placeholder="Email" required name="_username"
+                                           value="{{ last_username }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix m-b-10">
+                        <div class="col-sm-12">
+                            <div class="form-group m-t--5">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i
+                                                    class="fa fa fa-lock text-primary"></i></span>
+                                    </div>
+                                    <input type="password" class="form-control" id="showpassword" name="_password"
+                                           placeholder="Mot de passe" minlength="6" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('authenticate') }}">
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" id="addUser" value="Se connecter" class="btn btn-primary btn-block">
+                        <img src="{{ asset('img/loading.gif') }}" style="width: 50px; display:none;"
+                             class="align-justify" id="loadUser">
+                    </div>
+                </form>
+
+                <div class="text-center" style="padding-top: 20px; font-size: 12px">
+                    <a href="{{ path('resetpassword') }}" style="font-size: medium">Mot de
+                        passe oublié</a> <br>
+                    <!-- <a href="{{ path('app_register') }}" style="font-size: medium">Créer mon compte</a> <br> -->
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('admin') }}
+{% endblock %}
+
+
+</body>
+</html>

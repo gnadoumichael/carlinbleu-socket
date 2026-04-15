@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>États des comptes | Carlinbleu</title>
+    <meta content="no-cache, no-store, must-revalidate, post-check=0, pre-check=0"/>
+    <meta name="description"
+          content="Votre application multi-utilisateurs de gestion de chantiers: Comptabilité, Gestion technique, Suivi et gestion de matériel,Gestion des articles, Planning, Gestionnaire de stock, etc.">
+    <meta name="keywords"
+          content="carlinbleu, carlin bleu, carlin, gestion , projet, chantier, comptabilité, gestion technique, suivi , gestion de matériel, gestion de chantiersgestionnaire de projets, articles , showroom , matériels">
+    <meta name="author" content="carlinGroup">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" type="image/png" href="https://www.carlinbleu.com/img/Icon-96.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+
+    <link href="{{ asset('css/chat.css') }}" rel="stylesheet"/>
+    {{ encore_entry_link_tags('apfournisseurs') }}
+
+</head>
+
+<body class="theme-red" style="background-color: #d1d3e2 !important;" id="bod">
+<div class="page-loader-wrapper">
+    <div class="loader">
+        <div class="preloader">
+            <div class="spinner-layer pl-red">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        <p> Téléchargement de vos données...</p>
+    </div>
+</div>
+<div class="modal fade" id="ModalSearch" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-center" id="defaultModalLabel">RECHERCHER<br>
+                    <span class="col-pink" style="font-size: 14px; ">Chantier- Devis - Bon de commande - Bon de livraison - Facture - Bon de caisse</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Rechercher..." id="richi"
+                           style="border: 2px solid dodgerblue; padding: 10px"/>
+                </div>
+                <div id="ressult" style="width: 100%; align-content: start" class="text-left"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">FERMER</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErreur" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body" style="height: 120px !important;">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    IMPOSSIBLE DE TRAITER VOTRE REQUÊTE
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErrCai" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    VEUILLEZ SVP SUPPRIMER LES BONS DE CAISSE CRÉES
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErrInterve" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-black">
+                    MONTANT À PAYER INFÉRIEUR AU MONTANT DÉJÀ RECU.
+                </h4>
+            </div>
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalErreurDEVIS" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <!-- Content -->
+        <div class="modal-content text-center">
+            <!-- Header -->
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ERREUR
+                </h4>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle fa-4x animated rotateIn col-pink"></i>
+                <h4 class="col-pink">
+                    DES OPÉRATIONS ONT ÉTÉ FAITS SUR CE DEVIS. VEUILLEZ SVP LES DÉVALIDER ÉGALEMENT.
+                </h4>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center">
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    FERMER
+                </div>
+            </div>
+        </div>
+        <!-- /.Content -->
+    </div>
+</div>
+<div class="modal fade" id="ModalSucces" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <!-- Content -->
+        <div class="modal-content text-center">
+            <!-- Header -->
+            <div class="modal-header d-flex justify-content-center bg-green">
+                <h4>
+                    REQUÊTE ACCEPTÉE
+                </h4>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <i class="fas fa-check-circle fa-4x animated rotateIn col-green"></i>
+                <h4 class="col-green">
+                    VALIDATION EN COURS ....
+                </h4>
+            </div>
+        </div>
+        <!-- /.Content -->
+    </div>
+</div>
+<div class="modal fade" id="Traitement" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-primary">
+                <h4 class="font-bold">
+                    TRAITEMENT
+                </h4>
+            </div>
+            <div class="modal-body p-t-25" style="height: 100px !important;">
+                <div class="preloader">
+                    <div class="spinner-layer pl-blue">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.Content -->
+    </div>
+</div>
+<div class="modal fade" id="ConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-pink">
+                <h4 class="bolo700">
+                    ÊTES VOUS SUR ?
+                </h4>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-times fa-4x animated rotateIn col-pink"></i>
+            </div>
+            <div class="text-center">
+                <div type="button" id="accept" class="btn btn-link waves-effect text-white bg-primary">
+                    OUI
+                </div>
+                <div type="button" id="closeLier" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    NON
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ConfirmDevaDevis" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify" role="document">
+        <div class="modal-content text-center">
+            <div class="modal-header d-flex justify-content-center bg-deep-orange">
+                <h4>DES OPÉRATIONS PEUVENT ÊTRE LIÉES À CE DEVIS.</h4>
+                <h4>VEUILLEZ SVP LES DÉVALIDER ÉGALEMENT.</h4>
+                <h4>CONTINUER ?</h4>
+            </div>
+            <div class="modal-body">
+                <i class="far fa-exclamation-circle col-deep-orange" style="font-size: 50px"></i>
+            </div>
+            <div class="text-center">
+                <div type="button" id="acceptDeva" class="btn btn-link waves-effect text-white bg-primary">
+                    OUI
+                </div>
+                <div type="button" id="closeDeva" class="btn btn-link waves-effect text-white bg-pink"
+                     data-dismiss="modal">
+                    NON
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="large" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="shadow bg-white devtohide"
+                 style="height:29.7cm; margin: auto; padding: 0.6cm;" id="shacontent">
+                <iframe id="frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+        font-size: 16px;
+        font-family: Verdana, sans-serif;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    th, td {
+        box-sizing: border-box;
+        border: 1px solid #e9eae8;
+        padding: 8px 20px;
+    }
+
+    th {
+        cursor: pointer;
+    }
+
+</style>
+<style>
+    p {
+        margin: 0 !important
+    }
+
+    .upper {
+        text-transform: uppercase !important;
+    }
+
+    td.borde {
+        border-spacing: 0;
+        border-collapse: collapse;
+        border: solid #D3D3D3;
+        border-width: 1px 1px 1px 1px !important;
+    }
+</style>
+<nav class="navbar bg-blue">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse"
+               data-target="#navbar-collapse" aria-expanded="false"></a>
+            <a href="javascript:void(0);" class="bars"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-right m-t-5">
+                {% if libre is not defined %}
+                    {% if app.user %}
+                        <li class="col-yellow h4 bolo600 m-l-20">
+                            {{ app.user.nom|upper }}
+                            {{ app.user.prenoms|upper }}
+                        </li>
+                    {% endif %}
+                {% endif %}
+
+                {% if app.user %}
+                    {% if libre is not defined and app.user %}
+                        <li class="hidere"><a href="javascript:void(0);" data-close="true">
+                    <span class="js-right-sidebars badge bg-purple">
+                      CHANTIERS EN ÉTUDE
+                    </span>
+                            </a>
+                        </li>
+                        <li class="hidere">
+                            <a href="javascript:void(0);" data-close="true">
+                    <span class="js-right-sidebar badge bg-pink">
+                      CHANTIERS EN COURS
+                    </span>
+                            </a>
+                        </li>
+                        <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                            <i class="material-icons">notifications</i>
+                        </a>
+                        <ul class="dropdown-menu bg-light" style="width: 370px !important">
+                            <li class="header col-pink" style="font-size: 16px">ACTIONS</li>
+                            <li class="body">
+                                <ul class="menu" style="width: 340px !important">
+                                    {% for history in history %}
+                                        <li>
+                                            <a href="javascript:void(0);">
+                                                <div class="menu-info">
+                                                    <h5 class="col-indigo font-weight-bold">{{ history.action|striptags|raw }}</h5>
+                                                    <h5 class="col-pink font-weight-bold">
+                                                        Par: {{ history.dobyuser.nom|upper }} {{ history.dobyuser.prenoms|upper }}</h5>
+                                                    <p class="col-black">
+                                                        <i class="material-icons">access_time</i> <span
+                                                                style="font-size: 14px">{{ history.date|date('d.m.Y H.m') }}</span>
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            <li class="footer bg-blue col-white">
+                                <a href="{{ path('historique') }}" class="bolo text-white" style="font-size: 16px">
+                                    Voir toutes les actions
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+
+                    <li class="hidere">
+                        <a data-toggle="modal" data-target="#ModalSearch">
+                            <i class="material-icons">search</i>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="#" id="tgol" title="Page d'acceuil">
+                        <i class="material-icons">exit_to_app</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<section>
+    <aside id="leftsidebar" class="sidebar text-center bg-pri"
+           style="z-index: 1000 !important; margin-top: -70px; width: 240px; height: 100%">
+        <div class="user-info" style="height: 150px !important;">
+            <img src="{{ asset('img/logoy.png') }}" style="float: left; width: 200px !important;margin-top: 10px"/>
+        </div>
+        <div class="menu">
+            <ul class="list">
+                <li class="active">
+                    {% if page is defined and page == 'page' %}
+                        <a href="{{ path('welcome') }}" class="bolo">
+                            <i class="material-icons col-yellow">home</i>
+                            <span class="col-yellow">ACCUEIL</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('welcome') }}" class="bolo">
+                            <i class="material-icons text-white">home</i>
+                            <span class="text-white">Accueil</span>
+                        </a>
+                    {% endif %}
+                </li>
+                {% if app.user %}
+                    <li class="active">
+                        {% if page is defined and page == 'message' %}
+                            <a href="{{ path('message') }}" class="bolo">
+                                <i class="material-icons col-yellow">email</i>
+                                <span class="col-yellow">MESSAGERIE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('message') }}" class="bolo">
+                                <i class="material-icons text-white">email</i>
+                                <span class="text-white">Messagerie</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'article' %}
+                            <a href="{{ path('article') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">GESTION DES ARTICLES</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('article') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Gestion des articles</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'listeclient' %}
+                            <a href="{{ path('listeclient') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">LISTE DES CLIENTS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('listeclient') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Liste des clients</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanetude' %}
+                            <a href="{{ path('chanetude') }}" class="bolo">
+                                <i class="material-icons col-yellow">content_copy</i>
+                                <span class="col-yellow">CHANTIERS EN ÉTUDE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanetude') }}" class="bolo">
+                                <i class="material-icons text-white">content_copy</i>
+                                <span class="text-white">Chantiers en étude</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chancours' %}
+                            <a href="{{ path('chancours') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS EN COURS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chancours') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers en cours</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanechouer' %}
+                            <a href="{{ path('chanechouer') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS ÉCHOUÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanechouer') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers échoués</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chanclotures' %}
+                            <a href="{{ path('chanclotures') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS CLÔTURÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chanclotures') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers clôturés</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'chantermines' %}
+                            <a href="{{ path('chantermines') }}" class="bolo">
+                                <i class="material-icons col-yellow">widgets</i>
+                                <span class="col-yellow">CHANTIERS TERMINÉS</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('chantermines') }}">
+                                <i class="material-icons text-white">widgets</i>
+                                <span class="text-white">Chantiers terminés</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'technique' %}
+                            <a href="{{ path('technique') }}" class="bolo">
+                                <i class="material-icons col-yellow">open_with</i>
+                                <span class="col-yellow">GESTION TECHNIQUE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('technique') }}" class="bolo">
+                                <i class="material-icons text-white">open_with</i>
+                                <span class="text-white">Gestion technique</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'materiel' %}
+                            <a href="{{ path('materiel') }}" class="bolo">
+                                <i class="material-icons col-yellow">bubble_chart</i>
+                                <span class="col-yellow">GESTION DU MATÉRIEL</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('materiel') }}" class="bolo">
+                                <i class="material-icons text-white">bubble_chart</i>
+                                <span class="text-white">Gestion du matériel</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'personnel' %}
+                            <a href="{{ path('personnel') }}" class="bolo">
+                                <i class="material-icons col-yellow">people_outline</i>
+                                <span class="col-yellow">GESTION DU PERSONNEL</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('personnel') }}" class="bolo">
+                                <i class="material-icons text-white">people_outline</i>
+                                <span class="text-white">Gestion du personnel</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'paie' %}
+                            <a href="{{ path('paie') }}" class="bolo">
+                                <i class="material-icons col-yellow">toll</i>
+                                <span class="col-yellow">POINTS DE PAIE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('paie') }}">
+                                <i class="material-icons text-white">toll</i>
+                                <span class="text-white">Points de paie</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'parametre' %}
+                            <a href="{{ path('parametre') }}" class="bolo">
+                                <i class="material-icons col-yellow">center_focus_weak</i>
+                                <span class="col-yellow">PARAMÈTRES</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('parametre') }}" class="bolo">
+                                <i class="material-icons text-white">center_focus_weak</i>
+                                <span class="text-white">Paramètres</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'historique' %}
+                            <a href="{{ path('historique') }}" class="bolo">
+                                <i class="material-icons col-yellow">history</i>
+                                <span class="col-yellow">HISTORIQUE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('historique') }}" class="bolo">
+                                <i class="material-icons text-white">history</i>
+                                <span class="text-white">Historique</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                    <li class="active">
+                        {% if page is defined and page == 'corbeille' %}
+                            <a href="{{ path('corbeille') }}" class="bolo">
+                                <i class="material-icons col-yellow">delete</i>
+                                <span class="col-yellow">CORBEILLE</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('corbeille') }}" class="bolo">
+                                <i class="material-icons text-white">delete</i>
+                                <span class="text-white">Corbeille</span>
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+    <aside id="rightsidebars" class="right-sidebars m-t--25 p-t-10" style="overflow: scroll">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="chantier">
+                <div class="table-responsive" style="padding: 10px !important;">
+                    {% if libre is not defined %}
+                        {% set q = 0 %}
+                        {% for client in clients %}
+                            {% set p = 0 %}
+                            {% if client.corbeille is null and client.chantiers.count > 0 %}
+                                {% if client.type is null %}
+                                    <table class="table-bordered shadow" style=" overflow: scroll; width: 100%">
+                                        {% if q == 0 %}
+                                            <tr>
+                                                <td colspan="2" class="bg-purple text-white"
+                                                    style="padding-left: 5px;">CHANTIERS EN ÉTUDE
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null %}
+                                                {% if chantier.etat == "etude" %}
+                                                    {% if p == 0 %}
+                                                        <tr>
+                                                            <td colspan="2" class="bg-blue text-white"
+                                                                style="padding-left: 5px;">
+                                                                <a href="{{ path('client',{id: client.id}) }}"
+                                                                   class="text-white" title="{{ client.nomclient|upper }}">
+                                                                    -
+                                                                    {{ client.nomclient|upper }}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <tr>
+                                                        <td style="padding-left: 5px" colspan="2" class="bg-light">
+                                                            <a href="{{ path(
+                                                                'chantier',
+                                                                {
+                                                                    id: chantier.id
+                                                                }
+                                                            ) }}" class="text-pri" title="{{ chantier.nomchantier }}">
+                                                                # {{ chantier.nomchantier[0:55]|upper }}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% set p = p + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                    {% set q = q + 1 %}
+                                {% endif %}
+                            {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </aside>
+    <aside id="rightsidebar" class="right-sidebar m-t--25 p-t-10" style="overflow: scroll">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active in active" id="chantier">
+                <div class="table-responsive" style="padding: 10px !important;">
+                    {% if libre is not defined %}
+                        {% set q = 0 %}
+                        {% for client in clients %}
+                            {% set p = 0 %}
+                            {% if client.corbeille is null and client.chantiers.count > 0 %}
+                                {% if client.type is null %}
+                                    <table class="table-bordered shadow" style=" overflow: scroll; width: 100%">
+                                        {% if q == 0 %}
+                                            <tr>
+                                                <td colspan="2" class="bg-pink text-white"
+                                                    style="padding-left: 5px;">CHANTIERS EN COURS
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                        {% for chantier in client.chantiers %}
+                                            {% if chantier.corbeille is null %}
+                                                {% if chantier.etat == "encours" %}
+                                                    {% if p == 0 %}
+                                                        <tr>
+                                                            <td colspan="2" class="bg-blue text-white"
+                                                                style="padding-left: 5px;">
+                                                                <a href="{{ path('client',{id: client.id}) }}"
+                                                                   class="text-white" title="{{ client.nomclient|upper }}">
+                                                                    -
+                                                                    {{ client.nomclient|upper }}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                    <tr>
+                                                        <td style="padding-left: 5px" colspan="2" class="bg-light">
+                                                            <a href="{{ path(
+                                                                'chantier',
+                                                                {
+                                                                    id: chantier.id
+                                                                }
+                                                            ) }}" class="text-pri" title="{{ chantier.nomchantier }}">
+                                                                # {{ chantier.nomchantier[0:55]|upper }}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    {% set p = p + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                    {% set q = q + 1 %}
+                                {% endif %}
+                            {% endif %}
+
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </aside>
+</section>
+
+<input type="text" class="hide" id="jsondevis" value="{{ jsondev }}">
+<input type="text" class="hide" id="jsonbon" value="{{ jsonbon }}">
+<input type="text" class="hide" id="jsoncaisse" value="{{ jsoncaisse }}">
+<input type="text" class="hide" id="jsondec" value="{{ jsondec }}">
+<input type="text" class="hide" id="jsonfac" value="{{ jsonfac }}">
+
+<section class="content" style="margin-top: 50px !important;">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row clearfix m-t-50">
+                <div class="col-sm-12 ">
+                    <h3 class="bolo700">Bonjour {{ app.user.prenoms|capitalize }} !</h3>
+                    <h4 class="bolo700 col-deep-orange">TRAVAUX DU JOUR</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content" id="settravauxjour"></section>
+<script>
+    localStorage.setItem('reloadd', 'travauxjour');
+</script>
+{{ encore_entry_script_tags('aptravauxjour') }}
+</body>
+</html>
+
+

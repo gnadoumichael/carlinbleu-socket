@@ -1,0 +1,372 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <h5 class="text-pri">MON COMPTE</h5>
+                    <hr class="bg-pri" style="width: 100%; margin-top: -5px">
+                    <table cellpadding="3" cellspacing="0" class="table-striped">
+                        <tr>
+                            <td class="text-pri">Administrateur</td>
+                            <td>{{ user.nom }}
+                                {{ user.prenoms }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">Entreprise</td>
+                            <td>{{ user.societe }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">Localisation</td>
+                            <td>{{ user.adresse }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">Contact</td>
+                            <td>{{ user.contact }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">E-mail</td>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">Pays</td>
+                            <td>{{ user.pays.nation }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri">Compte contribuable</td>
+                            <td>{{ user.contri }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <h5 class="text-danger">MODIFIER MON COMPTE</h5>
+                    <hr class="bg-danger" style="width: 100%; margin-top: -5px;">
+                    {{ form_start(form,{'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(form._token) }}
+                    <table width="100%">
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Nom<br>
+                                {{ form_widget(form.nom,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.nom) }}
+                            </td>
+                            <td class="text-pri bolderr">&raquo; Prénoms<br>
+                                {{ form_widget(form.prenoms,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.prenoms) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr" colspan="2">&raquo; Entreprise<br>
+                                {{ form_widget(form.societe,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.societe) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Contact<br>
+                                {{ form_widget(form.contact,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.contact) }}
+                            </td>
+                            <td class="text-pri bolderr">&raquo; Pays<br>
+                                {{ form_widget(form.pays,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.pays) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; E-Mail<br>
+                                {{ form_widget(form.username,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.username) }}
+                            </td>
+                            <td class="text-pri bolderr">&raquo; Compte contribuable<br>
+                                {{ form_widget(form.contri,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.contri) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr" colspan="2">&raquo; Localisation<br>
+                                {{ form_widget(form.adresse,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(form.adresse) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-top: 10px; text-align: left">
+                                {{ form_widget(form.saveuser,{
+                                    'label': 'Enregistrer',
+                                    'attr':{'class':'btn btn-danger'}
+                                }) }}
+                            </td>
+                        </tr>
+                    </table>
+                    {{ form_end(form) }}
+                </div>
+
+
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <h5 class="text-pri">DOMAINES D'ACTIVITÉS</h5>
+                    <hr class="bg-pri" style="width: 100%; margin-top: -5px">
+                    <table class="table-striped" style="width: 100%">
+                        {% for domaine in domaines %}
+                            <tr>
+                                <td>{{ domaine.metier.nom }}</td>
+                                {% if domaine.info == 'non' %}
+                                    <td><input type="checkbox" data-toggle="toggle" onclick="buble({{ domaine.id }});"
+                                               id="{{ domaine.id }}"></td>
+                                {% else %}
+                                    <td><input type="checkbox" checked data-toggle="toggle"
+                                               onclick="buble({{ domaine.id }});" id="{{ domaine.id }}"></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <h5 class="text-pri">MODIFIER MON MOT DE PASSE</h5>
+                    <hr class="bg-pri" style="width: 100%; margin-top: -5px;">
+                    {% for message in app.flashes('errpasse') %}
+                        <div class="alert alert-danger">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {{ form_start(forme,{'attr': {'novalidate': 'novalidate'}}) }}
+                    {{ form_row(forme._token) }}
+                    <table width="100%">
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Ancien mot de passe<br>
+                                {{ form_widget(forme.oldpasse,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(forme.oldpasse) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Nouveau mot de passe<br>
+                                {{ form_widget(forme.password,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(forme.password) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-pri bolderr">&raquo; Confirmer mot de passe<br>
+                                {{ form_widget(forme.confirm_passe,{'attr':{'class':'form-control '}}) }}
+                                {{ form_errors(forme.confirm_passe) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-top: 10px; text-align: left">
+                                {{ form_widget(forme.savepasse,{
+                                    'label': 'Enregistrer',
+                                    'attr':{'class':'btn btn-primary'}
+                                }) }}
+                            </td>
+                        </tr>
+                    </table>
+                    {{ form_end(forme) }}
+                </div>
+
+
+            </div>
+            <div class="col-md-4">
+                {% if app.user.compte == null and app.user.version == "2" %}
+                    <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                        <h5 class="text-pri">AJOUTER UN SOUS-COMPTE</h5>
+                        <hr class="bg-pri" style="width: 100%; margin-top: -5px;">
+                        {% for message in app.flashes('errcomte') %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(formcompte,{'attr': {'novalidate': 'novalidate','autocomplete':'off'}}) }}
+                        {{ form_row(formcompte._token) }}
+                        <table width="100%">
+                            <tr>
+                                <td class="text-pri bolderr">&raquo; Nom<br>
+                                    {{ form_widget(formcompte.nom,{'attr':{'class':'form-control '}}) }}
+                                    {{ form_errors(formcompte.nom) }}
+                                </td>
+                                <td class="text-pri bolderr">&raquo; Prénoms<br>
+                                    {{ form_widget(formcompte.prenoms,{'attr':{'class':'form-control '}}) }}
+                                    {{ form_errors(formcompte.prenoms) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-pri bolderr">&raquo; Société<br>
+                                    {{ form_widget(formcompte.societe,{'attr':{'class':'form-control form-control-user','placeholder':'Société'}}) }}
+                                    {{ form_errors(formcompte.societe) }}
+                                </td>
+                                <td class="text-pri bolderr">&raquo; Pays<br>
+                                    {{ form_widget(formcompte.pays,{'attr':{'class':'form-control form-control-user','placeholder':'Pays'}}) }}
+                                    {{ form_errors(formcompte.pays) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-pri bolderr">&raquo; Email<br>
+                                    {{ form_widget(formcompte.username,{'attr':{'class':'form-control form-control-email','placeholder':'Email','autocomplete':'disable'}}) }}
+                                    {{ form_errors(formcompte.username) }}
+                                </td>
+                                <td class="text-pri bolderr">&raquo; Contact<br>
+                                    {{ form_widget(formcompte.contact,{'attr':{'class':'form-control form-control-user','placeholder':'Contact'}}) }}
+                                    {{ form_errors(formcompte.contact) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-pri bolderr">&raquo; Mot de passe<br>
+                                    {{ form_widget(formcompte.password,{'attr':{'class':'form-control form-control-user','placeholder':'Mot de passe'}}) }}
+                                    {{ form_errors(formcompte.password) }}
+                                </td>
+                                <td class="text-pri bolderr">&raquo; Confirmer<br>
+                                    {{ form_widget(formcompte.confirm_passe,{'attr':{'class':'form-control form-control-user','placeholder':'confirmer le mot de passe'}}) }}
+                                    {{ form_errors(formcompte.confirm_passe) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-pri bolderr" colspan="2">
+                                    <hr class="bg-pri">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-dangerr bolderr">
+                                    <b class="text-dangerr">* ATTRIBUEZ UN TYPE DE COMPTE</b><br><span
+                                            class="text-pri">
+                                {{ form_widget(formcompte.droits) }}
+                                        {{ form_errors(formcompte.droits) }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-pri bolderr" colspan="2">
+                                    <hr class="bg-pri">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-top: 10px; text-align: left">
+                                    {{ form_widget(formcompte.savecompte,{
+                                        'label': 'Enregistrer',
+                                        'attr':{'class':'btn btn-primary'}
+                                    }) }}
+                                </td>
+                            </tr>
+                        </table>
+                        {{ form_end(formcompte) }}
+                    </div>
+                    <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                        <h5 class="text-pri">SOUS-COMPTES</h5>
+                        <table class="table-bordered"
+                               style="padding: 0; width: 100%">
+                            <thead>
+                            <th class="p-2">SOUS-COMPTES / RESTRICTIONS</th>
+                            <th style="width: 60px !important;"></th>
+                            <th style="width: 60px !important;"></th>
+                            </thead>
+                            <tbody>
+                            {% for compte in comptes %}
+                                <tr>
+                                    <td class="text-pri bg-gray-300"><b>{{ compte.nom }}&nbsp;{{ compte.prenoms }}</b></td>
+                                    <td class="text-center"><a href="{{ path('editsouscompte', {'id': compte.id}) }}"><i class="fa fa fa-edit text-success"></i></a></td>
+                                    <td class="text-center"><a href="#" onclick="delcompte({{ compte.id }});"><i class="fa fa-trash text-del"></i></a></td>
+
+                                </tr>
+                                {% for droit in compte.droits %}
+                                    <tr>
+                                        <td class="bolderrer" style="padding-left: 20px">++ {{ droit.droit|capitalize }}</td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                {% if app.user.pub == 'oui' %}
+                <div class="card shadow mb-4 bg-white" style=" padding:10px">
+                    <div class="card-body">
+                        <h5 class="text-pri">PHOTOS SHOWROOM</h5>
+                        <hr class="bg-pri" style="width: 100%; margin-top: -5px;">
+                        <div class="carousel slide" data-ride="carousel" id="carouselExampleIndicators">
+                            <ol class="carousel-indicators">
+                                <li class="active" data-slide-to="0" data-target="#carouselExampleIndicators"></li>
+                                <li data-slide-to="1" data-target="#carouselExampleIndicators"></li>
+                                <li data-slide-to="2" data-target="#carouselExampleIndicators"></li>
+                                <li data-slide-to="3" data-target="#carouselExampleIndicators"></li>
+                                <li data-slide-to="4" data-target="#carouselExampleIndicators"></li>
+                            </ol>
+                            <div class="carousel-inner">
+
+                                {% for gale in user.galeries %}
+
+                                    {% if gale.info == 'oui' and gale.position != 0 %}
+                                        <div class="carousel-item {% if gale.position == 1 %}active{% endif %} ">
+                                            <img class="d-block w-100" src="{{ asset('gallery/'~gale.link ) }}"
+                                                 style="width:100%;">
+                                        </div>
+                                    {% else %}
+                                        <div class="carousel-item {% if gale.position == 1 %}active{% endif %}">
+                                            <img class="d-block w-100" src="{{ asset('gallery/not.png' ) }}"
+                                                 style="width: 100%;">
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+                            <a class="carousel-control-prev" data-slide="prev" href="#carouselExampleIndicators"
+                               role="button">
+                                <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" data-slide="next" href="#carouselExampleIndicators"
+                               role="button">
+                                <span aria-hidden="true" class="carousel-control-next-icon"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+                        <br>
+                        <h6>LOGO ET IMAGES DE LA GALERIE</h6>
+                        <div style="width: 100%" class="table-responsive">
+
+                            <table class="d table-bordered" width="100%" align="center">
+                                <tr>
+                                    {% set k = 0 %}
+                                    {% for gale in user.galeries %}
+                                    {% if gale.info == 'oui' %}
+                                        <td style="border: 1px solid grey; margin-right:2px;width: 82px; text-align: center">
+                                            <img src="{{ asset('gallery/'~gale.link ) }}"
+                                                 style="width: 78px; height:78px;margin-bottom: 3px; margin-right: 1px; float: left">
+                                            <a href="{{ path('delpicture',{'id':gale.link,'iduser':gale.user.id, 'position':gale.position}) }}"
+                                               style="float: right; margin-top: 50px"><img
+                                                        src="{{ asset('img/signaler.png') }}" style="width: 25px; ">
+                                            </a>
+                                            {% if gale.position == 0 %}
+                                                <span class="text-pri bolderrer">LOGO</span>
+                                            {% else %}
+                                                <span class="text-dangerr bolderrer">IMAGE {{ gale.position }}</span>
+                                            {% endif %}
+                                        </td>
+                                    {% else %}
+                                        <td style="border: 1px solid grey; margin-right: 2px; width: 82px; text-align: center">
+                                            <img src="{{ asset('gallery/not.png') }}"
+                                                 style="width: 78px; height: 80px;margin-bottom: 3px; margin-right: 1px; float: left">
+                                            {% if gale.position == 0 %}
+                                                <span class="text-pri bolderrer">LOGO</span>
+                                            {% else %}
+                                                <span class="text-dangerr bolderrer">IMAGE {{ gale.position }}</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    {% if k == 2 %}
+                                </tr>
+                                <tr>
+                                    {% endif %}
+                                    {% set k = k + 1 %}
+                                    {% endfor %}
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
