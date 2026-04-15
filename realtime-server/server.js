@@ -24,6 +24,10 @@ io.on("connection", (socket) => {
     });
 });
 
+app.get("/", (req, res) => {
+    res.send("🚀 Socket.IO server is running");
+});
+
 // endpoint test Symfony
 app.post("/emit/client_updated", (req, res) => {
     io.emit("client_updated", req.body);
