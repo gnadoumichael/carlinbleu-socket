@@ -1,3 +1,0 @@
-client ;contribuable;adresse;contact;mail
-ORANGE;CC 7890;bp 10;10101;mo@op.com
-MTN;CC 6790;bp 20;2020;mo@po.com
