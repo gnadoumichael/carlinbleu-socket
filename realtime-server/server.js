@@ -30,13 +30,16 @@ io.on("connection", (socket) => {
 });
 
 // endpoint Symfony
-app.post("/emit/client_updated", (req, res) => {
-    console.log("🔥 HTTP REÇU:", req.body);
-    console.log("👥 clients connectés:", io.engine.clientsCount);
+app.post('/emit/client_updated', (req, res) => {
+  const auth = req.headers.authorization;
 
-    io.emit("client_updated", req.body);
+  if (auth !== `Bearer ${process.env.MON_SECRET}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
-    res.json({ status: "okK" });
+  io.emit('client_updated', req.body);
+
+  res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3000;
