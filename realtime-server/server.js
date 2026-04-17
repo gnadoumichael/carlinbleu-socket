@@ -27,6 +27,11 @@ app.get("/", (req, res) => {
     res.send("🚀 Socket server OK");
 });
 
+app.get("/test", (req, res) => {
+    console.log("HEADERS =", req.headers);
+    res.json(req.headers);
+});
+
 // =======================
 // AUTH SIMPLE
 // =======================
