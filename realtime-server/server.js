@@ -79,6 +79,18 @@ app.post("/emit/client_updated", checkAuth, (req, res) => {
     res.json({ success: true });
 });
 
+app.post("/emit/client_add", checkAuth, (req, res) => {
+    const data = req.body;
+
+    if (!data || !data.id) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    io.emit("client_add", data);
+
+    res.json({ success: true });
+});
+
 // =======================
 // START
 // =======================
