@@ -29,13 +29,8 @@ app.get("/", (req, res) => {
     res.send("🚀 Socket server OK");
 });
 
-app.get("/test", (req, res) => {
-    console.log("HEADERS =", req.headers);
-    res.json(req.headers);
-});
-
 // =======================
-// AUTH
+// AUTH MIDDLEWARE
 // =======================
 function checkAuth(req, res, next) {
     const auth = req.headers.authorization;
@@ -54,18 +49,43 @@ function checkAuth(req, res, next) {
 }
 
 // =======================
-// SOCKET
+// SOCKET CONNECTION
 // =======================
 io.on("connection", (socket) => {
-    console.log("Client connecté:", socket.id);
+    console.log("🟢 Client connecté:", socket.id);
 
     socket.on("disconnect", () => {
-        console.log("Client déconnecté:", socket.id);
+        console.log("🔴 Client déconnecté:", socket.id);
     });
 });
 
 // =======================
-// EMIT
+// UTILITAIRE RESPONSE
+// =======================
+function safeEmit(event, payload) {
+    io.emit(event, {
+        ...payload,
+        serverTime: new Date().toISOString()
+    });
+}
+
+// =======================
+// CLIENT ADD
+// =======================
+app.post("/emit/client_add", checkAuth, (req, res) => {
+    const data = req.body;
+
+    if (!data || !data.id) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    safeEmit("client_add", data);
+
+    return res.json({ success: true });
+});
+
+// =======================
+// CLIENT UPDATE
 // =======================
 app.post("/emit/client_updated", checkAuth, (req, res) => {
     const data = req.body;
@@ -74,21 +94,24 @@ app.post("/emit/client_updated", checkAuth, (req, res) => {
         return res.status(400).json({ error: "Invalid data" });
     }
 
-    io.emit("client_updated", data);
+    safeEmit("client_updated", data);
 
-    res.json({ success: true });
+    return res.json({ success: true });
 });
 
-app.post("/emit/client_add", checkAuth, (req, res) => {
+// =======================
+// CLIENT DELETE
+// =======================
+app.post("/emit/client_deleted", checkAuth, (req, res) => {
     const data = req.body;
 
     if (!data || !data.id) {
         return res.status(400).json({ error: "Invalid data" });
     }
 
-    io.emit("client_add", data);
+    safeEmit("client_deleted", { id: data.id });
 
-    res.json({ success: true });
+    return res.json({ success: true });
 });
 
 // =======================
