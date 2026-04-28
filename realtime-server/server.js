@@ -114,6 +114,52 @@ app.post("/emit/client_deleted", checkAuth, (req, res) => {
     return res.json({ success: true });
 });
 
+
+// =======================
+// CHANTIER ADD
+// =======================
+app.post("/emit/chantier_add", checkAuth, (req, res) => {
+    const data = req.body;
+
+    if (!data || !data.id) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    safeEmit("chantier_add", data);
+
+    return res.json({ success: true });
+});
+
+// =======================
+// CHANTIER UPDATE
+// =======================
+app.post("/emit/chantier_updated", checkAuth, (req, res) => {
+    const data = req.body;
+
+    if (!data || !data.id) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    safeEmit("chantier_updated", data);
+
+    return res.json({ success: true });
+});
+
+// =======================
+// CHANTIER DELETE
+// =======================
+app.post("/emit/chantier_deleted", checkAuth, (req, res) => {
+    const data = req.body;
+
+    if (!data || !data.id) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    safeEmit("chantier_deleted", { id: data.id });
+
+    return res.json({ success: true });
+});
+
 // =======================
 // START
 // =======================
