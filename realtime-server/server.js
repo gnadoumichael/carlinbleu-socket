@@ -5,8 +5,17 @@ const cors = require("cors");
 
 const app = express();
 
+// =======================
+// CORS
+// =======================
+const allowedOrigins = [
+    "https://carlinbleu.com",
+    "https://client1.com",
+    "https://client2.com"
+];
+
 app.use(cors({
-    origin: "https://carlinbleu.com"
+    origin: allowedOrigins
 }));
 
 app.use(express.json());
@@ -15,7 +24,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "https://carlinbleu.com"
+        origin: allowedOrigins
     }
 });
 
@@ -113,7 +122,6 @@ app.post("/emit/client_deleted", checkAuth, (req, res) => {
 
     return res.json({ success: true });
 });
-
 
 // =======================
 // CHANTIER ADD
