@@ -90,9 +90,12 @@ io.on("connection", (socket) => {
 
   socket.join(room);
 
-  console.log(
-    `Utilisateur ${socket.data.userId} connecté dans ${room}`
-  );
+  console.log("--------------------------------");
+  console.log("SOCKET CONNECTÉ");
+  console.log("USER ID :", socket.data.userId);
+  console.log("MASTER ID :", socket.data.masterId);
+  console.log("ROOM :", room);
+  console.log("--------------------------------");
 
   socket.emit("connexion_ok", {
     userId: socket.data.userId,
