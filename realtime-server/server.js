@@ -52,6 +52,7 @@ console.log("✅ Configuration Socket.IO prête");
 // ========================================
 
 const ALLOWED_EVENTS = [
+  "historique_ajoute",
   "client_ajoute",
   "client_modifie",
   "client_supprime",
