@@ -1,11 +1,12 @@
 
+const fs = require("fs");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 const server = http.createServer(app);
 
@@ -16,87 +17,132 @@ const io = new Server(server, {
   }
 });
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const SOCKET_SECRET = process.env.SOCKET_SECRET;
+// ========================================
+// CONFIGURATION
+// ========================================
 
-// Événements autorisés
+const SOCKET_SECRET = process.env.SOCKET_SECRET;
+const JWT_PUBLIC_KEY_PATH =
+  process.env.JWT_PUBLIC_KEY_PATH || "/etc/secrets/jwt_public.pem";
+
+if (!SOCKET_SECRET) {
+  throw new Error("SOCKET_SECRET manquant dans les variables Render");
+}
+
+if (!fs.existsSync(JWT_PUBLIC_KEY_PATH)) {
+  throw new Error(
+    `Clé publique JWT introuvable : ${JWT_PUBLIC_KEY_PATH}`
+  );
+}
+
+const JWT_PUBLIC_KEY = fs.readFileSync(
+  JWT_PUBLIC_KEY_PATH,
+  "utf8"
+);
+
+if (!JWT_PUBLIC_KEY.includes("BEGIN PUBLIC KEY")) {
+  throw new Error("Le fichier JWT public.pem ne semble pas être une clé publique PEM valide");
+}
+
+console.log("✅ Clé publique JWT chargée");
+console.log("✅ Configuration Socket.IO prête");
+
+// ========================================
+// ÉVÉNEMENTS AUTORISÉS
+// ========================================
+
 const ALLOWED_EVENTS = [
-  // Clients
   "client_ajoute",
   "client_modifie",
   "client_supprime",
 
-  // Chantiers
   "chantier_ajoute",
   "chantier_modifie",
   "chantier_supprime",
 
-  // Devis
   "devis_ajoute",
   "devis_modifie",
   "devis_supprime",
 
-  // Fournisseurs
   "fournisseur_ajoute",
   "fournisseur_modifie",
   "fournisseur_supprime",
 
-  // Personnel
   "personnel_ajoute",
   "personnel_modifie",
   "personnel_supprime",
 
-  // Dépenses
   "depense_ajoute",
   "depense_modifie",
   "depense_supprime",
 
-  // Règlements
   "reglement_ajoute",
   "reglement_modifie",
   "reglement_supprime"
 ];
 
-// Authentification Socket.IO
+// ========================================
+// AUTHENTIFICATION SOCKET.IO
+// ========================================
+
 io.use((socket, next) => {
   try {
     const token = socket.handshake.auth?.token;
 
-    if (!token) {
+    if (!token || typeof token !== "string") {
       return next(new Error("Token manquant"));
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_PUBLIC_KEY, {
+      algorithms: ["RS256"]
+    });
 
-    // Ces informations proviennent du JWT signé par Symfony
+    const userId = decoded.id;
     const masterId = decoded.id_master;
 
-    if (!masterId) {
-      return next(new Error("Master non autorisé"));
+    if (
+      userId === undefined ||
+      userId === null ||
+      masterId === undefined ||
+      masterId === null ||
+      String(masterId).trim() === ""
+    ) {
+      return next(new Error("Identifiants utilisateur ou master manquants"));
     }
 
-    socket.data.userId = decoded.id;
+    // Identité issue exclusivement du JWT signé par Symfony
+    socket.data.userId = String(userId);
     socket.data.masterId = String(masterId);
 
+    console.log("✅ AUTHENTIFICATION SOCKET VALIDÉE");
+    console.log("USER ID :", socket.data.userId);
+    console.log("MASTER ID :", socket.data.masterId);
+
     next();
+
   } catch (error) {
+    console.error("❌ ERREUR JWT :", error.name, error.message);
+
     next(new Error("Authentification invalide"));
   }
 });
 
-// Connexion et attribution automatique à la salle master
+// ========================================
+// CONNEXION ET SALLE MASTER
+// ========================================
+
 io.on("connection", (socket) => {
   const room = `master_${socket.data.masterId}`;
 
-  console.log("================================");
-  console.log("🔥 NOUVELLE CONNEXION SOCKET");
-  console.log("USER ID :", socket.data.userId);
-  console.log("MASTER ID :", socket.data.masterId);
-
   socket.join(room);
 
+  console.log("================================");
+  console.log("🔥 NOUVELLE CONNEXION SOCKET");
+  console.log("SOCKET ID :", socket.id);
+  console.log("USER ID :", socket.data.userId);
+  console.log("MASTER ID :", socket.data.masterId);
   console.log("ROOM :", room);
-  console.log("SALLES DU SOCKET :", [...socket.rooms]);
+  console.log("SALLES :", [...socket.rooms]);
   console.log("================================");
 
   socket.emit("connexion_ok", {
@@ -104,18 +150,21 @@ io.on("connection", (socket) => {
     masterId: socket.data.masterId
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (reason) => {
     console.log(
-      `Utilisateur ${socket.data.userId} déconnecté`
+      `🔌 Utilisateur ${socket.data.userId} déconnecté : ${reason}`
     );
   });
 });
 
-// Réception des notifications envoyées par Symfony
+// ========================================
+// ÉMISSION DES NOTIFICATIONS DEPUIS SYMFONY
+// ========================================
+
 app.post("/emit", (req, res) => {
   const secret = req.headers["x-socket-secret"];
 
-  if (!SOCKET_SECRET || secret !== SOCKET_SECRET) {
+  if (!secret || secret !== SOCKET_SECRET) {
     return res.status(401).json({
       success: false,
       message: "Non autorisé"
@@ -124,28 +173,52 @@ app.post("/emit", (req, res) => {
 
   const { masterId, event, data } = req.body;
 
-  if (!masterId || !ALLOWED_EVENTS.includes(event)) {
+  if (
+    masterId === undefined ||
+    masterId === null ||
+    String(masterId).trim() === "" ||
+    !ALLOWED_EVENTS.includes(event)
+  ) {
     return res.status(400).json({
       success: false,
       message: "Paramètres invalides"
     });
   }
 
-  io.to(`master_${String(masterId)}`).emit(event, data);
+  const room = `master_${String(masterId)}`;
+
+  io.to(room).emit(event, {
+    ...(data && typeof data === "object" && !Array.isArray(data)
+      ? data
+      : { value: data }),
+    masterId: String(masterId)
+  });
+
+  console.log("📡 ÉVÉNEMENT ÉMIS :", event);
+  console.log("🏢 MASTER :", masterId);
+  console.log("🏠 ROOM :", room);
 
   return res.json({
     success: true,
-    event: event,
+    event,
     masterId: String(masterId)
   });
 });
 
+// ========================================
+// ROUTE DE TEST
+// ========================================
+
 app.get("/", (req, res) => {
-  res.send("Carlinbleu Socket.IO opérationnel");
+  res.status(200).send("Carlinbleu Socket.IO opérationnel");
 });
+
+// ========================================
+// DÉMARRAGE
+// ========================================
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, () => {
-  console.log(`Socket.IO démarré sur le port ${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Socket.IO démarré sur le port ${PORT}`);
 });
