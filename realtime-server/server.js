@@ -88,14 +88,16 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   const room = `master_${socket.data.masterId}`;
 
-  socket.join(room);
-
-  console.log("--------------------------------");
-  console.log("SOCKET CONNECTÉ");
+  console.log("================================");
+  console.log("🔥 NOUVELLE CONNEXION SOCKET");
   console.log("USER ID :", socket.data.userId);
   console.log("MASTER ID :", socket.data.masterId);
+
+  socket.join(room);
+
   console.log("ROOM :", room);
-  console.log("--------------------------------");
+  console.log("SALLES DU SOCKET :", [...socket.rooms]);
+  console.log("================================");
 
   socket.emit("connexion_ok", {
     userId: socket.data.userId,
