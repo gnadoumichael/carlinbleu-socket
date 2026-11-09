@@ -21,17 +21,40 @@ const SOCKET_SECRET = process.env.SOCKET_SECRET;
 
 // Événements autorisés
 const ALLOWED_EVENTS = [
-  "devis_ajoute",
-  "devis_modifie",
-  "devis_supprime",
+  // Clients
   "client_ajoute",
   "client_modifie",
   "client_supprime",
+
+  // Chantiers
   "chantier_ajoute",
   "chantier_modifie",
   "chantier_supprime",
+
+  // Devis
+  "devis_ajoute",
+  "devis_modifie",
+  "devis_supprime",
+
+  // Fournisseurs
+  "fournisseur_ajoute",
+  "fournisseur_modifie",
+  "fournisseur_supprime",
+
+  // Personnel
+  "personnel_ajoute",
+  "personnel_modifie",
+  "personnel_supprime",
+
+  // Dépenses
+  "depense_ajoute",
   "depense_modifie",
-  "reglement_modifie"
+  "depense_supprime",
+
+  // Règlements
+  "reglement_ajoute",
+  "reglement_modifie",
+  "reglement_supprime"
 ];
 
 // Authentification Socket.IO
